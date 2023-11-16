@@ -1,0 +1,25 @@
+{
+  "name": "@mini-mind-map/mind-core",
+  "version": "1.0.0",
+  "description": "@mini-mind-map/mind-core",
+  "type": "module",
+  "main": "dist/bundle.cjs.js",
+  "module": "dist/bundle.esm.js",
+  "scripts": {
+    "test": "vitest run",
+    "build": "rollup -c --configPlugin @rollup/plugin-typescript --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@svgdotjs/svg.js": "^3.2.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "rollup": "^4.4.1",
+    "tslib": "^2.6.2"
+  }
+}
