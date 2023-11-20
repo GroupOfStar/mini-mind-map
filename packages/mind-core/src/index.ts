@@ -1,18 +1,11 @@
 import { Rect, SVG, Text } from "@svgdotjs/svg.js";
 
-/**
- *
- * @param a
- * @param b
- * @returns
- */
-export const sum = (a: number, b: number) => {
-  return a + b;
-};
+export * from "./graph";
 
 export const craeteSVGDom = () => {
   const draw = SVG().size("100%", "100%");
   const group = draw.group();
+  console.log("group :>> ", group);
   group.path("M10, 20L30, 40");
   const rectNode = new Rect()
     .size(100, 100)
@@ -34,6 +27,5 @@ export const craeteSVGDom = () => {
   group.add(textNode);
 
   draw.add(group);
-  draw.node.getBoundingClientRect();
   return { draw, group, rectNode, textNode };
 };

@@ -16,5 +16,6 @@
     "types": ["vitest/globals", "node"]
   },
   "include": ["src", "__tests__"],
-  "exclude": ["rollup.config.ts"]
+  "exclude": ["rollup.config.ts"],
+  "ts-node": { "esm": true }
 }

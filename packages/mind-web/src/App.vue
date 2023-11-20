@@ -4,19 +4,27 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { craeteSVGDom } from '@mini-mind-map/mind-core'
+import { GraphMindMap, IMindDataItem } from '@mini-mind-map/mind-core'
+import { mindMapData } from './mindMapData'
 
 const mindMapRef = ref()
-const svgDom = craeteSVGDom()
 
 onMounted(() => {
-  // svgDom.addTo(mindMapRef.value)
-  const { draw, rectNode, textNode } = svgDom
-  draw.addTo(mindMapRef.value)
-  const rectBox = rectNode.node.getBoundingClientRect();
-  const textBox = textNode.node.getBoundingClientRect();
-  console.log('rectBox :>> ', rectBox);
-  console.log('textBox :>> ', textBox);
+  const mindMap = new GraphMindMap({ container: mindMapRef.value })
+
+  const config = mindMapData[0]
+
+  console.log('config :>> ', config);
+
+  const { id: rootId } = config
+  const rootNode = mindMapData[1]
+  if (rootNode) {
+    const mapData = mindMapData.slice(1).map<IMindDataItem>(item => ({ id: item.id, pid: item.pid || '', type: item.pid === rootId ? "rootNode" : (item.pid === rootNode.id ? "secondNode" : "defaultNode"), text: item.text }))
+    mindMap.data([mapData[0]])
+    mindMap.render()
+  }
+
+  console.log('mindMap :>> ', mindMap);
 })
 </script>
 
