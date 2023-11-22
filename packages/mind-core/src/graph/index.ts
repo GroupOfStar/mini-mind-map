@@ -1,1 +1,1 @@
-export * from "./GraphMindMap";
+export * from "./Graph";

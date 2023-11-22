@@ -1,10 +1,10 @@
 import { Rect } from "@svgdotjs/svg.js";
-import { MindNode } from "./";
+import { Node } from "./Node";
 import type * as SVGType from "@svgdotjs/svg.js";
-import { IMindDataItem } from "src/graph";
+import { IGraphDataItem } from "src/graph";
 
-export class DefaultNode extends MindNode {
-  constructor(group: SVGType.G, node: IMindDataItem) {
+export class DefaultNode extends Node {
+  constructor(group: SVGType.G, node: IGraphDataItem) {
     super(group, node);
   }
   create() {
