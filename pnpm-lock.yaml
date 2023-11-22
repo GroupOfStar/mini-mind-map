@@ -45,9 +45,21 @@ importers:
       '@mini-mind-map/mind-core':
         specifier: ^1.0.0
         version: link:../mind-core
+      mindmap-layouts:
+        specifier: ^0.2.9
+        version: registry.npmmirror.com/mindmap-layouts@0.2.9
+      random-graph:
+        specifier: ^0.0.3
+        version: registry.npmmirror.com/random-graph@0.0.3
       vue:
         specifier: ^3.3.4
         version: registry.npmmirror.com/vue@3.3.8(typescript@5.2.2)
+      vue-router:
+        specifier: ^4.2.5
+        version: registry.npmmirror.com/vue-router@4.2.5(vue@3.3.8)
+      zero-colors:
+        specifier: ^0.2.0
+        version: registry.npmmirror.com/zero-colors@0.2.0
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^4.2.3
@@ -731,6 +743,12 @@ packages:
       '@vue/compiler-dom': registry.npmmirror.com/@vue/compiler-dom@3.3.8
       '@vue/shared': registry.npmmirror.com/@vue/shared@3.3.8
 
+  registry.npmmirror.com/@vue/devtools-api@6.5.1:
+    resolution: {integrity: sha512-+KpckaAQyfbvshdDW5xQylLni1asvNSGme1JFs8I1+/H5pHEhqUKMEQD/qn3Nx5+/nycBq11qAEi8lk+LXI2dA==, tarball: https://registry.npmmirror.com/@vue/devtools-api/-/devtools-api-6.5.1.tgz}
+    name: '@vue/devtools-api'
+    version: 6.5.1
+    dev: false
+
   registry.npmmirror.com/@vue/language-core@1.8.22(typescript@5.2.2):
     resolution: {integrity: sha512-bsMoJzCrXZqGsxawtUea1cLjUT9dZnDsy5TuZ+l1fxRMzUGQUG9+Ypq4w//CqpWmrx7nIAJpw2JVF/t258miRw==, tarball: https://registry.npmmirror.com/@vue/language-core/-/language-core-1.8.22.tgz}
     id: registry.npmmirror.com/@vue/language-core/1.8.22
@@ -1187,6 +1205,12 @@ packages:
     dev: true
     optional: true
 
+  registry.npmmirror.com/mindmap-layouts@0.2.9:
+    resolution: {integrity: sha512-xvW1Y67mC72CHNJP/pZp5jdmpzL4UUmxxLOKsHjh51k5Jn1o1kXoxXPT4hlbVgwOtMMitDo1FbmIOBtAmzN9UA==, tarball: https://registry.npmmirror.com/mindmap-layouts/-/mindmap-layouts-0.2.9.tgz}
+    name: mindmap-layouts
+    version: 0.2.9
+    dev: false
+
   registry.npmmirror.com/minimatch@9.0.3:
     resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==, tarball: https://registry.npmmirror.com/minimatch/-/minimatch-9.0.3.tgz}
     name: minimatch
@@ -1341,6 +1365,12 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  registry.npmmirror.com/random-graph@0.0.3:
+    resolution: {integrity: sha512-PvAAD8kwDvrpRgIoDT2DKoBItmhy4uy+HkGFIQTLx1h1U1kE/EJJsmBhQN97JGfuSfI1+suCuK2SBJ52Ve4XgA==, tarball: https://registry.npmmirror.com/random-graph/-/random-graph-0.0.3.tgz}
+    name: random-graph
+    version: 0.0.3
+    dev: false
 
   registry.npmmirror.com/react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==, tarball: https://registry.npmmirror.com/react-is/-/react-is-18.2.0.tgz}
@@ -1664,6 +1694,18 @@ packages:
       - terser
     dev: true
 
+  registry.npmmirror.com/vue-router@4.2.5(vue@3.3.8):
+    resolution: {integrity: sha512-DIUpKcyg4+PTQKfFPX88UWhlagBEBEfJ5A8XDXRJLUnZOvcpMF8o/dnL90vpVkGaPbjvXazV/rC1qBKrZlFugw==, tarball: https://registry.npmmirror.com/vue-router/-/vue-router-4.2.5.tgz}
+    id: registry.npmmirror.com/vue-router/4.2.5
+    name: vue-router
+    version: 4.2.5
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      '@vue/devtools-api': registry.npmmirror.com/@vue/devtools-api@6.5.1
+      vue: registry.npmmirror.com/vue@3.3.8(typescript@5.2.2)
+    dev: false
+
   registry.npmmirror.com/vue-template-compiler@2.7.15:
     resolution: {integrity: sha512-yQxjxMptBL7UAog00O8sANud99C6wJF+7kgbcwqkvA38vCGF7HWE66w0ZFnS/kX5gSoJr/PQ4/oS3Ne2pW37Og==, tarball: https://registry.npmmirror.com/vue-template-compiler/-/vue-template-compiler-2.7.15.tgz}
     name: vue-template-compiler
@@ -1729,3 +1771,10 @@ packages:
     version: 1.0.0
     engines: {node: '>=12.20'}
     dev: true
+
+  registry.npmmirror.com/zero-colors@0.2.0:
+    resolution: {integrity: sha512-8yVhvA/aIAURYgbaJ6GRKVEUwh7pB9ndIJa20um9k3xHZlI/LxvUUhP9Odq6AP9xnY78D8dEGLHpZ3TqRrYDkw==, tarball: https://registry.npmmirror.com/zero-colors/-/zero-colors-0.2.0.tgz}
+    name: zero-colors
+    version: 0.2.0
+    engines: {node: '>=4.0.0'}
+    dev: false

@@ -10,7 +10,11 @@
   },
   "dependencies": {
     "@mini-mind-map/mind-core": "^1.0.0",
-    "vue": "^3.3.4"
+    "mindmap-layouts": "^0.2.9",
+    "random-graph": "^0.0.3",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.5",
+    "zero-colors": "^0.2.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
