@@ -8,6 +8,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/home/index.vue")
   },
   {
+    path: "/svgjs",
+    name: "vSvgjs", // svgjs Demo
+    component: () => import("../views/svgjs/index")
+  },
+  {
     path: "/layout",
     name: "vLayout", // 布局页
     component: () => import("../views/layout/index")
