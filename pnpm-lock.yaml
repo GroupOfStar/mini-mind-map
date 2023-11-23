@@ -45,9 +45,6 @@ importers:
       '@mini-mind-map/mind-core':
         specifier: ^1.0.0
         version: link:../mind-core
-      mindmap-layouts:
-        specifier: ^0.2.9
-        version: registry.npmmirror.com/mindmap-layouts@0.2.9
       random-graph:
         specifier: ^0.0.3
         version: registry.npmmirror.com/random-graph@0.0.3
@@ -72,7 +69,7 @@ importers:
         version: registry.npmmirror.com/typescript@5.2.2
       vite:
         specifier: ^4.4.5
-        version: registry.npmmirror.com/vite@4.5.0(@types/node@20.9.0)(less@4.2.0)
+        version: registry.npmmirror.com/vite@4.5.0(less@4.2.0)
       vue-tsc:
         specifier: ^1.8.5
         version: registry.npmmirror.com/vue-tsc@1.8.22(typescript@5.2.2)
@@ -624,7 +621,7 @@ packages:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: registry.npmmirror.com/vite@4.5.0(@types/node@20.9.0)(less@4.2.0)
+      vite: registry.npmmirror.com/vite@4.5.0(less@4.2.0)
       vue: registry.npmmirror.com/vue@3.3.8(typescript@5.2.2)
     dev: true
 
@@ -1205,12 +1202,6 @@ packages:
     dev: true
     optional: true
 
-  registry.npmmirror.com/mindmap-layouts@0.2.9:
-    resolution: {integrity: sha512-xvW1Y67mC72CHNJP/pZp5jdmpzL4UUmxxLOKsHjh51k5Jn1o1kXoxXPT4hlbVgwOtMMitDo1FbmIOBtAmzN9UA==, tarball: https://registry.npmmirror.com/mindmap-layouts/-/mindmap-layouts-0.2.9.tgz}
-    name: mindmap-layouts
-    version: 0.2.9
-    dev: false
-
   registry.npmmirror.com/minimatch@9.0.3:
     resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==, tarball: https://registry.npmmirror.com/minimatch/-/minimatch-9.0.3.tgz}
     name: minimatch
@@ -1235,6 +1226,7 @@ packages:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==, tarball: https://registry.npmmirror.com/ms/-/ms-2.1.2.tgz}
     name: ms
     version: 2.1.2
+    requiresBuild: true
     dev: true
 
   registry.npmmirror.com/muggle-string@0.3.1:
@@ -1619,6 +1611,45 @@ packages:
         optional: true
     dependencies:
       '@types/node': registry.npmmirror.com/@types/node@20.9.0
+      esbuild: registry.npmmirror.com/esbuild@0.18.20
+      less: registry.npmmirror.com/less@4.2.0
+      postcss: registry.npmmirror.com/postcss@8.4.31
+      rollup: registry.npmmirror.com/rollup@3.29.4
+    optionalDependencies:
+      fsevents: registry.npmmirror.com/fsevents@2.3.3
+    dev: true
+
+  registry.npmmirror.com/vite@4.5.0(less@4.2.0):
+    resolution: {integrity: sha512-ulr8rNLA6rkyFAlVWw2q5YJ91v098AFQ2R0PRFwPzREXOUJQPtFUG0t+/ZikhaOCDqFoDhN6/v8Sq0o4araFAw==, tarball: https://registry.npmmirror.com/vite/-/vite-4.5.0.tgz}
+    id: registry.npmmirror.com/vite/4.5.0
+    name: vite
+    version: 4.5.0
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      lightningcss: ^1.21.0
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
       esbuild: registry.npmmirror.com/esbuild@0.18.20
       less: registry.npmmirror.com/less@4.2.0
       postcss: registry.npmmirror.com/postcss@8.4.31

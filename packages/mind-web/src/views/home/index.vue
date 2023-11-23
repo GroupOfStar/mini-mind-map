@@ -14,7 +14,6 @@ const onResize = Utils.debounce(mindMap.onResize.bind(mindMap))
 
 onMounted(() => {
     const config = mindMapData[0]
-    console.log('config :>> ', config);
 
     const { id: rootId } = config
     const rootNode = mindMapData[1]

@@ -12,7 +12,7 @@ const randomTree = (size: number) => {
         options: {
           length: 0,
           maxLength: 16,
-          categories: ["japanese", "letter", "chinese", "special"]
+          categories: ["letter", "chinese"]
         }
       }
     }

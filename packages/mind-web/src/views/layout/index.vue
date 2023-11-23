@@ -1,7 +1,7 @@
 <template>
     <aside>
         <form id="layout-props" ref="layoutPropsRef">
-            <input name="dataSize" type="number" min="1" value="20">
+            <input name="dataSize" type="number" min="1" value="30">
             <select name="layoutType">
                 <option value="Standard">Standard</option>
                 <option value="RightLogical">Right Logical</option>
@@ -33,7 +33,7 @@
   
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import MindmapLayouts from 'mindmap-layouts'
+import * as MindmapLayouts from './../../../lib/mindMapLayouts'
 import randomTree from './utils/randomTree'
 import drawLink from './utils/drawLine'
 import drawNode from './utils/drawNode'
@@ -66,8 +66,6 @@ onMounted(() => {
 
     function setCanvasSize() {
         if (canvas && containerNode) {
-            console.log('canvas :>> ', canvas);
-            console.log('containerNode :>> ', containerNode);
             canvas.width = containerNode.offsetWidth
             canvas.height = containerNode.offsetHeight
         }
@@ -75,11 +73,10 @@ onMounted(() => {
 
     function render() {
         if (canvas && ctx && containerNode && formNode && layoutTimeNode && renderTimeNode) {
-            console.log("render")
             const count = formNode.dataSize.value
-            const layoutType = formNode.layoutType.value
+
+            const layoutType: 'Standard' | 'DownwardOrganizational' | 'UpwardOrganizational' | 'LeftLogical' = formNode.layoutType.value
             const root = randomTree(count)
-            console.log('root :>> ', root);
             Object.assign(root, {
                 isRoot: true
             })
@@ -118,15 +115,10 @@ onMounted(() => {
 
             const rootNode = layout.doLayout()
 
-            console.log('rootNode :>> ', rootNode);
-
             const t1 = window.performance.now()
 
             setCanvasSize()
             const bb = rootNode.getBoundingBox()
-            console.log('bb :>> ', bb);
-            console.log('canvas.width :>> ', canvas.width);
-            console.log('canvas.height :>> ', canvas.height);
             const scale = Math.max(bb.width / canvas.width, bb.height / canvas.height)
             canvas.width = bb.width / scale
             canvas.height = bb.height / scale
