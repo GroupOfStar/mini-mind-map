@@ -10,7 +10,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/layout",
     name: "vLayout", // 布局页
-    component: () => import("../views/layout/index.vue")
+    component: () => import("../views/layout/index")
   }
 ];
 
