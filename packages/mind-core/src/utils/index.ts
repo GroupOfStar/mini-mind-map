@@ -46,16 +46,17 @@ export class Utils {
   }
 
   // 防抖
-  static debounce(fn: Function, delay: number = 300) {
+  static debounce(fn: Function, time: number = 300) {
     let timer: NodeJS.Timeout | null = null;
-    return (...args: any[]) => {
+    return function (this: object, ...args: any[]) {
+      console.log("this :>> ", this);
       if (timer) {
         clearTimeout(timer);
       }
       timer = setTimeout(() => {
         fn.apply(this, args);
         timer = null;
-      }, delay);
+      }, time);
     };
   }
 }

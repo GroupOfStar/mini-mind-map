@@ -3,7 +3,7 @@
 </template>
   
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { Graph, IGraphDataItem, Utils } from '@mini-mind-map/mind-core'
 import { mindMapData } from './mindMapData'
 
@@ -29,8 +29,8 @@ onMounted(() => {
     console.log('mindMap :>> ', mindMap);
 })
 
-onUnmounted(() => {
-    window.removeEventListener('resize', onResize)
+onBeforeUnmount(() => {
+    window.removeEventListener("resize", onResize)
 })
 </script>
   

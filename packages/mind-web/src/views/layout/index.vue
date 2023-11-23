@@ -1,13 +1,9 @@
 <template>
     <aside>
-        <form id="layout-props" ref="layoutPropsRef">
-            <input name="dataSize" type="number" min="1" value="30">
-            <select name="layoutType">
-                <option value="Standard">Standard</option>
-                <option value="RightLogical">Right Logical</option>
-                <option value="DownwardOrganizational">Downward Organizational</option>
-                <option value="UpwardOrganizational">Upward Organizational</option>
-                <option value="LeftLogical">Left Logical</option>
+        <form @change="render" @submit.prevent.stop>
+            <input type="number" min="2" v-model="dataSize">
+            <select v-model="layoutType">
+                <option v-for="item in layoutTypeOption" :key="item.value" :value="item.value">{{ item.title }}</option>
             </select>
         </form>
         <table>
@@ -19,8 +15,8 @@
             </thead>
             <tbody>
                 <tr>
-                    <td ref="layoutTimeRef">0</td>
-                    <td ref="renderTimeRef">0</td>
+                    <td ref="layoutTimeRef">{{ layoutTime }}</td>
+                    <td ref="renderTimeRef">{{ renderTime }}</td>
                 </tr>
             </tbody>
         </table>
@@ -32,17 +28,28 @@
 </template>
   
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, reactive, onBeforeUnmount } from 'vue';
 import * as MindmapLayouts from './../../../lib/mindMapLayouts'
 import randomTree from './utils/randomTree'
 import drawLink from './utils/drawLine'
 import drawNode from './utils/drawNode'
+import { debounce } from '../../utils';
 
-const layoutPropsRef = ref<HTMLFormElement | null>()
-const layoutTimeRef = ref<HTMLDivElement | null>()
-const renderTimeRef = ref<HTMLDivElement | null>()
 const containerRef = ref<HTMLDivElement | null>()
 const canvasRef = ref<HTMLCanvasElement | null>()
+
+const dataSize = ref(30)
+const layoutType = ref<'Standard' | 'DownwardOrganizational' | 'UpwardOrganizational' | 'LeftLogical'>("Standard")
+const layoutTypeOption = reactive([
+    { title: 'Standard', value: "Standard" },
+    { title: 'Right Logical', value: "RightLogical" },
+    { title: 'Downward Organizational', value: "DownwardOrganizational" },
+    { title: 'Upward Organizational', value: "UpwardOrganizational" },
+    { title: 'Left Logical', value: "LeftLogical" },
+])
+
+const layoutTime = ref(0)
+const renderTime = ref(0)
 
 const PEM = 18
 
@@ -55,101 +62,98 @@ function isHorizontal(type: string) {
     return HORIZONTAL_LAYOUTS.indexOf(type) > -1
 }
 
-onMounted(() => {
+function setCanvasSize() {
     const canvas = canvasRef.value
     const containerNode = containerRef.value
-    const formNode = layoutPropsRef.value
-    const layoutTimeNode = layoutTimeRef.value
-    const renderTimeNode = renderTimeRef.value
+    if (canvas && containerNode) {
+        canvas.width = containerNode.offsetWidth
+        canvas.height = containerNode.offsetHeight
+    }
+}
+
+function render() {
+    console.log('render')
+    const canvas = canvasRef.value
+    const containerNode = containerRef.value
 
     const ctx = canvas?.getContext('2d')
 
-    function setCanvasSize() {
-        if (canvas && containerNode) {
-            canvas.width = containerNode.offsetWidth
-            canvas.height = containerNode.offsetHeight
-        }
-    }
+    if (canvas && ctx && containerNode) {
 
-    function render() {
-        if (canvas && ctx && containerNode && formNode && layoutTimeNode && renderTimeNode) {
-            const count = formNode.dataSize.value
-
-            const layoutType: 'Standard' | 'DownwardOrganizational' | 'UpwardOrganizational' | 'LeftLogical' = formNode.layoutType.value
-            const root = randomTree(count)
-            Object.assign(root, {
-                isRoot: true
-            })
-
-            ctx.font = `${PEM}px Courier, monospace`
-
-            const MindmapLayout = MindmapLayouts[layoutType]
-            const layout = new MindmapLayout(root, {
-                getHeight(d: any) {
-                    if (d.isRoot) {
-                        return PEM * 2.4
-                    }
-                    return PEM * 1.2
-                },
-                getWidth(d: any) {
-                    if (d.isRoot) {
-                        return ctx.measureText(d.name).width * 2 + PEM * 1.6
-                    }
-                    return ctx.measureText(d.name).width + PEM * 1.6
-                },
-                getHGap(d: any) {
-                    if (d.isRoot) {
-                        return PEM * 2
-                    }
-                    return Math.round(PEM / 2)
-                },
-                getVGap(d: any) {
-                    if (d.isRoot) {
-                        return PEM * 2
-                    }
-                    return Math.round(PEM / 2)
-                }
-            })
-
-            const t0 = window.performance.now()
-
-            const rootNode = layout.doLayout()
-
-            const t1 = window.performance.now()
-
-            setCanvasSize()
-            const bb = rootNode.getBoundingBox()
-            const scale = Math.max(bb.width / canvas.width, bb.height / canvas.height)
-            canvas.width = bb.width / scale
-            canvas.height = bb.height / scale
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height)
-            rootNode.eachNode((node: any) => {
-                node.children.forEach((child: any) => {
-                    drawLink(node, child, ctx, isHorizontal(layoutType), scale)
-                })
-                drawNode(node, ctx, scale)
-            })
-            const t2 = window.performance.now()
-            layoutTimeNode.innerHTML = Math.round(t1 - t0).toString()
-            renderTimeNode.innerHTML = Math.round(t2 - t1).toString()
-        }
-    }
-
-    if (formNode) {
-        formNode.addEventListener('change', render)
-        formNode.addEventListener('submit', (e) => {
-            e.preventDefault()
-            render()
-            return false
+        const root = randomTree(dataSize.value)
+        Object.assign(root, {
+            isRoot: true
         })
-    }
-    window.onresize = () => {
+
+        ctx.font = `${PEM}px Courier, monospace`
+
+        const MindmapLayout = MindmapLayouts[layoutType.value]
+        const layout = new MindmapLayout(root, {
+            getHeight(d: any) {
+                if (d.isRoot) {
+                    return PEM * 2.4
+                }
+                return PEM * 1.2
+            },
+            getWidth(d: any) {
+                if (d.isRoot) {
+                    return ctx.measureText(d.name).width * 2 + PEM * 1.6
+                }
+                return ctx.measureText(d.name).width + PEM * 1.6
+            },
+            getHGap(d: any) {
+                if (d.isRoot) {
+                    return PEM * 2
+                }
+                return Math.round(PEM / 2)
+            },
+            getVGap(d: any) {
+                if (d.isRoot) {
+                    return PEM * 2
+                }
+                return Math.round(PEM / 2)
+            }
+        })
+
+        const t0 = window.performance.now()
+
+        const rootNode = layout.doLayout()
+
+        const t1 = window.performance.now()
+
         setCanvasSize()
-        render()
+        const bb = rootNode.getBoundingBox()
+        const scale = Math.max(bb.width / canvas.width, bb.height / canvas.height)
+        canvas.width = bb.width / scale
+        canvas.height = bb.height / scale
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        rootNode.eachNode((node: any) => {
+            node.children.forEach((child: any) => {
+                drawLink(node, child, ctx, isHorizontal(layoutType.value), scale)
+            })
+            drawNode(node, ctx, scale)
+        })
+        const t2 = window.performance.now()
+        layoutTime.value = Math.round(t1 - t0)
+        renderTime.value = Math.round(t2 - t1)
     }
+}
+
+const onResize = debounce(() => {
+    console.log('onResize')
     setCanvasSize()
     render()
+})
+
+onMounted(() => {
+    setCanvasSize()
+    render()
+    window.addEventListener("resize", onResize)
+})
+
+onBeforeUnmount(() => {
+    window.removeEventListener("resize", onResize)
 })
 </script>
 
