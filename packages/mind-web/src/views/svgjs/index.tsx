@@ -1,6 +1,5 @@
 import { defineComponent, onMounted, ref } from "vue";
 import { craeteSVGDom } from "@mini-mind-map/mind-core";
-import styles from "./index.module.less";
 
 export default defineComponent(function Svgjs() {
   const mindMapRef = ref();
@@ -16,5 +15,5 @@ export default defineComponent(function Svgjs() {
     console.log("textBox :>> ", textBox);
   });
 
-  return () => <div class={styles.mindMapContainer} ref={mindMapRef}></div>;
+  return () => <div class="mindMapContainer" ref={mindMapRef}></div>;
 });

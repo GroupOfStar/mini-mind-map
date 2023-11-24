@@ -13,6 +13,16 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/svgjs/index")
   },
   {
+    path: "/bbox",
+    name: "VBbox", // bbox Demo
+    component: () => import("../views/bbox/index")
+  },
+  {
+    path: "/node",
+    name: "VNode", // node Demo
+    component: () => import("../views/node/index")
+  },
+  {
     path: "/layout",
     name: "vLayout", // 布局页
     component: () => import("../views/layout/index")

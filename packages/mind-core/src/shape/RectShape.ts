@@ -37,7 +37,7 @@ export class RectShape extends Shape {
     this.width = textSize.width + padding * 2;
     this.height = textSize.height + padding * 2;
 
-    const rectNode = this.createBorderRect(this.width, this.height);
     const textNode = this.createTextNode();
+    const rectNode = this.createBorderRect(this.width, this.height);
   }
 }
