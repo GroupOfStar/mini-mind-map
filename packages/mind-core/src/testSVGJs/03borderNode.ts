@@ -1,6 +1,6 @@
 import { SVG, G, Rect, Text } from "@svgdotjs/svg.js";
-import { Style } from "./../themes";
-import type { IThemeType } from "src/themes";
+import { Style } from "../style";
+import type { INodeType } from "./../style";
 
 const initDraw = (el: HTMLElement) => {
   const draw = SVG().size("100%", "100%");
@@ -22,8 +22,8 @@ const initDraw = (el: HTMLElement) => {
   return group;
 };
 
-function createNode(nodeContanier: G, theme: IThemeType = "node") {
-  const group = new G().addTo(nodeContanier);
+function createNode(nodesGroup: G, nodeType: INodeType = "node") {
+  const group = new G().addTo(nodesGroup);
 
   // 文本节点
   const textNode = new Text().addClass("text").text("测试节点");
@@ -34,8 +34,9 @@ function createNode(nodeContanier: G, theme: IThemeType = "node") {
 
   // 确保text节点在最后一个, 所以最后添加
   textNode.addTo(group);
-  const style = new Style();
-  style.setNodeStyleByTheme(group, theme);
+  const style = new Style(nodeType);
+  console.log("style :>> ", style);
+  style.setNodeStyleByType(group);
 
   // 一定要最后设置cx和cy,否则会错乱
   textNode.cx(0).cy(0);
@@ -44,10 +45,10 @@ function createNode(nodeContanier: G, theme: IThemeType = "node") {
 
 /**
  * 给所有节点注册事件
- * @param nodeContanier 节点G组
+ * @param nodesGroup 节点G组
  */
-const addEventListener = (nodeContanier: G) => {
-  nodeContanier.children().forEach(group => {
+const addEventListener = (nodesGroup: G) => {
+  nodesGroup.children().forEach(group => {
     const borderNode = group.findOne("rect.node-border") as Rect | null;
     if (borderNode) {
       group.on("mouseover", event => {
@@ -67,7 +68,7 @@ const addEventListener = (nodeContanier: G) => {
       group.on("click", event => {
         event.stopPropagation();
         // 先取消容器组下所有的active样式
-        nodeContanier.find("rect.active").forEach(item => {
+        nodesGroup.find("rect.active").forEach(item => {
           item.stroke({ width: 1, color: "transparent" });
           item.removeClass("active");
         });
@@ -80,10 +81,11 @@ const addEventListener = (nodeContanier: G) => {
 };
 
 export const borderNode = (el: HTMLElement) => {
-  const nodeContanier = initDraw(el);
+  debugger;
+  const nodesGroup = initDraw(el);
 
-  const group0 = createNode(nodeContanier);
-  const group1 = createNode(nodeContanier, "second");
+  const group0 = createNode(nodesGroup, "root");
+  const group1 = createNode(nodesGroup, "second");
   group1.transform({
     rotate: 0,
     translateX: 100,
@@ -91,7 +93,7 @@ export const borderNode = (el: HTMLElement) => {
     scale: 1
   });
 
-  const group2 = createNode(nodeContanier, "generalization");
+  const group2 = createNode(nodesGroup, "node");
   group2.transform({
     rotate: 0,
     translateX: -100,
@@ -99,9 +101,9 @@ export const borderNode = (el: HTMLElement) => {
     scale: 1
   });
 
-  addEventListener(nodeContanier);
+  addEventListener(nodesGroup);
 
-  (nodeContanier.parent() as G)
+  (nodesGroup.parent() as G)
     .cx(window.innerWidth / 2)
     .cy(window.innerHeight / 2);
 };

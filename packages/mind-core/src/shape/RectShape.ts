@@ -2,7 +2,7 @@ import { G, Rect, Text } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import { Shape } from "./Shape";
 import { Utils } from "src/utils";
-import { IGraphDataItem } from "src/graph";
+import { INodeData } from "src/graph";
 
 export class RectShape extends Shape {
   id: string;
@@ -12,7 +12,7 @@ export class RectShape extends Shape {
     fill: { color: "#f06", opacity: 0.5 },
     radius: 4
   };
-  constructor(node: IGraphDataItem) {
+  constructor(node: INodeData) {
     super(node);
     this.id = node.id;
   }

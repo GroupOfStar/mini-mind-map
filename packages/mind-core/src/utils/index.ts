@@ -49,7 +49,6 @@ export class Utils {
   static debounce(fn: Function, time: number = 300) {
     let timer: NodeJS.Timeout | null = null;
     return function (this: object, ...args: any[]) {
-      console.log("this :>> ", this);
       if (timer) {
         clearTimeout(timer);
       }

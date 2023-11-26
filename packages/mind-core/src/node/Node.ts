@@ -1,40 +1,20 @@
 import { G, Rect, Text } from "@svgdotjs/svg.js";
-import { IGraphDataItem } from "src/graph";
-import { SVGTreeNode } from "./SVGTreeNode";
+import type * as SVGType from "@svgdotjs/svg.js";
+import { INodeData } from "./../graph";
+import { Style } from "./../style";
+import type { INodeType } from "./../style";
 
 export class Node {
   group: G;
-  node: IGraphDataItem;
+  nodeData: INodeData;
+  style: Style;
   //   text?: string;
   //   expand?: boolean;
   //   color?: string;
   //   children?: Node[];
-  constructor(group: G, node: IGraphDataItem) {
-    this.group = group;
-    this.node = node;
+  constructor(nodeData: INodeData, nodesGroup: SVGType.G, nodeType: INodeType) {
+    this.group = new G().addTo(nodesGroup);
+    this.nodeData = nodeData;
+    this.style = new Style(nodeType);
   }
-
-  //   getTextNodeRect() {
-  //     const fidText = this.nodeGroup.findOne("text.textClass") as Text;
-  //     console.log("fidText.bbox() :>> ", fidText.bbox());
-  //     const textRect = fidText?.node.getBoundingClientRect();
-  //     console.log("textRect :>> ", textRect);
-  //     const { padding } = this.rectConfig;
-  //     if (fidText) {
-  //       fidText.x(padding).y(padding);
-  //     }
-  //     return textRect;
-  //   }
-  //   setGroupNodeSize() {
-  //     const { padding } = this.rectConfig;
-  //     const width = padding * 2 + (this.getTextNodeRect()?.width || 0);
-  //     const height = padding * 2 + (this.getTextNodeRect()?.height || 0);
-  //     const rectNode = this.nodeGroup.findOne("rect") as Rect;
-  //     if (rectNode) {
-  //       rectNode.size(width, height);
-  //     }
-  //   }
-  //   moveTo(x: number, y: number) {
-  //     this.nodeGroup.x(x).y(y);
-  //   }
 }

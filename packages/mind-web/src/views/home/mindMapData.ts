@@ -173,6 +173,7 @@ export const mindMapData = [
   },
   {
     id: "mind#2aeb13ae-5d9b-43db-80fb-286c2515d78a",
+    expand: true,
     pid: "conf#b7a2e17cfa37b53e907ba00e258ef0ce",
     children: [
       {

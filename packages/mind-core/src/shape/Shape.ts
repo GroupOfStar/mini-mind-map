@@ -1,16 +1,16 @@
 import { G, Rect, Text } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
-import { IGraphDataItem } from "src/graph";
+import { INodeData } from "src/graph";
 
 export class Shape {
   group: SVGType.Element;
-  node: IGraphDataItem;
+  node: INodeData;
   x: number;
   y: number;
   width: number;
   height: number;
   // children: Shape[] = [];
-  constructor(node: IGraphDataItem) {
+  constructor(node: INodeData) {
     this.group = new G({ id: node.id });
     this.node = node;
     this.x = 0;

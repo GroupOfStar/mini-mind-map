@@ -4,7 +4,7 @@
   
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref } from 'vue';
-import { Graph, IGraphDataItem, Utils } from '@mini-mind-map/mind-core'
+import { Graph, INodeData, Utils } from '@mini-mind-map/mind-core'
 import { mindMapData } from './mindMapData'
 
 const mindMapRef = ref<HTMLDivElement | null>()
@@ -14,13 +14,10 @@ const onResize = Utils.debounce(mindMap.onResize.bind(mindMap))
 
 onMounted(() => {
     const config = mindMapData[0]
-
     const { id: rootId } = config
-    const rootNode = mindMapData[1]
-    if (rootNode && mindMapRef.value) {
+    if (mindMapRef.value) {
         mindMap.setContainer(mindMapRef.value)
-        const mapData = mindMapData.slice(1).map<IGraphDataItem>(item => ({ id: item.id, pid: item.pid || '', type: item.pid === rootId ? "rootNode" : (item.pid === rootNode.id ? "secondNode" : "defaultNode"), text: item.text }))
-        mindMap.setDataList(mapData)
+        mindMap.setDataByList(mindMapData.slice(1) as INodeData[], rootId)
         mindMap.render()
         mindMap.onResize()
     }

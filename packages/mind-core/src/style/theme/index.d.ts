@@ -89,7 +89,8 @@ export interface IDefaultTheme {
   fontFamily?: string;
 }
 
-export type IThemeType = "root" | "second" | "node" | "generalization";
+/** 节点类型 */
+export type INodeType = "root" | "second" | "node" | "generalization";
 
 // 主题配置类型
 // export interface ITheme extends IDefaultTheme {
@@ -103,4 +104,4 @@ export type IThemeType = "root" | "second" | "node" | "generalization";
 //   generalization: INodeTheme;
 // }
 
-export type ITheme = Record<IThemeType, INodeTheme> & IDefaultTheme;
+export type ITheme = Record<INodeType, INodeTheme> & IDefaultTheme;

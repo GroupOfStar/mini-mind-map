@@ -1,7 +1,7 @@
-import { Style } from "./Style";
+import { Theme } from "./Theme";
 
 /** 商务 */
-export const deepPurple = Style.mergeTheme({
+export const deepPurple = Theme.mergeTheme({
   // 连线的颜色
   lineColor: "#534E96",
   // 概要连线的颜色

@@ -1,7 +1,7 @@
-import { Style } from "./Style";
+import { Theme } from "./Theme";
 
 /** 蓝色系 */
-export const blueGray = Style.mergeTheme({
+export const blueGray = Theme.mergeTheme({
   // 连线的颜色
   lineColor: "#4A51D9",
   // 连线风格

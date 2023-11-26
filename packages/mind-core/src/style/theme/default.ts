@@ -1,4 +1,4 @@
-import type { ITheme } from "./index.d";
+import type { ITheme } from ".";
 
 /** 默认主题 */
 export const defaultTheme: ITheme = {
