@@ -1,8 +1,9 @@
 import randomColor from "./randomColor";
+import { Node } from "./../../../../lib/mindMapLayouts";
 
 const PEM = 18;
 
-const drawNode = (node: any, ctx: CanvasRenderingContext2D, scale = 1) => {
+const drawNode = (node: Node, ctx: CanvasRenderingContext2D, scale = 1) => {
   const origin = node.data;
   const color = randomColor();
   // console.log(color.toRgba());

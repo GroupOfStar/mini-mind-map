@@ -25,9 +25,13 @@ const DEFAULT_OPTIONS: INodeOptions = {
 };
 
 /** 节点数据 */
-export type INodeItem = Record<string, any>;
+export interface INodeItem {
+  id: string;
+  name: string;
+  [key: string]: any;
+}
 
-interface INodeOptions {
+export interface INodeOptions {
   getId?: (item: INodeItem) => any;
   getHGap?: (item: INodeItem) => number;
   getVGap?: (item: INodeItem) => number;
@@ -132,7 +136,7 @@ export class Node {
   eachNode(callback: (node: Node) => void) {
     let nodes: Node[] = [this];
     let current: Node | undefined = undefined;
-    while ((current = nodes.pop())) {
+    while ((current = nodes.shift())) {
       callback(current);
       nodes = nodes.concat(current.children);
     }

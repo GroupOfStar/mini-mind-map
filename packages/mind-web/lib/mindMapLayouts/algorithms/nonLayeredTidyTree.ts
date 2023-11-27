@@ -234,11 +234,9 @@ export const nonLayeredTidyTree = (root: Node, isHorizontal: boolean) => {
   // do layout
   layer(root, isHorizontal);
   const wt = WrappedTree.fromNode(root, isHorizontal);
-  if (wt) {
-    firstWalk(wt);
-    secondWalk(wt, 0);
-    convertBack(wt, root, isHorizontal);
-  }
+  firstWalk(wt);
+  secondWalk(wt, 0);
+  convertBack(wt, root, isHorizontal);
   normalize(root, isHorizontal);
 
   return root;

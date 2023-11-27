@@ -1,9 +1,10 @@
+import { Node } from "./../../../../lib/mindMapLayouts";
 const lineColor = "#999";
 
 const drawLine = (
-  n: any,
-  c: any,
-  ctx: any,
+  n: Node,
+  c: Node,
+  ctx: CanvasRenderingContext2D,
   isHorizontal = false,
   scale = 1
 ) => {

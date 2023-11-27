@@ -35,7 +35,7 @@ export class WrappedTree {
     this.cs = c.length;
   }
 
-  static fromNode(root: Node, isHorizontal: boolean): WrappedTree | null {
+  static fromNode(root: Node, isHorizontal: boolean): WrappedTree {
     const children: WrappedTree[] = [];
     root.children.forEach(child => {
       const childTree = WrappedTree.fromNode(child, isHorizontal);

@@ -7,9 +7,10 @@ import {
   Fragment
 } from "vue";
 import * as MindmapLayouts from "./../../../lib/mindMapLayouts";
-import randomTree from "./utils/randomTree";
+// import randomTree from "./utils/randomTree";
 import drawLink from "./utils/drawLine";
 import drawNode from "./utils/drawNode";
+import { treeData } from "./treeData";
 import { debounce } from "../../utils";
 import styles from "./index.module.less";
 
@@ -23,7 +24,8 @@ export default defineComponent(function Layout() {
     | "DownwardOrganizational"
     | "UpwardOrganizational"
     | "LeftLogical"
-  >("Standard");
+    | "RightLogical"
+  >("RightLogical");
 
   const layoutTypeOption = reactive([
     { title: "Standard", value: "Standard" },
@@ -39,6 +41,7 @@ export default defineComponent(function Layout() {
   const PEM = 18;
 
   const HORIZONTAL_LAYOUTS = ["LeftLogical", "RightLogical", "Standard"];
+
   function isHorizontal(type: string) {
     return HORIZONTAL_LAYOUTS.indexOf(type) > -1;
   }
@@ -60,34 +63,37 @@ export default defineComponent(function Layout() {
     const ctx = canvas?.getContext("2d");
 
     if (canvas && ctx && containerNode) {
-      const root = randomTree(dataSize.value);
+      const root = treeData;
+      // const root = randomTree(dataSize.value);
       Object.assign(root, {
         isRoot: true
       });
+
+      console.log("root :>> ", root);
 
       ctx.font = `${PEM}px Courier, monospace`;
 
       const MindmapLayout = MindmapLayouts[layoutType.value];
       const layout = new MindmapLayout(root, {
-        getHeight(d: any) {
+        getHeight(d) {
           if (d.isRoot) {
             return PEM * 2.4;
           }
           return PEM * 1.2;
         },
-        getWidth(d: any) {
+        getWidth(d) {
           if (d.isRoot) {
             return ctx.measureText(d.name).width * 2 + PEM * 1.6;
           }
           return ctx.measureText(d.name).width + PEM * 1.6;
         },
-        getHGap(d: any) {
+        getHGap(d) {
           if (d.isRoot) {
             return PEM * 2;
           }
           return Math.round(PEM / 2);
         },
-        getVGap(d: any) {
+        getVGap(d) {
           if (d.isRoot) {
             return PEM * 2;
           }
@@ -109,8 +115,8 @@ export default defineComponent(function Layout() {
       canvas.height = bb.height / scale;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      rootNode.eachNode((node: any) => {
-        node.children.forEach((child: any) => {
+      rootNode.eachNode(node => {
+        node.children.forEach(child => {
           drawLink(node, child, ctx, isHorizontal(layoutType.value), scale);
         });
         drawNode(node, ctx, scale);
@@ -122,7 +128,6 @@ export default defineComponent(function Layout() {
   }
 
   const onResize = debounce(() => {
-    console.log("onResize");
     setCanvasSize();
     render();
   });

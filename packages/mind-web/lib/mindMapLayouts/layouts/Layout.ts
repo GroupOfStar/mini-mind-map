@@ -1,4 +1,4 @@
-import { Node } from "./../hierarchy";
+import { Node, INodeItem, INodeOptions } from "./../hierarchy";
 
 interface IEdgeItem {
   source: any;
@@ -9,7 +9,11 @@ export class Layout {
   root: Node;
   options: {};
   extraEdges: IEdgeItem[];
-  constructor(root: Node, options = {}, extraEdges: IEdgeItem[] = []) {
+  constructor(
+    root: INodeItem,
+    options: INodeOptions = {},
+    extraEdges: IEdgeItem[] = []
+  ) {
     this.root = new Node(root, options);
     this.options = options;
     this.extraEdges = extraEdges;
