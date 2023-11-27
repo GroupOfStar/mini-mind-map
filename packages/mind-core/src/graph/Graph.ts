@@ -14,10 +14,10 @@ export interface INodeData {
 }
 
 export class Graph {
-  rootNode: RootNode;
   canvas: Canvas;
   container: HTMLElement;
   dataTree: INodeData[];
+  rootNode?: RootNode;
   svg: SVGType.Svg;
   graphGroup: SVGType.G;
   nodesGroup: SVGType.G;
@@ -28,7 +28,6 @@ export class Graph {
     this.graphGroup = new G({ class: "g-graph" }).addTo(this.svg);
     this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
 
-    this.rootNode = new RootNode({ id: "root", pid: "root" }, this.nodesGroup);
     this.canvas = new Canvas();
     this.container = document.body;
     this.dataTree = [];
@@ -68,14 +67,33 @@ export class Graph {
     }
   }
 
-  mapTree(callback: (nodeData: INodeData, index: number) => any): INodeData[] {
-    function walk(data: INodeData[]) {
-      return data.map((item, index) => ({
-        ...callback(item, index),
-        children: Array.isArray(item.children) ? walk(item.children) : []
-      }));
+  /** 遍历树得到新的数据 */
+  mapTree<T extends RootNode | SecondNode | DefaultNode>(
+    callback: (nodeData: INodeData, index: number) => T
+  ): T[] {
+    function walk(data: any[]) {
+      return data.map((item, index) => {
+        const node = callback(item, index);
+        if (Array.isArray(item.children)) {
+          node.children = walk(item.children);
+        }
+        return node;
+      });
     }
     return walk(this.dataTree);
+  }
+
+  /** 给画布注册事件 */
+  addEventListener() {
+    // 取消所有节点的active样式状态
+    if (this.container) {
+      this.container.addEventListener("click", () => {
+        this.nodesGroup.find("rect.active").forEach(item => {
+          item.stroke({ width: 1, color: "transparent" });
+          item.removeClass("active");
+        });
+      });
+    }
   }
 
   /** window 的resize事件 */
@@ -102,16 +120,17 @@ export class Graph {
       }
       node.transform({
         rotate: 0,
-        translateX: deep * 100 + index * 150,
-        translateY: deep * 100 - index * 150,
+        translateX: deep * 60 + index * 120,
+        translateY: deep * 60 - index * 120,
         scale: 1
       });
-      node.addEventListener(this.nodesGroup);
-
+      node.addEventListener();
       return node;
     });
+    this.rootNode = nodeTree[0] as RootNode;
+    console.log("this.rootNode :>> ", this.rootNode);
 
-    console.log("nodeTree :>> ", nodeTree);
+    this.addEventListener();
 
     this.svg.addTo(this.container);
   }

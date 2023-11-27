@@ -17,6 +17,7 @@ onMounted(() => {
     const { id: rootId } = config
     if (mindMapRef.value) {
         mindMap.setContainer(mindMapRef.value)
+        console.log('mindMapData.slice(1) :>> ', mindMapData.slice(1));
         mindMap.setDataByList(mindMapData.slice(1) as INodeData[], rootId)
         mindMap.render()
         mindMap.onResize()

@@ -81,7 +81,6 @@ const addEventListener = (nodesGroup: G) => {
 };
 
 export const borderNode = (el: HTMLElement) => {
-  debugger;
   const nodesGroup = initDraw(el);
 
   const group0 = createNode(nodesGroup, "root");
