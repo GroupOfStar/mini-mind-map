@@ -50,6 +50,8 @@ export class Style implements INodeTheme {
 
   constructor(nodeType: INodeType) {
     this.nodeType = nodeType;
+    // const nodeTheme =  this.theme[this.nodeType] as INodeTheme;
+    // const nodeStyle = Object.assign
     this.setStyle({});
   }
 
@@ -59,16 +61,10 @@ export class Style implements INodeTheme {
    * @param {INodeType} nodeType 节点类型
    */
   setStyle(nodeTheme: INodeData["theme"] = {}) {
-    switch (this.nodeType) {
-      case "root":
-        break;
-      case "second":
-        break;
-      case "generalization":
-        break;
-      case "node":
-      default:
-        break;
+    const nodeThemeStyle = this.theme[this.nodeType];
+    if (nodeThemeStyle) {
+      // 深度赋值
+      Object.assign(this, nodeThemeStyle);
     }
   }
 

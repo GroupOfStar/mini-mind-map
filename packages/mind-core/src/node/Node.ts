@@ -4,7 +4,7 @@ import { INodeData } from "./../graph";
 import { Style } from "./../style";
 import type { INodeType } from "./../style";
 
-export class Node {
+export abstract class Node {
   nodesGroup: G;
   group: G;
   nodeData: INodeData;
@@ -18,6 +18,10 @@ export class Node {
     this.style = new Style(nodeType);
   }
 
+  /**
+   * 遍历节点及子节点
+   * @param callback 遍历时执行的回调
+   */
   eachNode(callback: (node: Node) => void) {
     let nodes: Node[] = [this];
     let current: Node | undefined = undefined;
@@ -26,6 +30,9 @@ export class Node {
       nodes = nodes.concat(current.children);
     }
   }
+
+  /** 设置节点样式 */
+  abstract setNodeStyle(): void;
 
   /** 给所有节点注册事件 */
   addEventListener() {

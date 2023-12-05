@@ -118,6 +118,7 @@ export class Graph {
           node = new DefaultNode(nodeData, this.nodesGroup);
           break;
       }
+      node.setNodeStyle();
       node.transform({
         rotate: 0,
         translateX: deep * 60 + index * 120,
