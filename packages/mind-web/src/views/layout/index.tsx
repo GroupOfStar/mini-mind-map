@@ -4,13 +4,12 @@ import {
   ref,
   reactive,
   onBeforeUnmount,
-  Fragment
+  Fragment,
 } from "vue";
 import * as MindmapLayouts from "./../../../lib/mindMapLayouts";
-// import randomTree from "./utils/randomTree";
 import drawLink from "./utils/drawLine";
 import drawNode from "./utils/drawNode";
-import { treeData } from "./treeData";
+import { nodeTree } from "../../data";
 import { debounce } from "../../utils";
 import styles from "./index.module.less";
 
@@ -32,7 +31,7 @@ export default defineComponent(function Layout() {
     { title: "Right Logical", value: "RightLogical" },
     { title: "Downward Organizational", value: "DownwardOrganizational" },
     { title: "Upward Organizational", value: "UpwardOrganizational" },
-    { title: "Left Logical", value: "LeftLogical" }
+    { title: "Left Logical", value: "LeftLogical" },
   ]);
 
   const layoutTime = ref(0);
@@ -63,10 +62,10 @@ export default defineComponent(function Layout() {
     const ctx = canvas?.getContext("2d");
 
     if (canvas && ctx && containerNode) {
-      const root = treeData;
+      const root = nodeTree[0];
       // const root = randomTree(dataSize.value);
       Object.assign(root, {
-        isRoot: true
+        isRoot: true,
       });
 
       console.log("root :>> ", root);
@@ -98,7 +97,7 @@ export default defineComponent(function Layout() {
             return PEM * 2;
           }
           return Math.round(PEM / 2);
-        }
+        },
       });
 
       const t0 = window.performance.now();
@@ -115,8 +114,8 @@ export default defineComponent(function Layout() {
       canvas.height = bb.height / scale;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      rootNode.eachNode(node => {
-        node.children.forEach(child => {
+      rootNode.eachNode((node) => {
+        node.children.forEach((child) => {
           drawLink(node, child, ctx, isHorizontal(layoutType.value), scale);
         });
         drawNode(node, ctx, scale);
@@ -152,7 +151,7 @@ export default defineComponent(function Layout() {
         <form onChange={render} onSubmit={onSubmit}>
           <input type="number" min={2} v-model={dataSize.value} />
           <select v-model={layoutType.value}>
-            {layoutTypeOption.map(item => (
+            {layoutTypeOption.map((item) => (
               <option key={item.value} value={item.value}>
                 {item.title}
               </option>

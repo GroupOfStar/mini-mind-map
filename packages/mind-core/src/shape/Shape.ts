@@ -5,10 +5,12 @@ import { INodeData } from "src/graph";
 export abstract class Shape {
   x: number;
   y: number;
+  offsetX = 0;
+  offsetY = 0;
   /** 文本的宽 */
-  _tWidth: number;
+  protected _tWidth: number;
   /** 文本的高 */
-  _tHeight: number;
+  protected _tHeight: number;
   // children: Shape[] = [];
   constructor(node: INodeData) {
     this.x = 0;

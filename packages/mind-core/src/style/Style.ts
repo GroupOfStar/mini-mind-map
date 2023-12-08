@@ -15,7 +15,6 @@ import { INodeData } from "src/graph";
 // >;
 
 export class Style implements INodeTheme {
-  theme = new Theme();
   /** 节点类型 */
   nodeType: INodeType;
 
@@ -23,6 +22,10 @@ export class Style implements INodeTheme {
   paddingX?: number;
   /** 节点纵向边距 */
   paddingY?: number;
+  /** 节点横向间距  */
+  marginX?: number;
+  /** 节点纵向间距 */
+  marginY?: number;
   /** 节点填充颜色 */
   fillColor?: string;
   /** 节点字体粗细 */
@@ -50,8 +53,12 @@ export class Style implements INodeTheme {
 
   constructor(nodeType: INodeType) {
     this.nodeType = nodeType;
-    // const nodeTheme =  this.theme[this.nodeType] as INodeTheme;
-    // const nodeStyle = Object.assign
+    const theme = new Theme();
+    const nodeThemeStyle = theme[this.nodeType];
+    if (nodeThemeStyle) {
+      // 深度赋值
+      Object.assign(this, nodeThemeStyle);
+    }
     this.setStyle({});
   }
 
@@ -61,11 +68,11 @@ export class Style implements INodeTheme {
    * @param {INodeType} nodeType 节点类型
    */
   setStyle(nodeTheme: INodeData["theme"] = {}) {
-    const nodeThemeStyle = this.theme[this.nodeType];
-    if (nodeThemeStyle) {
-      // 深度赋值
-      Object.assign(this, nodeThemeStyle);
-    }
+    // const nodeThemeStyle = this.theme[this.nodeType];
+    // if (nodeThemeStyle) {
+    //   // 深度赋值
+    //   Object.assign(this, nodeThemeStyle);
+    // }
   }
 
   /**
@@ -84,7 +91,7 @@ export class Style implements INodeTheme {
       borderColor,
       borderRadius = 0,
       fillColor
-    } = this.theme[this.nodeType] as INodeTheme;
+    } = this;
 
     let width = 0;
     let height = 0;

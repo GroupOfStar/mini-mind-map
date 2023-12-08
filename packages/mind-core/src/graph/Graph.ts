@@ -48,21 +48,21 @@ export class Graph {
    */
   setDataByList(list: INodeData[], rootPid: INodeData["pid"]) {
     function treeLoop(listData: INodeData[], parentId: string, pDeep: number) {
-      const children = listData.filter(item => item.pid === parentId);
+      const children = listData.filter((item) => item.pid === parentId);
       if (children.length === 0) {
         return [];
       } else {
-        return children.map(item => ({
+        return children.map((item) => ({
           ...item,
           deep: pDeep + 1,
-          children: treeLoop(listData, item.id, pDeep + 1)
+          children: treeLoop(listData, item.id, pDeep + 1),
         }));
       }
     }
-    const fidRoot = list.find(item => item.pid === rootPid);
+    const fidRoot = list.find((item) => item.pid === rootPid);
     if (fidRoot) {
       this.dataTree = [
-        { ...fidRoot, deep: 0, children: treeLoop(list, fidRoot.id, 0) }
+        { ...fidRoot, deep: 0, children: treeLoop(list, fidRoot.id, 0) },
       ];
     }
   }
@@ -87,8 +87,9 @@ export class Graph {
   addEventListener() {
     // 取消所有节点的active样式状态
     if (this.container) {
-      this.container.addEventListener("click", () => {
-        this.nodesGroup.find("rect.active").forEach(item => {
+      this.svg.on("click", (event) => {
+        event.stopPropagation();
+        this.nodesGroup.find("rect.active").forEach((item) => {
           item.stroke({ width: 1, color: "transparent" });
           item.removeClass("active");
         });
@@ -98,7 +99,9 @@ export class Graph {
 
   /** window 的resize事件 */
   onResize() {
-    this.graphGroup.cx(window.innerWidth / 2).cy(window.innerHeight / 2);
+    const graphWidth = this.graphGroup.bbox().width;
+    const graphY = Math.max(window.innerHeight - graphWidth, 0);
+    this.graphGroup.x(window.innerWidth / 3).y(graphY / 2);
   }
 
   /** 渲染 */
@@ -118,13 +121,14 @@ export class Graph {
           node = new DefaultNode(nodeData, this.nodesGroup);
           break;
       }
+      node.deep = deep;
       node.setNodeStyle();
-      node.transform({
-        rotate: 0,
-        translateX: deep * 60 + index * 120,
-        translateY: deep * 60 - index * 120,
-        scale: 1
-      });
+      // node.transform({
+      //   rotate: 0,
+      //   translateX: deep * 60 + index * 120,
+      //   translateY: deep * 60 - index * 120,
+      //   scale: 1
+      // });
       node.addEventListener();
       return node;
     });

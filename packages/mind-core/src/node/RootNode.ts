@@ -2,15 +2,12 @@ import { G, Rect, Text } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import { Node } from "./Node";
 import { INodeData } from "src/graph";
-import { RectShape } from "src/shape";
-
 export class RootNode extends Node {
-  shape: RectShape;
   _textNode = new Text();
   _thisNode = new Rect();
   constructor(nodeData: INodeData, nodesGroup: SVGType.G) {
     super(nodeData, nodesGroup, "root");
-    this.shape = new RectShape(nodeData, this.style);
+
     // 文本节点
     this._textNode.addClass("text").text(nodeData.text || "");
     // 节点边框

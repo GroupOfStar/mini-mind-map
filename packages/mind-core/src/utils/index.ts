@@ -1,3 +1,6 @@
+import { Node } from "./../node";
+import type { IForEachNode } from "./type.d";
+
 interface IFontString {
   fontSize: number;
   fontFamily?: string;
@@ -23,7 +26,7 @@ export class Utils {
     text: string,
     fontStr: IFontString = {
       fontSize: 16,
-      fontFamily: "Inter, system-ui, Avenir, Helvetica, Arial, sans-serif"
+      fontFamily: "Inter, system-ui, Avenir, Helvetica, Arial, sans-serif",
     }
   ) {
     const font = this.joinFontStr(fontStr);
@@ -38,8 +41,7 @@ export class Utils {
       this.measureTextContext.font = font;
       const textMetrics = this.measureTextContext.measureText(text);
       textSize.width = textMetrics.width;
-      textSize.height =
-        textMetrics.fontBoundingBoxAscent + textMetrics.fontBoundingBoxDescent;
+      textSize.height = textMetrics.fontBoundingBoxAscent + textMetrics.fontBoundingBoxDescent;
       this.measureTextContext.restore();
     }
     return textSize;
@@ -58,4 +60,88 @@ export class Utils {
       }, time);
     };
   }
+}
+
+/**
+ * 对数组循环callback
+ * @param callback 遍历时执行的回调
+ */
+export function nodeListForEach(list: Node[], callback: IForEachNode) {
+  let parentNode: Node | undefined = undefined;
+  for (let i = 0; i < list.length; i++) {
+    const item = list[i];
+    if (parentNode && item.nodeData.pid === (parentNode as Node).nodeData.id) {
+      callback(item, i, parentNode);
+    } else {
+      parentNode = list.find((ele) => ele.nodeData.id === item.nodeData.pid);
+      callback(item, i, parentNode);
+    }
+  }
+}
+
+/**
+ * 优先深度顺序获取节点及子节点
+ */
+export function getDepthNodeList(node: Node) {
+  const nodeList: Node[] = [];
+  const stack: Node[] = [node];
+  while (stack.length) {
+    const item = stack.pop() as Node;
+    nodeList.push(item);
+    for (let i = item.children.length - 1; i > -1; i--) {
+      stack.push(item.children[i]);
+    }
+  }
+  return nodeList;
+}
+
+/**
+ * 优先广度顺序获取节点及子节点
+ */
+export function getScopeNodeList(node: Node) {
+  const nodeList: Node[] = [];
+  const queue: Node[] = [node];
+  while (queue.length) {
+    const item = queue.shift() as Node;
+    nodeList.push(item);
+    for (let i = 0; i < item.children.length; i++) {
+      queue.push(item.children[i]);
+    }
+  }
+  return nodeList;
+}
+
+/**
+ * 优先深度遍历节点及子节点
+ * @param callback 遍历时执行的回调
+ */
+export function forDepthEachTree(
+  callback: IForEachNode,
+  node: Node,
+  index: number,
+  parentNode?: Node
+) {
+  callback(node, index, parentNode);
+  if (node.children) {
+    node.children.forEach((item, idx) => {
+      forDepthEachTree(callback, item, idx, node);
+    });
+  }
+}
+
+/**
+ * 优先广度遍历节点及子节点树
+ * @param callback 遍历时执行的回调
+ */
+export function forScopeEachTree(callback: IForEachNode, nodeTree: Node[], parentNode?: Node) {
+  const nodeList: Node[] = [];
+  nodeTree.forEach((item, index) => {
+    callback(item, index, parentNode);
+    if (item.children) {
+      nodeList.push(item);
+    }
+  });
+  nodeList.forEach((item) => {
+    forScopeEachTree(callback, item.children, item);
+  });
 }
