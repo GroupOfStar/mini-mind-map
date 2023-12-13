@@ -1,12 +1,13 @@
 import { SVG, G } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
+import { RightLogical } from "src/layout";
 import { DefaultNode, RootNode, SecondNode } from "src/node";
 import { Canvas, INodeTheme } from "src/style";
 
 export interface INodeData {
   id: string;
   pid: "root" | string;
-  deep?: number;
+  depth?: number;
   text?: string;
   theme?: INodeTheme;
   children?: INodeData[];
@@ -56,14 +57,14 @@ export class Graph {
       } else {
         return children.map((item) => ({
           ...item,
-          deep: pDeep + 1,
+          depth: pDeep + 1,
           children: treeLoop(listData, item.id, pDeep + 1),
         }));
       }
     }
     const fidRoot = list.find((item) => item.pid === rootPid);
     if (fidRoot) {
-      this.dataTree = [{ ...fidRoot, deep: 0, children: treeLoop(list, fidRoot.id, 0) }];
+      this.dataTree = [{ ...fidRoot, depth: 0, children: treeLoop(list, fidRoot.id, 0) }];
     }
   }
 
@@ -107,9 +108,9 @@ export class Graph {
   /** 渲染 */
   render() {
     const nodeTree = this.mapTree((nodeData, index, parentNode) => {
-      const deep = nodeData.deep || 0;
+      const depth = nodeData.depth || 0;
       let node: RootNode | SecondNode | DefaultNode;
-      switch (deep) {
+      switch (depth) {
         case 0:
           node = new RootNode(nodeData, this.nodesGroup);
           break;
@@ -121,22 +122,19 @@ export class Graph {
           node = new DefaultNode(nodeData, this.nodesGroup, parentNode);
           break;
       }
-      node.deep = deep;
+      node.depth = depth;
       node.setNodeStyle();
       // node.transform({
       //   rotate: 0,
-      //   translateX: deep * 60 + index * 120,
-      //   translateY: deep * 60 - index * 120,
+      //   translateX: depth * 60 + index * 120,
+      //   translateY: depth * 60 - index * 120,
       //   scale: 1
       // });
       node.addEventListener();
       return node;
     });
     this.rootNode = nodeTree[0] as RootNode;
-    console.log("this.rootNode :>> ", this.rootNode);
-
     this.addEventListener();
-
     this.svg.addTo(this.container);
   }
 }

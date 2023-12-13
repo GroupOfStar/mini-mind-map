@@ -18,21 +18,19 @@ function cubicBezierPath(x1: number, y1: number, x2: number, y2: number) {
 }
 
 // 画线
-export const drawLine = function (mindMap: Graph, current: Node, index: number, parentNode?: Node) {
+export const drawEdge = function (mindMap: Graph, current: Node, index: number, parentNode?: Node) {
   if (parentNode) {
     let x1 = 0;
-    let y1 = 0;
+    let y1 = parentNode.shape.y;
     const x2 = current.shape.x - current.shape.width / 2;
     const y2 = current.shape.y;
     let path = "";
     // 根节点连二级节点
-    if (current.deep === 1) {
+    if (current.depth === 1) {
       x1 = parentNode.shape.x;
-      y1 = parentNode.shape.y;
       path = quadraticCurvePath(x1, y1, x2, y2);
     } else {
       x1 = parentNode.shape.x + parentNode.shape.width / 2;
-      y1 = parentNode.shape.y;
       path = cubicBezierPath(x1, y1, x2, y2);
     }
     const line = mindMap.linesGroup.path(path);

@@ -5,7 +5,7 @@
     "rootDir": ".",
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "target": "ESNext",
+    "target": "ES5",
     "module": "ESNext",
     "noImplicitAny": false,
     "removeComments": true,

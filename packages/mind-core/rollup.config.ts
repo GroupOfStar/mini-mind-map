@@ -4,21 +4,13 @@ import typescript from "@rollup/plugin-typescript";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import { readFileSync } from "node:fs";
 
-const pkg = JSON.parse(
-  readFileSync(new URL("./package.json", import.meta.url), "utf8")
-);
+const pkg = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8"));
 
 export default defineConfig({
   input: "./src/index.ts",
   output: [
-    {
-      format: "cjs",
-      file: pkg.main
-    },
-    {
-      format: "esm",
-      file: pkg.module
-    }
+    { format: "cjs", file: pkg.main },
+    { format: "esm", file: pkg.module },
   ],
-  plugins: [json(), typescript(), nodeResolve()]
+  plugins: [json(), typescript(), nodeResolve()],
 });

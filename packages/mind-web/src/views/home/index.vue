@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref } from "vue";
-import { Graph, layout, Utils, RootNode } from "@mini-mind-map/mind-core";
+import { Graph, Utils, RootNode, RightLogical, drawEdge } from "@mini-mind-map/mind-core";
 import { config, nodeList } from "../../data";
 
 const mindMapRef = ref<HTMLDivElement | null>();
@@ -21,20 +21,25 @@ onMounted(() => {
     mindMap.render();
 
     const rootNode = mindMap.rootNode as RootNode;
-    layout(rootNode, mindMap);
-    console.log("mindMap.rootNode :>> ", rootNode);
-    // rootNode.transform({
-    //   rotate: 0,
-    //   translateX: -200,
-    //   translateY: -100,
-    //   scale: 1.2
-    // });
+    const layout = new RightLogical(rootNode);
+    layout.doLayout();
+    rootNode.eachNode((node) => {
+      node.children.forEach((child, index) => {
+        drawEdge(mindMap, child, index, node);
+      });
+      node.transform({
+        rotate: 0,
+        translateX: node.shape.x,
+        translateY: node.shape.y,
+        scale: 1,
+      });
+    });
+    console.log("rootNode :>> ", rootNode);
 
     mindMap.onResize();
   }
 
   window.addEventListener("resize", onResize);
-  console.log("mindMap :>> ", mindMap);
 });
 
 onBeforeUnmount(() => {
