@@ -21,8 +21,7 @@ onMounted(() => {
     mindMap.render();
 
     const rootNode = mindMap.rootNode as RootNode;
-    console.log("object");
-    layout(rootNode);
+    layout(rootNode, mindMap);
     console.log("mindMap.rootNode :>> ", rootNode);
     // rootNode.transform({
     //   rotate: 0,

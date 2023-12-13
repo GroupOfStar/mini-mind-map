@@ -5,28 +5,22 @@ interface IEdgeItem {
   target: any;
 }
 
-export class Layout {
+export abstract class Layout {
   root: Node;
   options: {};
   extraEdges: IEdgeItem[];
-  constructor(
-    root: INodeItem,
-    options: INodeOptions = {},
-    extraEdges: IEdgeItem[] = []
-  ) {
+  constructor(root: INodeItem, options: INodeOptions = {}, extraEdges: IEdgeItem[] = []) {
     this.root = new Node(root, options);
     this.options = options;
     this.extraEdges = extraEdges;
   }
-
-  doLayout() {
-    throw new Error("please override this method");
-  }
-
+  /** 布局 */
+  abstract doLayout(): Node;
+  /** 获取所有的节点 */
   getNodes() {
     const root = this.root;
     const nodes: any[] = [];
-    root.eachNode(node => {
+    root.eachNode((node) => {
       nodes.push({
         // origin data
         data: node.data,
@@ -44,21 +38,21 @@ export class Layout {
         actualHeight: node.height - node.vgap * 2,
         actualWidth: node.width - node.hgap * 2,
         // depth
-        depth: node.depth
+        depth: node.depth,
       });
     });
     return nodes;
   }
-
+  /** 获取所有的线 */
   getEdges() {
     const extraEdges = this.extraEdges;
     const root = this.root;
     const edges: IEdgeItem[] = [];
-    root.eachNode(node => {
-      node.children.forEach(child => {
+    root.eachNode((node) => {
+      node.children.forEach((child) => {
         edges.push({
           source: node.id,
-          target: child.id
+          target: child.id,
         });
       });
     });

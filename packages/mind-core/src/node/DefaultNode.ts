@@ -8,8 +8,8 @@ export class DefaultNode extends Node {
   shape: RectShape;
   _textNode = new Text();
   _thisNode = new Rect();
-  constructor(nodeData: INodeData, nodesGroup: SVGType.G) {
-    super(nodeData, nodesGroup, "node");
+  constructor(nodeData: INodeData, nodesGroup: SVGType.G, parentNode?: Node) {
+    super(nodeData, nodesGroup, "node", parentNode);
     this.shape = new RectShape(nodeData, this.style);
     // 文本节点
     this._textNode.addClass("text").text(nodeData.text || "");

@@ -14,11 +14,12 @@ export abstract class Node {
   shape: RectShape;
   _borderNode = new Rect();
   children: Node[] = [];
-  childAreaHeight = 0;
-  constructor(nodeData: INodeData, nodesGroup: SVGType.G, nodeType: INodeType) {
+  parentNode?: Node;
+  constructor(nodeData: INodeData, nodesGroup: SVGType.G, nodeType: INodeType, parentNode?: Node) {
     this.nodesGroup = nodesGroup;
     this.group = new G().addTo(nodesGroup);
     this.nodeData = nodeData;
+    this.parentNode = parentNode;
     this.style = new Style(nodeType);
     this.shape = new RectShape(nodeData, this.style);
   }

@@ -23,9 +23,9 @@ export class Style implements INodeTheme {
   /** 节点纵向边距 */
   paddingY?: number;
   /** 节点横向间距  */
-  marginX?: number;
+  marginX: number = 0;
   /** 节点纵向间距 */
-  marginY?: number;
+  marginY: number = 0;
   /** 节点填充颜色 */
   fillColor?: string;
   /** 节点字体粗细 */
@@ -84,14 +84,7 @@ export class Style implements INodeTheme {
     const textNode = node.findOne(".text") as Text;
     const thisNode = node.findOne(".node") as Rect;
     const borderNode = node.findOne(".node-border") as Rect;
-    const {
-      color,
-      paddingX = 0,
-      paddingY = 0,
-      borderColor,
-      borderRadius = 0,
-      fillColor
-    } = this;
+    const { color, paddingX = 0, paddingY = 0, borderColor, borderRadius = 0, fillColor } = this;
 
     let width = 0;
     let height = 0;

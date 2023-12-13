@@ -15,16 +15,18 @@ export class WrappedTree {
   tl: null | WrappedTree = null;
   tr: null | WrappedTree = null;
 
-  // Extreme left and right nodes.
+  /** 最左边的节点 */
   el: null | WrappedTree = null;
+  /** 最右边的节点 */
   er: null | WrappedTree = null;
 
   // Sum of modifiers at the extreme nodes.
   msel = 0;
   mser = 0;
 
-  // Array of children and number of children.
+  /** children数组 */
   c: WrappedTree[] = [];
+  /** children的个数 */
   cs = 0;
 
   constructor(w: number, h: number, y: number, c: WrappedTree[] = []) {
@@ -37,14 +39,16 @@ export class WrappedTree {
 
   static fromNode(root: Node, isHorizontal: boolean): WrappedTree {
     const children: WrappedTree[] = [];
-    root.children.forEach(child => {
+    root.children.forEach((child) => {
       const childTree = WrappedTree.fromNode(child, isHorizontal);
       if (childTree) {
         children.push(childTree);
       }
     });
-    if (isHorizontal)
+    if (isHorizontal) {
       return new WrappedTree(root.height, root.width, root.x, children);
-    return new WrappedTree(root.width, root.height, root.y, children);
+    } else {
+      return new WrappedTree(root.width, root.height, root.y, children);
+    }
   }
 }

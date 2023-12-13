@@ -59,14 +59,14 @@ function setchildAreaHeight(
           const marginY = firstChild.style.marginY || 0;
           const childAreaHeight =
             child.reduce((pre, cur) => pre + cur.shape.height, 0) + (child.length - 1) * marginY;
-          fid.childAreaHeight = childAreaHeight;
+          fid.shape.childAreaHeight = childAreaHeight;
           fid.shape.y = firstChild.shape.y + childAreaHeight / 2 - fid.shape.height / 2;
         }
 
         if (fid?.nodeData.text === "第5层节点01-01-01-01") {
           console.log("child :>> ", child);
           console.log("child[0] :>> ", child[0]);
-          console.log("fid.childAreaHeight >>:", fid.childAreaHeight);
+          console.log("fid.childAreaHeight >>:", fid.shape.childAreaHeight);
           console.log("fid.shape.y :>> ", fid.shape.y);
         }
       }

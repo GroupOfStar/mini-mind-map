@@ -21,12 +21,14 @@ export class Graph {
   svg: SVGType.Svg;
   graphGroup: SVGType.G;
   nodesGroup: SVGType.G;
+  linesGroup: SVGType.G;
 
   constructor() {
     this.svg = SVG().size("100%", "100%");
     this.svg.node.style.backgroundColor = "rgb(242, 242, 242)";
     this.graphGroup = new G({ class: "g-graph" }).addTo(this.svg);
     this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
+    this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
 
     this.canvas = new Canvas();
     this.container = document.body;
@@ -61,21 +63,19 @@ export class Graph {
     }
     const fidRoot = list.find((item) => item.pid === rootPid);
     if (fidRoot) {
-      this.dataTree = [
-        { ...fidRoot, deep: 0, children: treeLoop(list, fidRoot.id, 0) },
-      ];
+      this.dataTree = [{ ...fidRoot, deep: 0, children: treeLoop(list, fidRoot.id, 0) }];
     }
   }
 
   /** 遍历树得到新的数据 */
   mapTree<T extends RootNode | SecondNode | DefaultNode>(
-    callback: (nodeData: INodeData, index: number) => T
+    callback: (nodeData: INodeData, index: number, parentNode?: T) => T
   ): T[] {
-    function walk(data: any[]) {
+    function walk(data: any[], parentNode?: T) {
       return data.map((item, index) => {
-        const node = callback(item, index);
+        const node = callback(item, index, parentNode);
         if (Array.isArray(item.children)) {
-          node.children = walk(item.children);
+          node.children = walk(item.children, node);
         }
         return node;
       });
@@ -106,7 +106,7 @@ export class Graph {
 
   /** 渲染 */
   render() {
-    const nodeTree = this.mapTree((nodeData, index) => {
+    const nodeTree = this.mapTree((nodeData, index, parentNode) => {
       const deep = nodeData.deep || 0;
       let node: RootNode | SecondNode | DefaultNode;
       switch (deep) {
@@ -114,11 +114,11 @@ export class Graph {
           node = new RootNode(nodeData, this.nodesGroup);
           break;
         case 1:
-          node = new SecondNode(nodeData, this.nodesGroup);
+          node = new SecondNode(nodeData, this.nodesGroup, parentNode);
           break;
         case 2:
         default:
-          node = new DefaultNode(nodeData, this.nodesGroup);
+          node = new DefaultNode(nodeData, this.nodesGroup, parentNode);
           break;
       }
       node.deep = deep;

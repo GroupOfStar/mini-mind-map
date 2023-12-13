@@ -1,17 +1,11 @@
-import {
-  defineComponent,
-  onMounted,
-  ref,
-  reactive,
-  onBeforeUnmount,
-  Fragment,
-} from "vue";
+import { defineComponent, onMounted, ref, reactive, onBeforeUnmount, Fragment } from "vue";
 import * as MindmapLayouts from "./../../../lib/mindMapLayouts";
 import drawLink from "./utils/drawLine";
 import drawNode from "./utils/drawNode";
 import { nodeTree } from "../../data";
 import { debounce } from "../../utils";
 import styles from "./index.module.less";
+import randomTree from "./utils/randomTree";
 
 export default defineComponent(function Layout() {
   const containerRef = ref<HTMLDivElement>();
@@ -19,11 +13,7 @@ export default defineComponent(function Layout() {
 
   const dataSize = ref(30);
   const layoutType = ref<
-    | "Standard"
-    | "DownwardOrganizational"
-    | "UpwardOrganizational"
-    | "LeftLogical"
-    | "RightLogical"
+    "Standard" | "DownwardOrganizational" | "UpwardOrganizational" | "LeftLogical" | "RightLogical"
   >("RightLogical");
 
   const layoutTypeOption = reactive([
@@ -63,7 +53,8 @@ export default defineComponent(function Layout() {
 
     if (canvas && ctx && containerNode) {
       const root = nodeTree[0];
-      // const root = randomTree(dataSize.value);
+      const rootBank = randomTree(dataSize.value);
+      console.log("rootBank :>> ", rootBank);
       Object.assign(root, {
         isRoot: true,
       });
@@ -106,10 +97,7 @@ export default defineComponent(function Layout() {
 
       setCanvasSize();
       const bb = rootNode.getBoundingBox();
-      const scale = Math.max(
-        bb.width / canvas.width,
-        bb.height / canvas.height
-      );
+      const scale = Math.max(bb.width / canvas.width, bb.height / canvas.height);
       canvas.width = bb.width / scale;
       canvas.height = bb.height / scale;
 

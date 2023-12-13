@@ -5,8 +5,8 @@ import { INodeData } from "src/graph";
 export abstract class Shape {
   x: number;
   y: number;
-  offsetX = 0;
-  offsetY = 0;
+  /** 子节点总高度 */
+  childAreaHeight = 0;
   /** 文本的宽 */
   protected _tWidth: number;
   /** 文本的高 */
