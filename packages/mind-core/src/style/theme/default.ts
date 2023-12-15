@@ -2,6 +2,7 @@ import type { ITheme } from ".";
 
 /** 默认主题 */
 export const defaultTheme: ITheme = {
+  layout: "RightLogical",
   imgMaxWidth: 100,
   imgMaxHeight: 100,
   iconSize: 20,
@@ -41,8 +42,8 @@ export const defaultTheme: ITheme = {
     textDecoration: "none",
     active: {
       borderDasharray: "none",
-      rectBorder: "#7716D9"
-    }
+      rectBorder: "#7716D9",
+    },
   },
   second: {
     fontFamily: "Harmony Medium",
@@ -67,8 +68,8 @@ export const defaultTheme: ITheme = {
     textDecoration: "none",
     active: {
       borderDasharray: "none",
-      rectBorder: "#7716D9"
-    }
+      rectBorder: "#7716D9",
+    },
   },
   node: {
     fontFamily: "Harmony Medium",
@@ -93,8 +94,8 @@ export const defaultTheme: ITheme = {
     textDecoration: "none",
     active: {
       borderDasharray: "none",
-      rectBorder: "#7716D9"
-    }
+      rectBorder: "#7716D9",
+    },
   },
   generalization: {
     fontFamily: "Harmony Medium",
@@ -116,7 +117,7 @@ export const defaultTheme: ITheme = {
     textDecoration: "none",
     active: {
       borderDasharray: "none",
-      rectBorder: "#7716D9"
-    }
-  }
+      rectBorder: "#7716D9",
+    },
+  },
 };

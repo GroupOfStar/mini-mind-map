@@ -47,7 +47,18 @@ export interface INodeTheme {
   };
 }
 
+/** 布局类型 */
+export type ILayoutType =
+  | "Standard"
+  | "DownwardOrganizational"
+  | "UpwardOrganizational"
+  | "LeftLogical"
+  | "RightLogical";
+
+/** 画布配置 */
 export interface IDefaultTheme {
+  /** 布局类型 */
+  layout: ILayoutType;
   /** 图片显示的最大宽度 */
   imgMaxWidth?: number;
   /** 图片显示的最大高度 */
@@ -92,16 +103,5 @@ export interface IDefaultTheme {
 /** 节点类型 */
 export type INodeType = "root" | "second" | "node" | "generalization";
 
-// 主题配置类型
-// export interface ITheme extends IDefaultTheme {
-//   /** 根节点样式 */
-//   root: INodeTheme;
-//   /** 二级节点样式 */
-//   second: INodeTheme;
-//   /** 三级及以下节点样式 */
-//   node: INodeTheme;
-//   /** 概要节点样式 */
-//   generalization: INodeTheme;
-// }
-
+/** 主题配置 */
 export type ITheme = Record<INodeType, INodeTheme> & IDefaultTheme;

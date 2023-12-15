@@ -27,9 +27,14 @@ export abstract class Node {
   /** 边框节点 */
   protected borderNode = new Rect();
 
-  constructor(nodeData: INodeData, nodesGroup: SVGType.G, nodeType: INodeType, parentNode?: Node) {
-    this.nodesGroup = nodesGroup;
-    this.group = new G().addTo(nodesGroup);
+  constructor(nodeData: INodeData, nodeType: INodeType, nodesGroup?: SVGType.G, parentNode?: Node) {
+    this.group = new G();
+    if (nodesGroup) {
+      this.nodesGroup = nodesGroup;
+      this.group.addTo(nodesGroup);
+    } else {
+      this.nodesGroup = new G();
+    }
     this.id = nodeData.id;
     this.nodeData = nodeData;
     this.parentNode = parentNode;
@@ -59,10 +64,11 @@ export abstract class Node {
     };
     this.eachNode((node) => {
       const { x, y, width, height } = node.shape;
+      const { marginX, marginY } = node.style;
       bb.left = Math.min(bb.left, x);
       bb.top = Math.min(bb.top, y);
-      bb.width = Math.max(bb.width, x + width);
-      bb.height = Math.max(bb.height, y + height);
+      bb.width = Math.max(bb.width, x + width + marginX);
+      bb.height = Math.max(bb.height, y + height + marginY);
     });
     return bb;
   }
@@ -78,7 +84,8 @@ export abstract class Node {
     const bb = this.getBoundingBox();
     this.eachNode((node) => {
       const { x, width } = node.shape;
-      node.shape.x = x - (x - bb.left) * 2 - width;
+      const { marginX } = node.style;
+      node.shape.x = x - (x - bb.left) * 2 - (width + marginX);
     });
     this.translate(bb.width, 0);
   }
@@ -87,7 +94,8 @@ export abstract class Node {
     const bb = this.getBoundingBox();
     this.eachNode((node) => {
       const { y, height } = node.shape;
-      node.shape.y = y - (y - bb.top) * 2 - height;
+      const { marginY } = node.style;
+      node.shape.y = y - (y - bb.top) * 2 - (height + marginY);
     });
     this.translate(0, bb.height);
   }

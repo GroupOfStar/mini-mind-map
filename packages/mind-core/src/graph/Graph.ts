@@ -1,8 +1,9 @@
 import { SVG, G } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
-import { RightLogical } from "src/layout";
+import * as Structure from "src/layout";
 import { DefaultNode, RootNode, SecondNode } from "src/node";
 import { Canvas, INodeTheme } from "src/style";
+import { drawEdge } from "./drawEdge";
 
 export interface INodeData {
   id: string;
@@ -35,7 +36,6 @@ export class Graph {
     this.container = document.body;
     this.dataTree = [];
   }
-
   /**
    * 设置SVG将要挂载的HTMLElement容器
    * @param container SVG挂载的HTMLElement容器
@@ -43,7 +43,6 @@ export class Graph {
   setContainer(container: HTMLElement) {
     this.container = container;
   }
-
   /**
    * 通过一维的节点数组设置成节点树数据
    * @param {INodeData[]} list 一维节点数组
@@ -67,7 +66,6 @@ export class Graph {
       this.dataTree = [{ ...fidRoot, depth: 0, children: treeLoop(list, fidRoot.id, 0) }];
     }
   }
-
   /** 遍历树得到新的数据 */
   mapTree<T extends RootNode | SecondNode | DefaultNode>(
     callback: (nodeData: INodeData, index: number, parentNode?: T) => T
@@ -83,7 +81,6 @@ export class Graph {
     }
     return walk(this.dataTree);
   }
-
   /** 给画布注册事件 */
   addEventListener() {
     // 取消所有节点的active样式状态
@@ -97,14 +94,35 @@ export class Graph {
       });
     }
   }
-
-  /** window 的resize事件 */
+  /**
+   * window 的resize事件
+   * 始终保持根节点的y在窗口中间，x根据布局类型来设置在窗口1/3处
+   */
   onResize() {
-    const graphWidth = this.graphGroup.bbox().width;
-    const graphY = Math.max(window.innerHeight - graphWidth, 0);
-    this.graphGroup.x(window.innerWidth / 3).y(graphY / 2);
+    const { x = 0, y = 0, width = 0, height = 0 } = this.rootNode?.shape || {};
+    let pointX = 0;
+    let pointY = window.innerHeight / 2 - y - height / 2;
+    switch (this.canvas.layout) {
+      case "LeftLogical":
+        pointX = (window.innerWidth * 2) / 3 - x - width / 2;
+        break;
+      case "Standard":
+        pointX = window.innerWidth / 2 - x - width / 2;
+        break;
+      case "DownwardOrganizational":
+        pointX = window.innerWidth / 2 - x - width / 2;
+        pointY = window.innerHeight / 3 - y - height / 2;
+        break;
+      case "UpwardOrganizational":
+        pointX = window.innerWidth / 2 - x - width / 2;
+        pointY = (window.innerHeight * 2) / 3 - y - height / 2;
+        break;
+      case "RightLogical":
+        pointX = window.innerWidth / 3 + x;
+        break;
+    }
+    this.graphGroup.x(pointX).y(pointY);
   }
-
   /** 渲染 */
   render() {
     const nodeTree = this.mapTree((nodeData, index, parentNode) => {
@@ -124,17 +142,26 @@ export class Graph {
       }
       node.depth = depth;
       node.setNodeStyle();
-      // node.transform({
-      //   rotate: 0,
-      //   translateX: depth * 60 + index * 120,
-      //   translateY: depth * 60 - index * 120,
-      //   scale: 1
-      // });
       node.addEventListener();
       return node;
     });
     this.rootNode = nodeTree[0] as RootNode;
     this.addEventListener();
     this.svg.addTo(this.container);
+  }
+  /** 布局 */
+  layout() {
+    if (this.rootNode) {
+      this.linesGroup.clear();
+      const MindmapLayout = Structure[this.canvas.layout];
+      const layout = new MindmapLayout(this.rootNode);
+      const rootNode = layout.doLayout();
+      rootNode.eachNode((node) => {
+        node.children.forEach((child, index) => {
+          drawEdge(this, child, index, node, this.canvas.isHorizontal);
+        });
+        node.group.cx(node.shape.x).cy(node.shape.y);
+      });
+    }
   }
 }

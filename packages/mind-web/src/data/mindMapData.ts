@@ -161,3 +161,61 @@ export const mindMapData = [
     children: [],
   },
 ];
+
+export const mindMapData2 = [
+  {
+    id: "conf#b7a2e17cfa37b53e907ba00e258ef0ce",
+    config: {},
+    info: {
+      isZenMode: false,
+    },
+    layout: "logicalStructure",
+    theme: {
+      template: "onlyYellow",
+      config: {},
+    },
+    _start: true,
+  },
+  {
+    id: "mind#2aeb13ae-5d9b-43db-80fb-286c2515d78a",
+    expand: true,
+    pid: "conf#b7a2e17cfa37b53e907ba00e258ef0ce",
+    text: "中心节点",
+    isActive: false,
+  },
+  {
+    id: "mind#1e3e635e-f533-4016-a0d7-8099f886f18a",
+    pid: "mind#2aeb13ae-5d9b-43db-80fb-286c2515d78a",
+    text: "第二层节点02",
+    expand: true,
+    isActive: false,
+  },
+  {
+    id: "mind#3a7dda90-6a2d-4793-89db-d17e04cd0b1d",
+    pid: "mind#1e3e635e-f533-4016-a0d7-8099f886f18a",
+    text: "第3层节点02-01",
+    expand: true,
+    isActive: false,
+    children: [],
+    generalization: {
+      text: "概要",
+      expand: true,
+      isActive: false,
+    },
+    icon: ["progress_2"],
+  },
+  {
+    id: "mind#3a7dda90-6a2d-4793-89db-sg3ddd3345r52",
+    pid: "mind#1e3e635e-f533-4016-a0d7-8099f886f18a",
+    text: "第3层节点02-02",
+    expand: true,
+    isActive: false,
+    children: [],
+    generalization: {
+      text: "概要",
+      expand: true,
+      isActive: false,
+    },
+    icon: ["progress_2"],
+  },
+];

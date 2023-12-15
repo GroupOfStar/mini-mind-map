@@ -37,19 +37,29 @@ export class WrappedTree {
     this.cs = c.length;
   }
 
-  static fromNode(root: Node, isHorizontal: boolean): WrappedTree {
+  static fromNode(root: Node, isHorizontal: boolean, brotherlength: number = 1): WrappedTree {
     const children: WrappedTree[] = [];
-    root.children.forEach((child) => {
-      const childTree = WrappedTree.fromNode(child, isHorizontal);
+    root.children.forEach((child, index, arr) => {
+      const childTree = WrappedTree.fromNode(child, isHorizontal, arr.length);
       if (childTree) {
         children.push(childTree);
       }
     });
     const { x, y, height, width } = root.shape;
     if (isHorizontal) {
-      return new WrappedTree(height + root.style.marginY, width, x, children);
+      return new WrappedTree(
+        height + (brotherlength > 1 ? root.style.marginY : 0),
+        width,
+        x,
+        children
+      );
     } else {
-      return new WrappedTree(width + root.style.marginX, height, y, children);
+      return new WrappedTree(
+        width + (brotherlength > 1 ? root.style.marginX : 0),
+        height,
+        y,
+        children
+      );
     }
   }
 }

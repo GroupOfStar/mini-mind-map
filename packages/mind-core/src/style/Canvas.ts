@@ -1,6 +1,8 @@
-import { IDefaultTheme, Theme } from "./theme";
+import { IDefaultTheme, ILayoutType, Theme } from "./theme";
 
 export class Canvas implements IDefaultTheme {
+  /** 布局类型 */
+  layout: ILayoutType = "RightLogical";
   /** 图片显示的最大宽度 */
   imgMaxWidth?: number;
   /** 图片显示的最大高度 */
@@ -47,5 +49,10 @@ export class Canvas implements IDefaultTheme {
       // 深度赋值
       Object.assign(this, defalutTheme);
     }
+  }
+
+  /** 是否为水平布局 */
+  get isHorizontal() {
+    return ["LeftLogical", "RightLogical", "Standard"].indexOf(this.layout) > -1;
   }
 }

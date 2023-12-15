@@ -18,20 +18,61 @@ function cubicBezierPath(x1: number, y1: number, x2: number, y2: number) {
 }
 
 // 画线
-export const drawEdge = function (mindMap: Graph, current: Node, index: number, parentNode?: Node) {
+export const drawEdge = function (
+  mindMap: Graph,
+  current: Node,
+  index: number,
+  parentNode: Node,
+  isHorizontal
+) {
   if (parentNode) {
-    let x1 = 0;
-    let y1 = parentNode.shape.y;
-    const x2 = current.shape.x - current.shape.width / 2;
-    const y2 = current.shape.y;
+    let beginNode: Node;
+    let endNode: Node;
+    let beginX: number;
+    let beginY: number;
+    let endX: number;
+    let endY: number;
+    // 水平节点布局
+    if (isHorizontal) {
+      if (current.shape.x > parentNode.shape.x) {
+        beginNode = current;
+        endNode = parentNode;
+      } else {
+        beginNode = parentNode;
+        endNode = current;
+      }
+      beginX = beginNode.shape.x - beginNode.shape.width / 2;
+      beginY = beginNode.shape.y;
+      if (endNode.isRoot) {
+        endX = endNode.shape.x;
+      } else {
+        endX = endNode.shape.x + endNode.shape.width / 2;
+      }
+      endY = endNode.shape.y;
+    } else {
+      if (current.shape.y > parentNode.shape.y) {
+        beginNode = current;
+        endNode = parentNode;
+      } else {
+        beginNode = parentNode;
+        endNode = current;
+      }
+      beginX = beginNode.shape.x;
+      beginY = beginNode.shape.y - beginNode.shape.height / 2;
+      endX = endNode.shape.x;
+      if (endNode.isRoot) {
+        endY = endNode.shape.y;
+      } else {
+        endY = endNode.shape.y + endNode.shape.height / 2;
+      }
+    }
+
     let path = "";
     // 根节点连二级节点
-    if (current.depth === 1) {
-      x1 = parentNode.shape.x;
-      path = quadraticCurvePath(x1, y1, x2, y2);
+    if (beginNode.depth === 1) {
+      path = quadraticCurvePath(beginX, beginY, endX, endY);
     } else {
-      x1 = parentNode.shape.x + parentNode.shape.width / 2;
-      path = cubicBezierPath(x1, y1, x2, y2);
+      path = cubicBezierPath(beginX, beginY, endX, endY);
     }
     const line = mindMap.linesGroup.path(path);
     line.fill("none");

@@ -25,10 +25,7 @@ export class Theme implements Record<INodeType, INodeTheme> {
    * @param {ITheme} defaultConfig 主题的通用配置
    * @returns {ITheme} 合并后的主题配置
    */
-  static mergeTheme(
-    theme: ITheme,
-    defaultConfig: ITheme = defaultTheme
-  ): ITheme {
+  static mergeTheme(theme: Partial<ITheme>, defaultConfig: ITheme = defaultTheme): ITheme {
     const { root, second, node, generalization, ...config } = theme;
     const {
       root: _root,
@@ -43,7 +40,7 @@ export class Theme implements Record<INodeType, INodeTheme> {
       root: { ..._root, ...root },
       second: { ..._second, ...second },
       node: { ..._node, ...node },
-      generalization: { ..._generalization, ...generalization }
+      generalization: { ..._generalization, ...generalization },
     };
   }
 
@@ -52,8 +49,7 @@ export class Theme implements Record<INodeType, INodeTheme> {
    * @param theme 目前已有在主题有 蓝色系: blueGray, 商务: deepPurple
    */
   useTheme(theme: ITheme) {
-    const { root, second, node, generalization, ...config } =
-      Theme.mergeTheme(theme);
+    const { root, second, node, generalization, ...config } = Theme.mergeTheme(theme);
     this.defalutTheme = config;
     this.root = root;
     this.second = second;

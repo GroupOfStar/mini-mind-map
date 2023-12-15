@@ -1,5 +1,5 @@
 import { INodeData } from "@mini-mind-map/mind-core";
-import { mindMapData } from "./mindMapData";
+import { mindMapData, mindMapData2 } from "./mindMapData";
 
 /**
  * 通过一维的节点数组生成节点树数据
@@ -7,11 +7,7 @@ import { mindMapData } from "./mindMapData";
  * @param {INodeData['pid']} rootPid 根节点的pid
  */
 function getTreeNode(list: INodeData[], rootPid: INodeData["pid"]) {
-  function treeLoop(
-    listData: INodeData[],
-    parentId: string,
-    pDeep: number
-  ): INodeData[] {
+  function treeLoop(listData: INodeData[], parentId: string, pDeep: number): INodeData[] {
     const children = listData.filter((item) => item.pid === parentId);
     if (children.length === 0) {
       return [];

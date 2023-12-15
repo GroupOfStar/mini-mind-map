@@ -6,8 +6,8 @@ import { INodeData } from "src/graph";
 export class SecondNode extends Node {
   private textNode = new Text();
   private thisNode = new Rect();
-  constructor(nodeData: INodeData, nodesGroup: SVGType.G, parentNode?: Node) {
-    super(nodeData, nodesGroup, "second", parentNode);
+  constructor(nodeData: INodeData, nodesGroup?: SVGType.G, parentNode?: Node) {
+    super(nodeData, "second", nodesGroup, parentNode);
     // 文本节点
     this.textNode.addClass("text").text(nodeData.text || "");
     // 节点边框

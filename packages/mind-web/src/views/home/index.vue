@@ -1,10 +1,13 @@
 <template>
-  <div class="mindMapContainer" ref="mindMapRef"></div>
+  <div class="mindMapContainer" ref="mindMapRef">
+    <Sidebar :mindMap="mindMap" />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref } from "vue";
-import { Graph, Utils, RootNode, RightLogical, drawEdge } from "@mini-mind-map/mind-core";
+import Sidebar from "./../../components/Sidebar/index.vue";
+import { Graph, Utils } from "@mini-mind-map/mind-core";
 import { config, nodeList } from "../../data";
 
 const mindMapRef = ref<HTMLDivElement | null>();
@@ -16,25 +19,10 @@ onMounted(() => {
   const { id: rootId } = config;
   if (mindMapRef.value) {
     mindMap.setContainer(mindMapRef.value);
-    console.log("nodeList :>> ", nodeList);
     mindMap.setDataByList(nodeList, rootId);
     mindMap.render();
 
-    const rootNode = mindMap.rootNode as RootNode;
-    const layout = new RightLogical(rootNode);
-    layout.doLayout();
-    rootNode.eachNode((node) => {
-      node.children.forEach((child, index) => {
-        drawEdge(mindMap, child, index, node);
-      });
-      node.transform({
-        rotate: 0,
-        translateX: node.shape.x,
-        translateY: node.shape.y,
-        scale: 1,
-      });
-    });
-    console.log("rootNode :>> ", rootNode);
+    mindMap.layout();
 
     mindMap.onResize();
   }
