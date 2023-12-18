@@ -1,7 +1,7 @@
 import { G, Rect, Text } from "@svgdotjs/svg.js";
 import { Theme } from "./theme";
 import type { INodeType, INodeTheme } from "./theme";
-import { INodeData } from "src/graph";
+import type { INodeData } from "./../graph/index.d";
 
 // // 获取类型中的函数名称
 // type MethodNames<T> = {

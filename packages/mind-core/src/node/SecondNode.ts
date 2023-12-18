@@ -1,13 +1,13 @@
-import { G, Rect, Text } from "@svgdotjs/svg.js";
-import type * as SVGType from "@svgdotjs/svg.js";
+import { Rect, Text } from "@svgdotjs/svg.js";
 import { Node } from "./Node";
-import { INodeData } from "src/graph";
+import type { ISecondNodeProps } from "./index.d";
 
 export class SecondNode extends Node {
   private textNode = new Text();
   private thisNode = new Rect();
-  constructor(nodeData: INodeData, nodesGroup?: SVGType.G, parentNode?: Node) {
-    super(nodeData, "second", nodesGroup, parentNode);
+  constructor(props: ISecondNodeProps) {
+    super({ ...props, nodeType: "second" });
+    const { nodeData } = props;
     // 文本节点
     this.textNode.addClass("text").text(nodeData.text || "");
     // 节点边框

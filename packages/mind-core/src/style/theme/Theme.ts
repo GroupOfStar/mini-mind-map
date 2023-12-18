@@ -1,5 +1,5 @@
 import { defaultTheme } from "./default";
-import type { ITheme, IDefaultTheme, INodeTheme, INodeType } from ".";
+import type { ITheme, IDefaultTheme, INodeTheme, INodeType } from "./index.d";
 
 export class Theme implements Record<INodeType, INodeTheme> {
   static instance?: Theme;

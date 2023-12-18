@@ -1,12 +1,13 @@
 import { Rect, Text } from "@svgdotjs/svg.js";
-import type * as SVGType from "@svgdotjs/svg.js";
 import { Node } from "./Node";
-import { INodeData } from "src/graph";
+import type { IRootNodeProps } from "./index.d";
+
 export class RootNode extends Node {
   private textNode = new Text();
   private thisNode = new Rect();
-  constructor(nodeData: INodeData, nodesGroup?: SVGType.G) {
-    super(nodeData, "root", nodesGroup);
+  constructor(props: IRootNodeProps) {
+    super({ ...props, nodeType: "root" });
+    const { nodeData, nodesGroup } = props;
 
     // 文本节点
     this.textNode.addClass("text").text(nodeData.text || "");

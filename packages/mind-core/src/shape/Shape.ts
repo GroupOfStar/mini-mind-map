@@ -1,6 +1,6 @@
 import { G, Rect, Text } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
-import { INodeData } from "src/graph";
+import type { INodeData } from "./../graph/index.d";
 
 export abstract class Shape {
   x: number;

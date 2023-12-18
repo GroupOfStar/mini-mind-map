@@ -1,5 +1,5 @@
 import { Node } from "./../node";
-import type { IForEachNode } from "./type.d";
+import type { IForEachNode } from "./index.d";
 
 interface IFontString {
   fontSize: number;

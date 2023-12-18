@@ -5,8 +5,8 @@ import { RootNode } from "./../../node";
 export class Standard extends Layout {
   doLayout() {
     // separate into left and right trees
-    const leftTree = new RootNode(this.rootNode.nodeData);
-    const rightTree = new RootNode(this.rootNode.nodeData);
+    const leftTree = new RootNode({ nodeData: this.rootNode.nodeData });
+    const rightTree = new RootNode({ nodeData: this.rootNode.nodeData });
     const treeSize = this.rootNode.children.length;
     const rightTreeSize = Math.round(treeSize / 2);
     for (let i = 0; i < treeSize; i++) {

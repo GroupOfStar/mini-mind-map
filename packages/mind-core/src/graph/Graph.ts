@@ -1,19 +1,12 @@
 import { SVG, G } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
-import * as Structure from "src/layout";
-import { DefaultNode, RootNode, SecondNode } from "src/node";
-import { Canvas, INodeTheme } from "src/style";
-import { drawEdge } from "./drawEdge";
-
-export interface INodeData {
-  id: string;
-  pid: "root" | string;
-  depth?: number;
-  text?: string;
-  theme?: INodeTheme;
-  children?: INodeData[];
-  [key: string]: any;
-}
+import * as Structure from "./../layout";
+import { DefaultNode, RootNode, SecondNode } from "./../node";
+import { Canvas } from "./../style";
+import { emitter } from "./../emitter";
+import type { Emitter } from "./../emitter/index.d";
+import { drawEdge } from "./../dom";
+import { INodeData, IEvents } from "./index.d";
 
 export class Graph {
   canvas: Canvas;
@@ -24,6 +17,8 @@ export class Graph {
   graphGroup: SVGType.G;
   nodesGroup: SVGType.G;
   linesGroup: SVGType.G;
+  /** 事件广播 */
+  emitter: Emitter<IEvents>;
 
   constructor() {
     this.svg = SVG().size("100%", "100%");
@@ -35,6 +30,8 @@ export class Graph {
     this.canvas = new Canvas();
     this.container = document.body;
     this.dataTree = [];
+
+    this.emitter = emitter();
   }
   /**
    * 设置SVG将要挂载的HTMLElement容器
@@ -81,19 +78,6 @@ export class Graph {
     }
     return walk(this.dataTree);
   }
-  /** 给画布注册事件 */
-  addEventListener() {
-    // 取消所有节点的active样式状态
-    if (this.container) {
-      this.svg.on("click", (event) => {
-        event.stopPropagation();
-        this.nodesGroup.find("rect.active").forEach((item) => {
-          item.stroke({ width: 1, color: "transparent" });
-          item.removeClass("active");
-        });
-      });
-    }
-  }
   /**
    * window 的resize事件
    * 始终保持根节点的y在窗口中间，x根据布局类型来设置在窗口1/3处
@@ -128,25 +112,32 @@ export class Graph {
     const nodeTree = this.mapTree((nodeData, index, parentNode) => {
       const depth = nodeData.depth || 0;
       let node: RootNode | SecondNode | DefaultNode;
+      const nodePorps = {
+        nodeData,
+        nodesGroup: this.nodesGroup,
+        parentNode,
+        emitter: this.emitter,
+      };
       switch (depth) {
         case 0:
-          node = new RootNode(nodeData, this.nodesGroup);
+          node = new RootNode(nodePorps);
           break;
         case 1:
-          node = new SecondNode(nodeData, this.nodesGroup, parentNode);
+          node = new SecondNode(nodePorps);
           break;
         case 2:
         default:
-          node = new DefaultNode(nodeData, this.nodesGroup, parentNode);
+          node = new DefaultNode(nodePorps);
           break;
       }
       node.depth = depth;
       node.setNodeStyle();
-      node.addEventListener();
+      node.bindEvent();
       return node;
     });
     this.rootNode = nodeTree[0] as RootNode;
-    this.addEventListener();
+
+    this.bindEvent();
     this.svg.addTo(this.container);
   }
   /** 布局 */
@@ -163,5 +154,25 @@ export class Graph {
         node.group.cx(node.shape.x).cy(node.shape.y);
       });
     }
+  }
+  /** 画布点击事件 */
+  onClick(event: Event) {
+    event.stopPropagation();
+    this.nodesGroup.find("rect.active").forEach((item) => {
+      item.stroke({ width: 1, color: "transparent" });
+      item.removeClass("active");
+    });
+  }
+  /** 注册事件 */
+  bindEvent() {
+    this.onClick = this.onClick.bind(this);
+
+    /** 画布点击事件 */
+    this.svg.on("click", this.onClick);
+    // this.emitter.on("graph_click", this.onClick);
+  }
+  /** 解除事件 */
+  unbindEvent() {
+    this.svg.off();
   }
 }

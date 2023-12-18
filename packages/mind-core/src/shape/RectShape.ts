@@ -1,9 +1,8 @@
 import { G, Rect, Text } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import { Shape } from "./Shape";
-import { Utils } from "src/utils";
-import { INodeData } from "src/graph";
-import { Style } from "src/style";
+import { Style } from "./../style";
+import type { INodeData } from "./../graph/index.d";
 
 export class RectShape extends Shape {
   id: string;

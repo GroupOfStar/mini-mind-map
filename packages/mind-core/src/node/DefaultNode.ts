@@ -1,15 +1,14 @@
 import { Rect, Text } from "@svgdotjs/svg.js";
-import type * as SVGType from "@svgdotjs/svg.js";
 import { Node } from "./Node";
-import { INodeData } from "src/graph";
+import type { IDefaultNodeProps } from "./index.d";
 
 export class DefaultNode extends Node {
   private textNode = new Text();
   private thisNode = new Rect();
-  constructor(nodeData: INodeData, nodesGroup?: SVGType.G, parentNode?: Node) {
-    super(nodeData, "node", nodesGroup, parentNode);
+  constructor(props: IDefaultNodeProps) {
+    super({ ...props, nodeType: "node" });
     // 文本节点
-    this.textNode.addClass("text").text(nodeData.text || "");
+    this.textNode.addClass("text").text(props.nodeData.text || "");
     // 节点边框
     this.borderNode.addTo(this.group).addClass("node-border");
     // 节点本身

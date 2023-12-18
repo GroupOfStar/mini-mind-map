@@ -23,7 +23,7 @@ export const drawEdge = function (
   current: Node,
   index: number,
   parentNode: Node,
-  isHorizontal
+  isHorizontal: boolean
 ) {
   if (parentNode) {
     let beginNode: Node;
