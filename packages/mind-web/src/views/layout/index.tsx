@@ -3,7 +3,7 @@ import * as MindmapLayouts from "./../../../lib/mindMapLayouts";
 import drawLink from "./utils/drawLine";
 import drawNode from "./utils/drawNode";
 import { nodeTree } from "../../data";
-import { debounce } from "../../utils";
+import { debounce } from "@mini-mind-map/mind-core";
 import styles from "./index.module.less";
 import randomTree from "./utils/randomTree";
 

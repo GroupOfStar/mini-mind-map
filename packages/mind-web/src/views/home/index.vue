@@ -7,13 +7,13 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref } from "vue";
 import Sidebar from "./../../components/Sidebar/index.vue";
-import { Graph, Utils } from "@mini-mind-map/mind-core";
+import { Graph, debounce } from "@mini-mind-map/mind-core";
 import { config, nodeList } from "../../data";
 
 const mindMapRef = ref<HTMLDivElement | null>();
 const mindMap = new Graph();
 
-const onResize = Utils.debounce(mindMap.onResize.bind(mindMap));
+const onResize = debounce(mindMap.onResize.bind(mindMap));
 
 onMounted(() => {
   const { id: rootId } = config;
@@ -31,6 +31,9 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  if (mindMapRef.value) {
+    mindMap.unbindEvent();
+  }
   window.removeEventListener("resize", onResize);
 });
 </script>
