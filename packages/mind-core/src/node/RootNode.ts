@@ -7,7 +7,7 @@ export class RootNode extends Node {
   private thisNode = new Rect();
   constructor(props: IRootNodeProps) {
     super({ ...props, nodeType: "root" });
-    const { nodeData, nodesGroup } = props;
+    const { nodeData } = props;
 
     // 文本节点
     this.textNode.addClass("text").text(nodeData.text || "");

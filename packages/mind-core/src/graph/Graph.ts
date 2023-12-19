@@ -7,10 +7,11 @@ import { emitter } from "./../emitter";
 import type { Emitter } from "./../emitter/index.d";
 import { drawEdge } from "./../dom";
 import { INodeData, IEvents } from "./index.d";
+import { GraphEvent } from "./GraphEvent";
 
 export class Graph {
   canvas: Canvas;
-  container: HTMLElement;
+  el: HTMLElement;
   dataTree: INodeData[];
   rootNode?: RootNode;
   svg: SVGType.Svg;
@@ -19,6 +20,8 @@ export class Graph {
   linesGroup: SVGType.G;
   /** 事件广播 */
   emitter: Emitter<IEvents>;
+  /** 事件 */
+  graphEvent: GraphEvent;
 
   constructor() {
     this.svg = SVG().size("100%", "100%");
@@ -28,17 +31,18 @@ export class Graph {
     this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
 
     this.canvas = new Canvas();
-    this.container = document.body;
+    this.el = document.body;
     this.dataTree = [];
 
     this.emitter = emitter();
+    this.graphEvent = new GraphEvent(this);
   }
   /**
    * 设置SVG将要挂载的HTMLElement容器
-   * @param container SVG挂载的HTMLElement容器
+   * @param el SVG挂载的HTMLElement容器
    */
-  setContainer(container: HTMLElement) {
-    this.container = container;
+  setContainer(el: HTMLElement) {
+    this.el = el;
   }
   /**
    * 通过一维的节点数组设置成节点树数据
@@ -138,7 +142,7 @@ export class Graph {
     this.rootNode = nodeTree[0] as RootNode;
 
     this.bindEvent();
-    this.svg.addTo(this.container);
+    this.svg.addTo(this.el);
   }
   /** 布局 */
   layout() {
@@ -156,20 +160,31 @@ export class Graph {
     }
   }
   /** 画布点击事件 */
-  onClick(event: Event) {
+  onSvgClick(event: Event) {
     event.stopPropagation();
     this.nodesGroup.find("rect.active").forEach((item) => {
       item.stroke({ width: 1, color: "transparent" });
       item.removeClass("active");
     });
   }
+  // /** 画布按下事件 */
+  // onSvgMousedown(event: Event) {
+  //   console.log("onSvgMousedown event :>> ", event);
+  //   event.preventDefault();
+  //   event.stopPropagation();
+  // }
   /** 注册事件 */
   bindEvent() {
-    this.onClick = this.onClick.bind(this);
+    this.onSvgClick = this.onSvgClick.bind(this);
+    // this.onSvgMousedown = this.onSvgMousedown.bind(this);
 
     /** 画布点击事件 */
-    this.svg.on("click", this.onClick);
-    // this.emitter.on("graph_click", this.onClick);
+    this.svg.on("click", this.onSvgClick);
+    // this.emitter.on("graph_click", this.onSvgClick);
+
+    // this.svg.on("mousedown", this.onSvgMousedown);
+    // window.addEventListener("mousemove", this.onMousemove);
+    // window.addEventListener("mouseup", this.onMouseup);
   }
   /** 解除事件 */
   unbindEvent() {
