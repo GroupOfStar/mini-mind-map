@@ -8,8 +8,6 @@ export class WrappedTree {
   y = 0;
   prelim = 0;
   mod = 0;
-  shift = 0;
-  change = 0;
 
   /** 上线程 */
   tt: null | WrappedTree = null;
@@ -18,28 +16,24 @@ export class WrappedTree {
 
   /** 第一个子节点 */
   nt: null | WrappedTree = null;
-  /** 最后一个子节点 wTree.c[wTree.cs - 1].nb */
+  /** 最后一个子节点 wTree.children[wTree.cs - 1].nb */
   nb: null | WrappedTree = null;
 
-  // Sum of modifiers at the extreme nodes.
-  msel = 0;
-  mser = 0;
-
   /** children数组 */
-  c: WrappedTree[] = [];
+  children: WrappedTree[] = [];
 
   name: string;
 
-  constructor(name: string, w: number, h: number, y: number, c: WrappedTree[] = []) {
+  constructor(name: string, w: number, h: number, y: number, children: WrappedTree[] = []) {
     this.name = name;
     this.w = w;
     this.h = h;
     this.y = y;
-    this.c = c;
+    this.children = children;
   }
   /** children的个数 */
   get cs() {
-    return this.c.length;
+    return this.children.length;
   }
   static fromNode(root: Node, isHorizontal: boolean, brotherlength: number = 1): WrappedTree {
     const children: WrappedTree[] = [];
