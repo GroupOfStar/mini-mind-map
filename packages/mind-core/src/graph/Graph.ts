@@ -109,6 +109,7 @@ export class Graph {
         pointX = window.innerWidth / 3 + x;
         break;
     }
+    this.graphGroup.transform({ translateX: 0, translateY: 0 });
     this.graphGroup.x(pointX).y(pointY);
   }
   /** 渲染 */

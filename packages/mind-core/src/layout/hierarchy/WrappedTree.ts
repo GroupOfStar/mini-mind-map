@@ -11,14 +11,15 @@ export class WrappedTree {
   shift = 0;
   change = 0;
 
-  // Left and right thread.
-  tl: null | WrappedTree = null;
-  tr: null | WrappedTree = null;
+  /** 上线程 */
+  tt: null | WrappedTree = null;
+  /** 下线程 */
+  tb: null | WrappedTree = null;
 
-  /** 最左边的节点 */
-  el: null | WrappedTree = null;
-  /** 最右边的节点 */
-  er: null | WrappedTree = null;
+  /** 第一个子节点 */
+  nt: null | WrappedTree = null;
+  /** 最后一个子节点 wTree.c[wTree.cs - 1].nb */
+  nb: null | WrappedTree = null;
 
   // Sum of modifiers at the extreme nodes.
   msel = 0;
@@ -26,17 +27,20 @@ export class WrappedTree {
 
   /** children数组 */
   c: WrappedTree[] = [];
-  /** children的个数 */
-  cs = 0;
 
-  constructor(w: number, h: number, y: number, c: WrappedTree[] = []) {
+  name: string;
+
+  constructor(name: string, w: number, h: number, y: number, c: WrappedTree[] = []) {
+    this.name = name;
     this.w = w;
     this.h = h;
     this.y = y;
     this.c = c;
-    this.cs = c.length;
   }
-
+  /** children的个数 */
+  get cs() {
+    return this.c.length;
+  }
   static fromNode(root: Node, isHorizontal: boolean, brotherlength: number = 1): WrappedTree {
     const children: WrappedTree[] = [];
     root.children.forEach((child, index, arr) => {
@@ -46,8 +50,10 @@ export class WrappedTree {
       }
     });
     const { x, y, height, width } = root.shape;
+    const name = root.nodeData.text || "";
     if (isHorizontal) {
       return new WrappedTree(
+        name,
         height + (brotherlength > 1 ? root.style.marginY : 0),
         width,
         x,
@@ -55,6 +61,7 @@ export class WrappedTree {
       );
     } else {
       return new WrappedTree(
+        name,
         width + (brotherlength > 1 ? root.style.marginX : 0),
         height,
         y,

@@ -32,14 +32,15 @@ export abstract class Node {
 
   constructor(props: INodeProps) {
     const { nodeData, nodeType, nodesGroup, parentNode, emitter } = props;
-    this.group = new G();
+    const id = nodeData.id.trim();
+    this.id = id;
+    this.group = new G().attr({ id: id.replace(/#|-/g, "") });
     if (nodesGroup) {
       this.nodesGroup = nodesGroup;
       this.group.addTo(nodesGroup);
     } else {
       this.nodesGroup = new G();
     }
-    this.id = nodeData.id;
     this.nodeData = nodeData;
     this.parentNode = parentNode;
     this.style = new Style(nodeType);

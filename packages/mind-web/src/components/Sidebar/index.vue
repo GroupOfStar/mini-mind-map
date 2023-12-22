@@ -25,7 +25,11 @@
         <button v-for="item in layoutList" :key="item.value" @click="() => layout(item)">
           {{ item.name }}
         </button>
+        <div>
+          <button @click="onTestClick">测试按钮</button>
+        </div>
       </div>
+
       <div class="directionLeft" style="left: 269px"></div>
     </div>
   </div>
@@ -49,6 +53,22 @@ const trigger = (...args: any[]) => {
 // 关闭侧边栏
 const close = () => {
   console.log("close");
+};
+
+// 测试按钮
+const onTestClick = (e: MouseEvent) => {
+  e.preventDefault();
+  const mindMap = props.mindMap;
+  const transform = mindMap.graphGroup.transform();
+  const width = mindMap.graphGroup.width();
+  const height = mindMap.graphGroup.height();
+  const x = mindMap.graphGroup.x();
+  const y = mindMap.graphGroup.y();
+  console.log("x :>> ", x);
+  console.log("y :>> ", y);
+  console.log("transform :>> ", transform);
+  console.log("width :>> ", width);
+  console.log("height :>> ", height);
 };
 
 const layout = (item: any) => {

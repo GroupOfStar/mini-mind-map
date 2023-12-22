@@ -1,34 +1,40 @@
+import { Polygon } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import type { Graph } from "./Graph";
 
 export class GraphEvent {
-  private svg: SVGType.Svg;
-  private graphGroup: SVGType.G;
+  private graph: Graph;
+  private selectRect: SVGType.Polygon;
+
   private isLeftMousedown: boolean;
+  private isLeftMousemove: boolean;
   private isRightMousedown: boolean;
   private isRightMousemove: boolean;
   private mousedownPos: { x: number; y: number };
   private mousemovePos: { x: number; y: number };
-  private mousemoveOffset: { x: number; y: number };
+  private allowMoveSize: { leftX: number; rightX: number; topY: number; bottomY: number };
 
-  constructor(props: Graph) {
-    this.svg = props.svg;
-    this.graphGroup = props.graphGroup;
-    this.mousedownPos = {
-      x: 0,
-      y: 0,
-    };
+  constructor(graph: Graph) {
+    this.graph = graph;
+    this.selectRect = new Polygon();
+    this.selectRect.stroke({ color: "#0984e3" });
+    this.selectRect.fill({ color: "rgba(9,132,227,0.15)" });
+    this.selectRect.addTo(graph.svg);
+
     this.isLeftMousedown = false;
-    this.isRightMousemove = false;
+    this.isLeftMousemove = false;
     this.isRightMousedown = false;
-    this.mousemovePos = {
-      x: 0,
-      y: 0,
-    };
+    this.isRightMousemove = false;
+    this.mousemovePos = { x: 0, y: 0 };
+    this.mousedownPos = { x: 0, y: 0 };
+    this.allowMoveSize = { leftX: 0, rightX: 0, topY: 0, bottomY: 0 };
     this.bindEvent();
-    this.mousemoveOffset = {
-      x: 0,
-      y: 0,
+  }
+  // 鼠标按住拖动的位移
+  get mousemoveOffset() {
+    return {
+      x: this.mousemovePos.x - this.mousedownPos.x,
+      y: this.mousemovePos.y - this.mousedownPos.y,
     };
   }
   // 绑定事件
@@ -40,17 +46,17 @@ export class GraphEvent {
     this.onWindMouseup = this.onWindMouseup.bind(this);
     this.onWindKeyup = this.onWindKeyup.bind(this);
 
-    this.svg.on("mousedown", this.onSvgMousedown);
+    this.graph.svg.on("mousedown", this.onSvgMousedown);
     window.addEventListener("mousemove", this.onWindMousemove);
     window.addEventListener("mouseup", this.onWindMouseup);
 
-    this.svg.on("wheel", this.onSvgMousewheel);
-    this.svg.on("contextmenu", this.onSvgContextmenu);
+    this.graph.svg.on("wheel", this.onSvgMousewheel);
+    this.graph.svg.on("contextmenu", this.onSvgContextmenu);
     window.addEventListener("keyup", this.onWindKeyup);
   }
   // 解绑事件
   protected unbindEvent() {
-    this.svg.off();
+    this.graph.svg.off();
     window.removeEventListener("mousemove", this.onWindMousemove);
     window.removeEventListener("mouseup", this.onWindMouseup);
 
@@ -60,12 +66,33 @@ export class GraphEvent {
   private onSvgMousedown(e: Event) {
     const event = e as MouseEvent;
     event.stopPropagation();
-    if (event.which === 1) {
-      // 左键
-      this.isLeftMousedown = true;
-    } else if (event.which === 3) {
-      // 右键
-      this.isRightMousedown = true;
+    // 0表示左键, 1表示中键, 2表示右键
+    switch (event.button) {
+      case 0:
+        this.isLeftMousedown = true;
+        this.selectRect.plot([[event.clientX, event.clientY]]);
+        break;
+      case 1:
+        break;
+      case 2:
+        this.isRightMousedown = true;
+        // graphTranslate 记录节点组开始的Transform
+        const { translateX = 0, translateY = 0 } = this.graph.graphGroup.transform();
+        /**
+         * allowMoveSize 记录不超出边界情况下的允许移动的距离
+         * 边界就是保证可视区域的1/4区域里有节点组
+         */
+        const graphX = this.graph.graphGroup.x() as number;
+        const graphY = this.graph.graphGroup.y() as number;
+        const width = this.graph.graphGroup.width() as number;
+        const height = this.graph.graphGroup.height() as number;
+        this.allowMoveSize = {
+          leftX: window.innerWidth / 2 - width - graphX - translateX,
+          rightX: window.innerWidth / 2 - graphX - translateX,
+          topY: window.innerHeight / 2 - height - graphY - translateY,
+          bottomY: window.innerHeight / 2 - graphY - translateY,
+        };
+        break;
     }
     this.mousedownPos.x = event.clientX;
     this.mousedownPos.y = event.clientY;
@@ -75,28 +102,47 @@ export class GraphEvent {
     if (this.isRightMousedown || this.isLeftMousedown) {
       this.mousemovePos.x = e.clientX;
       this.mousemovePos.y = e.clientY;
-      this.mousemoveOffset.x = e.clientX - this.mousedownPos.x;
-      this.mousemoveOffset.y = e.clientY - this.mousedownPos.y;
       // 如果是鼠标右键按住移动
       if (this.isRightMousedown) {
-        const { x, y } = this.mousemoveOffset;
-        this.graphGroup.transform({ translateX: x, translateY: y }, false);
+        this.isRightMousemove = true;
+        const { leftX, rightX, topY, bottomY } = this.allowMoveSize;
+        if (
+          this.mousemoveOffset.x > leftX &&
+          this.mousemoveOffset.x < rightX &&
+          this.mousemoveOffset.y > topY &&
+          this.mousemoveOffset.y < bottomY
+        ) {
+          // const translateX = this.graphTranslate.translateX + this.mousemoveOffset.x;
+          // const translateY = this.graphTranslate.translateY + this.mousemoveOffset.y;
+          // this.graph.graphGroup.transform({ translateX, translateY });
+          this.graph.graphGroup.translate(e.movementX, e.movementY);
+        }
       }
       // 鼠标左键按住移动
       if (this.isLeftMousedown) {
-        this.isRightMousemove = true;
+        this.isLeftMousemove = true;
+        const { x, y } = this.mousemoveOffset;
+        this.selectRect.plot([
+          [this.mousedownPos.x, this.mousedownPos.y],
+          [this.mousedownPos.x + x, this.mousedownPos.y],
+          [e.clientX, e.clientY],
+          [this.mousedownPos.x, this.mousedownPos.y + y],
+        ]);
         // this.emit("mousemove", e, this);
       }
-      console.log("onWindMousemove");
     }
   }
-  // 鼠标松开事件
+  // 鼠标松开事件, 清除状态
   private onWindMouseup(e: MouseEvent) {
+    e.stopPropagation();
     // this.emit("mouseup", e, this);
-    // 鼠标起来清除状态
+    if (this.isLeftMousedown && this.isLeftMousemove) {
+      this.selectRect.plot([]);
+    }
     this.isLeftMousedown = false;
-    this.isRightMousemove = false;
+    this.isLeftMousemove = false;
     this.isRightMousedown = false;
+    this.isRightMousemove = false;
   }
   // 鼠标右键菜单事件
   private onSvgContextmenu(e: Event) {
@@ -106,7 +152,6 @@ export class GraphEvent {
   // 鼠标滚动
   private onSvgMousewheel(event: Event) {
     const e = event as WheelEvent;
-    console.log("onSvgMousewheel e :>> ", e);
     e.stopPropagation();
     e.preventDefault();
     let dir;
@@ -129,7 +174,8 @@ export class GraphEvent {
   }
   // 按键松开事件
   private onWindKeyup(e: KeyboardEvent) {
-    console.log("KeyboardEvent e :>> ", e);
+    // console.log("e.key :>> ", e.key);
+    // console.log("KeyboardEvent e :>> ", e);
     // this.emit("keyup", e);
   }
 }
