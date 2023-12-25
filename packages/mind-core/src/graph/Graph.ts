@@ -27,8 +27,8 @@ export class Graph {
     this.svg = SVG().size("100%", "100%");
     this.svg.node.style.backgroundColor = "rgb(242, 242, 242)";
     this.graphGroup = new G({ class: "g-graph" }).addTo(this.svg);
-    this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
     this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
+    this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
 
     this.canvas = new Canvas();
     this.el = document.body;

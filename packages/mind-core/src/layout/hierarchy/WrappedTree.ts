@@ -14,11 +14,6 @@ export class WrappedTree {
   /** 下线程 */
   tb: null | WrappedTree = null;
 
-  /** 第一个子节点 */
-  nt: null | WrappedTree = null;
-  /** 最后一个子节点 wTree.children[wTree.cs - 1].nb */
-  nb: null | WrappedTree = null;
-
   /** children数组 */
   children: WrappedTree[] = [];
 
@@ -38,9 +33,9 @@ export class WrappedTree {
   static fromNode(root: Node, isHorizontal: boolean, brotherlength: number = 1): WrappedTree {
     const children: WrappedTree[] = [];
     root.children.forEach((child, index, arr) => {
-      const childTree = WrappedTree.fromNode(child, isHorizontal, arr.length);
-      if (childTree) {
-        children.push(childTree);
+      const wrappedChild = WrappedTree.fromNode(child, isHorizontal, arr.length);
+      if (wrappedChild) {
+        children.push(wrappedChild);
       }
     });
     const { x, y, height, width } = root.shape;
@@ -48,17 +43,17 @@ export class WrappedTree {
     if (isHorizontal) {
       return new WrappedTree(
         name,
-        height + (brotherlength > 1 ? root.style.marginY : 0),
         width,
-        x,
+        height + (brotherlength > 1 ? root.style.marginY : 0),
+        y,
         children
       );
     } else {
       return new WrappedTree(
         name,
-        width + (brotherlength > 1 ? root.style.marginX : 0),
         height,
-        y,
+        width + (brotherlength > 1 ? root.style.marginX : 0),
+        x,
         children
       );
     }

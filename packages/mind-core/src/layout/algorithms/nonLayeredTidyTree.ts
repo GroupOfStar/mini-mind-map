@@ -20,20 +20,19 @@ function layer(node: Node, isHorizontal: boolean, d = 0) {
 }
 
 // 第二次遍历
-function secondWalk(t: WrappedTree, modsum: number) {
-  modsum += t.mod;
-  t.x = t.prelim + modsum;
-  for (let i = 0; i < t.cs; i++) {
-    secondWalk(t.children[i], modsum);
-  }
+function secondWalk(t: WrappedTree) {
+  forScopeEachTree((node, index, parentNode) => {
+    node.mod = (parentNode?.mod || 0) + node.mod;
+    node.y = node.prelim + node.mod;
+  }, t);
 }
 
 // 转换回
 function convertBack(converted: WrappedTree, root: Node, isHorizontal: boolean) {
   if (isHorizontal) {
-    root.shape.y = converted.x;
+    root.shape.y = converted.y;
   } else {
-    root.shape.x = converted.x;
+    root.shape.x = converted.y;
   }
   converted.children.forEach((child, i) => {
     convertBack(child, root.children[i], isHorizontal);
@@ -92,7 +91,7 @@ export const nonLayeredTidyTree = (root: Node, isHorizontal: boolean) => {
     let n2: null | WrappedTree = currentChild;
     let n2ms = currentChild.mod;
     while (n1 != null && n2 != null) {
-      const dist = n1ms + n1.prelim + n1.w - (n2ms + n2.prelim);
+      const dist = n1ms + n1.prelim + n1.h - (n2ms + n2.prelim);
       if (dist > 0) {
         n2ms += dist;
         // 移动子树
@@ -121,18 +120,10 @@ export const nonLayeredTidyTree = (root: Node, isHorizontal: boolean) => {
 
   // 第一次遍历
   function firstWalk(wTree: WrappedTree) {
-    const firstChild = wTree.children[0];
-    const lastChild = wTree.children[wTree.cs - 1];
     // 如果没有子节点
-    if (wTree.cs === 0) {
-      // 设置极值
-      wTree.nt = wTree;
-      wTree.nb = wTree;
-    } else {
-      // 设置极值
-      wTree.nt = firstChild.nt;
-      wTree.nb = lastChild.nb;
-
+    if (wTree.cs !== 0) {
+      const firstChild = wTree.children[0];
+      const lastChild = wTree.children[wTree.cs - 1];
       firstWalk(firstChild);
       for (let i = 1; i < wTree.cs; ++i) {
         firstWalk(wTree.children[i]);
@@ -140,8 +131,8 @@ export const nonLayeredTidyTree = (root: Node, isHorizontal: boolean) => {
       }
       // 设置根节点位置并计算子节点间的距离和位移差值
       wTree.prelim =
-        (firstChild.prelim + firstChild.mod + lastChild.mod + lastChild.prelim + lastChild.w) / 2 -
-        wTree.w / 2;
+        (firstChild.prelim + firstChild.mod + lastChild.mod + lastChild.prelim + lastChild.h) / 2 -
+        wTree.h / 2;
     }
   }
 
@@ -149,7 +140,7 @@ export const nonLayeredTidyTree = (root: Node, isHorizontal: boolean) => {
   layer(root, isHorizontal);
   const wt = WrappedTree.fromNode(root, isHorizontal);
   firstWalk(wt);
-  secondWalk(wt, 0);
+  secondWalk(wt);
   convertBack(wt, root, isHorizontal);
   normalize(root, isHorizontal);
 
