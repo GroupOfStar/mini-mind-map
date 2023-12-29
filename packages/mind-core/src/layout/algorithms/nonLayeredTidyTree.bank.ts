@@ -2,12 +2,67 @@ import { forScopeEachTree } from "src/utils";
 import { WrapperdTree } from "../hierarchy";
 import { LayoutNode } from "./../hierarchy/LayoutNode";
 
+// 设置分层偏移量
+function layer(node: LayoutNode, isHorizontal: boolean, d = 0) {
+  const { marginX, marginY } = node.style;
+  const { width, height } = node.shape;
+  // 水平方向
+  if (isHorizontal) {
+    node.shape.x = d + marginX;
+    d += width + marginX;
+  } else {
+    node.shape.y = d + marginY;
+    d += height + marginY;
+  }
+  node.children.forEach((child) => {
+    layer(child, isHorizontal, d);
+  });
+}
+
 // 第二次遍历
 function secondWalk(t: WrapperdTree) {
   forScopeEachTree((node, index, parentNode) => {
     node.mod = (parentNode?.mod || 0) + node.mod;
     node.y = node.prelim + node.mod;
   }, t);
+}
+
+// 转换回
+function convertBack(converted: WrapperdTree, root: LayoutNode, isHorizontal: boolean) {
+  if (isHorizontal) {
+    root.shape.y = converted.y;
+  } else {
+    root.shape.x = converted.y;
+  }
+  converted.children.forEach((child, i) => {
+    convertBack(child, root.children[i], isHorizontal);
+  });
+}
+
+// 设置最大最小值
+function normalize(node: LayoutNode, isHorizontal: boolean) {
+  // 获取方向的最小值
+  function getMin(node: LayoutNode, isHorizontal: boolean) {
+    let res = isHorizontal ? node.shape.y : node.shape.x;
+    node.children.forEach((child) => {
+      res = Math.min(getMin(child, isHorizontal), res);
+    });
+    return res;
+  }
+  const min = getMin(node, isHorizontal);
+
+  // 设置节点位置
+  function moveRight(node: LayoutNode, move: number, isHorizontal: boolean) {
+    if (isHorizontal) {
+      node.shape.y += move;
+    } else {
+      node.shape.x += move;
+    }
+    node.children.forEach((child) => {
+      moveRight(child, move, isHorizontal);
+    });
+  }
+  moveRight(node, -min, isHorizontal);
 }
 
 // 获取节点底部的定位
@@ -85,6 +140,12 @@ export const nonLayeredTidyTree = (root: LayoutNode, wt: WrapperdTree, isHorizon
   // const wt = WrapperdTree.fromNode(root, isHorizontal);
   firstWalk(wt);
   secondWalk(wt);
+  convertBack(wt, root, isHorizontal);
+  normalize(root, isHorizontal);
 
+  forScopeEachTree((node, index, parentNode) => {
+    const { prelim = 0, mod = 0 } = node;
+    console.log(node.name, " >>: prelim :", prelim, "mod :", mod);
+  }, wt);
   return root;
 };

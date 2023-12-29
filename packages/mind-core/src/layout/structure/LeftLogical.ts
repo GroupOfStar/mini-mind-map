@@ -1,11 +1,14 @@
 import { Layout } from "./Layout";
 import { nonLayeredTidyTree } from "../algorithms";
+import { WrapperdTree } from "../hierarchy";
 
 export class LeftLogical extends Layout {
   doLayout() {
-    const rootNode = this.rootNode;
-    nonLayeredTidyTree(rootNode, true);
-    rootNode.right2left();
-    return rootNode;
+    this.layer(this.nodeTree, this.options, true);
+    const wt = new WrapperdTree(this.nodeTree, this.options, true);
+    nonLayeredTidyTree(this.nodeTree, wt, true);
+    this.nodeTree.right2left();
+
+    return this.rootNode;
   }
 }

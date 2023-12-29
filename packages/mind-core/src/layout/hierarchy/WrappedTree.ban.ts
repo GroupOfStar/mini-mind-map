@@ -1,6 +1,6 @@
 import { Node } from "./../../node";
 
-export class WrappedTree {
+export class WrapperdTree {
   // Width and height.
   w = 0;
   h = 0;
@@ -10,16 +10,16 @@ export class WrappedTree {
   mod = 0;
 
   /** 上线程 */
-  tt: null | WrappedTree = null;
+  tt: null | WrapperdTree = null;
   /** 下线程 */
-  tb: null | WrappedTree = null;
+  tb: null | WrapperdTree = null;
 
   /** children数组 */
-  children: WrappedTree[] = [];
+  children: WrapperdTree[] = [];
 
   name: string;
 
-  constructor(name: string, w: number, h: number, y: number, children: WrappedTree[] = []) {
+  constructor(name: string, w: number, h: number, y: number, children: WrapperdTree[] = []) {
     this.name = name;
     this.w = w;
     this.h = h;
@@ -30,10 +30,10 @@ export class WrappedTree {
   get cs() {
     return this.children.length;
   }
-  static fromNode(root: Node, isHorizontal: boolean, brotherlength: number = 1): WrappedTree {
-    const children: WrappedTree[] = [];
+  static fromNode(root: Node, isHorizontal: boolean, brotherlength: number = 1): WrapperdTree {
+    const children: WrapperdTree[] = [];
     root.children.forEach((child, index, arr) => {
-      const wrappedChild = WrappedTree.fromNode(child, isHorizontal, arr.length);
+      const wrappedChild = WrapperdTree.fromNode(child, isHorizontal, arr.length);
       if (wrappedChild) {
         children.push(wrappedChild);
       }
@@ -41,7 +41,7 @@ export class WrappedTree {
     const { x, y, height, width } = root.shape;
     const name = root.nodeData.text || "";
     if (isHorizontal) {
-      return new WrappedTree(
+      return new WrapperdTree(
         name,
         width,
         height + (brotherlength > 1 ? root.style.marginY : 0),
@@ -49,7 +49,7 @@ export class WrappedTree {
         children
       );
     } else {
-      return new WrappedTree(
+      return new WrapperdTree(
         name,
         height,
         width + (brotherlength > 1 ? root.style.marginX : 0),

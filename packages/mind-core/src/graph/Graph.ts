@@ -1,12 +1,12 @@
 import { SVG, G } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import * as Structure from "./../layout";
-import { DefaultNode, RootNode, SecondNode } from "./../node";
+import { DefaultNode, RootNode, SecondNode, Node } from "./../node";
 import { Canvas } from "./../style";
 import { emitter } from "./../emitter";
 import type { Emitter } from "./../emitter/index.d";
 import { drawEdge } from "./../dom";
-import { INodeData, IEvents } from "./index.d";
+import type { INodeData, IEvents } from "./index.d";
 import { GraphEvent } from "./GraphEvent";
 
 export class Graph {
@@ -150,7 +150,30 @@ export class Graph {
     if (this.rootNode) {
       this.linesGroup.clear();
       const MindmapLayout = Structure[this.canvas.layout];
-      const layout = new MindmapLayout(this.rootNode);
+      const layout = new MindmapLayout(this.rootNode, {
+        getId(item: Node) {
+          return item.nodeData.id;
+        },
+        getName(item: Node) {
+          return item.nodeData.text || "";
+        },
+        getVGap(item: Node) {
+          return item.style.marginY;
+        },
+        getHGap(item: Node) {
+          console.log("item :>> ", item);
+          return item.style.marginX;
+        },
+        getHeight(item: Node) {
+          return item.shape.width;
+        },
+        getWidth(item: Node) {
+          return item.shape.height;
+        },
+        getChildren(item: Node) {
+          return item.children;
+        },
+      });
       const rootNode = layout.doLayout();
       rootNode.eachNode((node) => {
         node.children.forEach((child, index) => {
