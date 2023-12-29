@@ -49,6 +49,22 @@ export const mindMapData = [
     children: [],
   },
   {
+    id: "mind#ab2a77db-3e97-48e1-8943-345ssg3feg5",
+    pid: "mind#b0afccdd-93a9-4d16-a3a1-47aa60a9b835",
+    text: "第4层节点01-02-01",
+    expand: true,
+    isActive: false,
+    children: [],
+  },
+  {
+    id: "mind#ab2a77db-3e97-48e1-8943-357744f44553",
+    pid: "mind#b0afccdd-93a9-4d16-a3a1-47aa60a9b835",
+    text: "第4层节点01-02-02",
+    expand: true,
+    isActive: false,
+    children: [],
+  },
+  {
     id: "mind#c5c07d1f-50fe-4163-afe3-c2ee6f448a9b",
     pid: "mind#ab2a77db-3e97-48e1-8943-91cc62c54de2",
     text: "第3层节点01-03",
@@ -137,6 +153,22 @@ export const mindMapData = [
     generalization: "",
   },
   {
+    id: "mind#1b0d4123-29ed-4bb3-84c2-453ddd455445",
+    pid: "mind#614a3de9-f60a-48d1-8fe3-98f4edf4ccb2",
+    text: "第6层节点01-01-01-02-01",
+    expand: true,
+    isActive: false,
+    children: [],
+  },
+  {
+    id: "mind#614a3de9-f60a-44451-8fe3-4gssge3444h",
+    pid: "mind#1b0d4123-29ed-4bb3-84c2-453ddd455445",
+    text: "第7层节点01-01-01-02-01-01",
+    expand: true,
+    isActive: false,
+    children: [],
+  },
+  {
     id: "mind#b2bdfa66-c0c3-49c0-8fe6-665b40524cb4",
     pid: "mind#1b0d4123-29ed-4bb3-84c2-a168aea59e88",
     text: "第5层节点01-01-01-03",
@@ -159,6 +191,13 @@ export const mindMapData = [
     expand: true,
     isActive: false,
     children: [],
+  },
+  {
+    id: "mind#1e3e635e-f533-4016-a0d7-45563dddh456",
+    pid: "mind#2aeb13ae-5d9b-43db-80fb-286c2515d78a",
+    text: "第二层节点03",
+    expand: true,
+    isActive: false,
   },
 ];
 

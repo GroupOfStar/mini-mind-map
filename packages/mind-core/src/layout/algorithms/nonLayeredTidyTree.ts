@@ -97,23 +97,12 @@ export const nonLayeredTidyTree = (root: Node, isHorizontal: boolean) => {
         // 移动子树
         n2.mod += dist;
       }
-      // 前一个节点的底部小于等于节点自己的底部位置
-      if (getBottom(n1) <= getBottom(n2)) {
-        // 下一个下轮廓
-        if (n1.cs === 0) {
-          n1 = n1.tb;
-        } else {
-          n1 = n1.children[n1.cs - 1];
-          n1ms += n1.mod;
-        }
+      // 下一个下轮廓
+      if (n1.cs === 0) {
+        n1 = n1.tb;
       } else {
-        // 下一个上轮廓
-        if (n2.cs === 0) {
-          n2 = n2.tt;
-        } else {
-          n2 = n2.children[0];
-          n1ms += n2.mod;
-        }
+        n1 = n1.children[n1.cs - 1];
+        n1ms += n1.mod;
       }
     }
   }
@@ -142,7 +131,7 @@ export const nonLayeredTidyTree = (root: Node, isHorizontal: boolean) => {
   firstWalk(wt);
   secondWalk(wt);
   convertBack(wt, root, isHorizontal);
-  normalize(root, isHorizontal);
+  // normalize(root, isHorizontal);
 
   forScopeEachTree((node, index, parentNode) => {
     const { prelim = 0, mod = 0 } = node;

@@ -1,9 +1,9 @@
 import { Layout } from "./Layout";
-import { nonLayeredTidyTree } from "../algorithms";
+import { nonLayeredTidyTree2 } from "../algorithms";
 
 export class RightLogical extends Layout {
   doLayout() {
     const rootNode = this.rootNode;
-    return nonLayeredTidyTree(rootNode, true);
+    return nonLayeredTidyTree2(rootNode, true);
   }
 }
