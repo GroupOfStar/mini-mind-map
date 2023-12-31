@@ -51,7 +51,7 @@ export abstract class Node {
   get isRoot() {
     return this.depth === 0;
   }
-  /** 遍历节点及子节点 */
+  /** 广度遍历节点及子节点 */
   eachNode(callback: (node: Node) => void) {
     let nodes: Node[] = [this];
     let current: Node | undefined = undefined;
@@ -69,6 +69,7 @@ export abstract class Node {
       height: 0,
     };
     this.eachNode((node) => {
+      console.log("node.nodeData.text :>> ", node.nodeData.text);
       const { x, y, width, height } = node.shape;
       const { marginX, marginY } = node.style;
       bb.left = Math.min(bb.left, x);

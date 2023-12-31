@@ -2,7 +2,7 @@
 export interface ITreeNode<T> {
   id?: any;
   children: T[];
-  [key: string]: any;
+  [key: PropertyKey]: any;
 }
 
 // 包装节点

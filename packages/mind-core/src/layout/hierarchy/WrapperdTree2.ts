@@ -1,29 +1,45 @@
-import { Node } from "./../../node";
-
-export class WrapperdTree2 {
-  name: string;
-  // Width and height.
-  w = 0;
-  h = 0;
+/** 布局节点 */
+export class WrapperdTree2<T> {
+  /** 是否水平布局 */
+  static isHorizontal: boolean = true;
+  /** 名称 */
+  readonly name: string;
   /** 水平方向上的间距 */
-  hGap = 0;
+  readonly hGap: number;
   /** 垂直方向上的间距 */
-  vGap = 0;
+  readonly vGap: number;
+  /** 宽度 */
+  readonly width: number;
+  /** 高度 */
+  readonly height: number;
+  /** X轴上的定位 */
   x = 0;
+  /** Y轴上的定位 */
   y = 0;
   /** 父节点 */
-  parentWt?: WrapperdTree2;
-
+  parentWt?: WrapperdTree2<T>;
   /** children数组 */
-  children: WrapperdTree2[] = [];
+  readonly children: WrapperdTree2<T>[] = [];
 
-  constructor(w: number, h: number, y: number, children: WrapperdTree2[] = [], node: Node) {
-    this.name = node.nodeData.text || "";
-    this.w = w;
-    this.h = h;
-    this.hGap = node.style.marginX;
-    this.vGap = node.style.marginY;
-    this.y = y;
+  constructor(node: T, children: WrapperdTree2<T>[] = []) {
+    const { text = "" } = node.nodeData;
+    const { marginX, marginY } = node.style;
+    this.name = text;
+    this.hGap = marginX;
+    this.vGap = marginY;
+
+    const { x, y, height, width } = node.shape;
+    if (WrapperdTree2.isHorizontal) {
+      this.width = width;
+      this.height = height;
+      this.y = y;
+    } else {
+      this.width = height;
+      this.height = width;
+      this.y = x;
+    }
+    // 设置父节点
+    children.forEach((item) => (item.parentWt = this));
     this.children = children;
   }
   /** children的个数 */
@@ -34,9 +50,9 @@ export class WrapperdTree2 {
   get contourBottom() {
     if (this.children.length > 0) {
       const lastChild = this.children[this.children.length - 1];
-      return Math.max(lastChild.y + lastChild.h, lastChild.contourBottom);
+      return Math.max(lastChild.y + lastChild.height, lastChild.contourBottom);
     } else {
-      return this.y + this.h;
+      return this.y + this.height;
     }
   }
   /** 轮廓高度 */
@@ -66,19 +82,32 @@ export class WrapperdTree2 {
       return undefined;
     }
   }
-  static fromNode(node: Node, isHorizontal: boolean): WrapperdTree2 {
-    const children: WrapperdTree2[] = [];
-    node.children.forEach((child, index, arr) => {
-      const wrappedChild = WrapperdTree2.fromNode(child, isHorizontal);
-      if (wrappedChild) {
-        children.push(wrappedChild);
-      }
-    });
-    const { x, y, height, width } = node.shape;
-    if (isHorizontal) {
-      return new WrapperdTree2(width, height, y, children, node);
+  /**
+   * 从节点树创建布局节点树
+   * @param node 节点树
+   * @returns 布局节点树
+   */
+  static fromNode<T>(node: T): WrapperdTree2<T> {
+    return new WrapperdTree2(
+      node,
+      node.children.map((item) => WrapperdTree2.fromNode(item))
+    );
+  }
+  /**
+   * 转换回
+   * @param wt 布局后的节点树
+   * @param root 传入的节点树
+   */
+  static convertBack<T>(wt: WrapperdTree2<T>, root: T) {
+    if (WrapperdTree2.isHorizontal) {
+      root.shape.x = wt.x;
+      root.shape.y = wt.y;
     } else {
-      return new WrapperdTree2(height, width, x, children, node);
+      root.shape.x = wt.y;
+      root.shape.y = wt.x;
     }
+    wt.children.forEach((child, i) => {
+      WrapperdTree2.convertBack(child, root.children[i]);
+    });
   }
 }

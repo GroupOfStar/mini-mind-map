@@ -1,3 +1,4 @@
+import { forScopeEachTree } from "src/utils";
 import { Node, RootNode } from "./../../node";
 
 interface IEdgeItem {
@@ -14,47 +15,31 @@ export abstract class Layout {
   }
   /** 布局 */
   abstract doLayout(): Node;
-  /** 获取所有的节点 */
-  getNodes() {
-    const nodes: any[] = [];
-    this.rootNode.eachNode((node) => {
+  /** 获取节点树的边界框 */
+  getBoundingBox() {
+    const bb = {
+      left: Number.MAX_VALUE,
+      top: Number.MAX_VALUE,
+      width: 0,
+      height: 0,
+    };
+    forScopeEachTree<Node>((node) => {
       const { x, y, width, height } = node.shape;
-      const { marginX: hgap, marginY: vgap } = node.style;
-      nodes.push({
-        // origin data
-        nodeData: node.nodeData,
-        id: node.id,
-        // position
-        x,
-        y,
-        centX: x + width / 2,
-        centY: y + height / 2,
-        // size
-        hgap,
-        vgap,
-        height,
-        width,
-        actualHeight: height - vgap * 2,
-        actualWidth: width - hgap * 2,
-        // depth
-        depth: node.depth,
-      });
-    });
-    return nodes;
+      const { marginX, marginY } = node.style;
+      bb.left = Math.min(bb.left, x);
+      bb.top = Math.min(bb.top, y);
+      bb.width = Math.max(bb.width, x + width + marginX);
+      bb.height = Math.max(bb.height, y + height + marginY);
+    }, this.rootNode);
+    return bb;
   }
-  /** 获取所有的线 */
-  getEdges() {
-    const extraEdges = this.extraEdges;
-    const edges: IEdgeItem[] = [];
-    this.rootNode.eachNode((node) => {
-      node.children.forEach((child) => {
-        edges.push({
-          source: node.id,
-          target: child.id,
-        });
-      });
-    });
-    edges.concat(extraEdges);
-    return edges;
+  /** 节点横坐标由右变成左 */
+  right2left() {
+    const bb = this.getBoundingBox();
+    forScopeEachTree<Node>((node) => {
+      const { x, width } = node.shape;
+      const { marginX } = node.style;
+      node.shape.x = x - (x - bb.left) * 2 - (width + marginX) + bb.width;
+    }, this.rootNode);
   }
 }
