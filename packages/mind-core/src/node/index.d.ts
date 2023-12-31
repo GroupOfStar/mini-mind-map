@@ -4,22 +4,22 @@ import type { INodeData, IEvents } from "./../graph/index.d";
 import type { INodeType } from "./../style";
 import type { Emitter } from "../emitter/index.d";
 
-export interface INodeProps {
+export interface INodeProps<P, C> {
   nodeData: INodeData;
   nodeType: INodeType;
   nodesGroup?: SVGType.G;
-  parentNode?: Node;
+  parentNode?: Node<P, C>;
   emitter?: Emitter<IEvents>;
 }
 
-export type IRootNodeProps = Pick<INodeProps, "nodeData" | "nodesGroup" | "emitter">;
+export type IRootNodeProps<P, C> = Pick<INodeProps<P, C>, "nodeData" | "nodesGroup" | "emitter">;
 
-export type ISecondNodeProps = Pick<
-  INodeProps,
+export type ISecondNodeProps<P, C> = Pick<
+  INodeProps<P, C>,
   "nodeData" | "nodesGroup" | "parentNode" | "emitter"
 >;
 
-export type IDefaultNodeProps = Pick<
-  INodeProps,
+export type IDefaultNodeProps<P, C> = Pick<
+  INodeProps<P, C>,
   "nodeData" | "nodesGroup" | "parentNode" | "emitter"
 >;

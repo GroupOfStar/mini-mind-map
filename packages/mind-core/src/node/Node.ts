@@ -6,7 +6,7 @@ import { RectShape } from "./../shape";
 import type { INodeProps } from "./index.d";
 import { Emitter } from "./../emitter/index.d";
 
-export abstract class Node {
+export abstract class Node<P, C> implements ITreeNode<Node<P, C>> {
   /** 节点group挂载的group容器 */
   nodesGroup: G;
   /** 节点group */
@@ -22,15 +22,15 @@ export abstract class Node {
   /** 形状 */
   shape: RectShape;
   /** 父节点 */
-  parentNode?: Node;
+  parentNode?: Node<P, C>;
   /** 子节点 */
-  children: Node[] = [];
+  children: Node<P, C>[] = [];
   /** 边框节点 */
   protected borderNode = new Rect();
   /** 事件广播 */
   emitter?: Emitter<IEvents>;
 
-  constructor(props: INodeProps) {
+  constructor(props: INodeProps<P, C>) {
     const { nodeData, nodeType, nodesGroup, parentNode, emitter } = props;
     const id = nodeData.id.trim();
     this.id = id;
@@ -50,61 +50,6 @@ export abstract class Node {
   /** 是否为根节点 */
   get isRoot() {
     return this.depth === 0;
-  }
-  /** 广度遍历节点及子节点 */
-  eachNode(callback: (node: Node) => void) {
-    let nodes: Node[] = [this];
-    let current: Node | undefined = undefined;
-    while ((current = nodes.shift())) {
-      callback(current);
-      nodes = nodes.concat(current.children);
-    }
-  }
-  /** 获取节点树的边界框 */
-  getBoundingBox() {
-    const bb = {
-      left: Number.MAX_VALUE,
-      top: Number.MAX_VALUE,
-      width: 0,
-      height: 0,
-    };
-    this.eachNode((node) => {
-      console.log("node.nodeData.text :>> ", node.nodeData.text);
-      const { x, y, width, height } = node.shape;
-      const { marginX, marginY } = node.style;
-      bb.left = Math.min(bb.left, x);
-      bb.top = Math.min(bb.top, y);
-      bb.width = Math.max(bb.width, x + width + marginX);
-      bb.height = Math.max(bb.height, y + height + marginY);
-    });
-    return bb;
-  }
-  /** 节点树整体偏移 */
-  translate(tx = 0, ty = 0) {
-    this.eachNode((node) => {
-      node.shape.x += tx;
-      node.shape.y += ty;
-    });
-  }
-  /** 节点横坐标由右变成左 */
-  right2left() {
-    const bb = this.getBoundingBox();
-    this.eachNode((node) => {
-      const { x, width } = node.shape;
-      const { marginX } = node.style;
-      node.shape.x = x - (x - bb.left) * 2 - (width + marginX);
-    });
-    this.translate(bb.width, 0);
-  }
-  /** 节点纵坐标由下变成上 */
-  down2up() {
-    const bb = this.getBoundingBox();
-    this.eachNode((node) => {
-      const { y, height } = node.shape;
-      const { marginY } = node.style;
-      node.shape.y = y - (y - bb.top) * 2 - (height + marginY);
-    });
-    this.translate(0, bb.height);
   }
   /** 设置节点样式 */
   abstract setNodeStyle(): void;

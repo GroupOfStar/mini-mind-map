@@ -1,13 +1,14 @@
 import { SVG, G } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import * as Structure from "./../layout";
-import { DefaultNode, RootNode, SecondNode } from "./../node";
+import { DefaultNode, RootNode, SecondNode, Node } from "./../node";
 import { Canvas } from "./../style";
 import { emitter } from "./../emitter";
 import type { Emitter } from "./../emitter/index.d";
 import { drawEdge } from "./../dom";
 import { INodeData, IEvents } from "./index.d";
 import { GraphEvent } from "./GraphEvent";
+import { forScopeEachTree } from "src/utils";
 
 export class Graph {
   canvas: Canvas;
@@ -87,6 +88,7 @@ export class Graph {
    * 始终保持根节点的y在窗口中间，x根据布局类型来设置在窗口1/3处
    */
   onResize() {
+    console.log("onResize");
     const { x = 0, y = 0, width = 0, height = 0 } = this.rootNode?.shape || {};
     let pointX = 0;
     let pointY = window.innerHeight / 2 - y - height / 2;
@@ -152,12 +154,18 @@ export class Graph {
       const MindmapLayout = Structure[this.canvas.layout];
       const layout = new MindmapLayout(this.rootNode);
       const rootNode = layout.doLayout();
-      rootNode.eachNode((node) => {
+      forScopeEachTree((node) => {
         node.children.forEach((child, index) => {
           drawEdge(this, child, index, node, this.canvas.isHorizontal);
         });
         node.group.cx(node.shape.x).cy(node.shape.y);
-      });
+      }, rootNode);
+      // rootNode.eachNode((node) => {
+      //   node.children.forEach((child, index) => {
+      //     drawEdge(this, child, index, node, this.canvas.isHorizontal);
+      //   });
+      //   node.group.cx(node.shape.x).cy(node.shape.y);
+      // });
     }
   }
   /** 画布点击事件 */

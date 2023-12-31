@@ -1,11 +1,12 @@
 import { Rect, Text } from "@svgdotjs/svg.js";
 import { Node } from "./Node";
 import type { IDefaultNodeProps } from "./index.d";
+import { SecondNode } from "./SecondNode";
 
-export class DefaultNode extends Node {
+export class DefaultNode extends Node<SecondNode | DefaultNode, DefaultNode> {
   private textNode = new Text();
   private thisNode = new Rect();
-  constructor(props: IDefaultNodeProps) {
+  constructor(props: IDefaultNodeProps<SecondNode | DefaultNode, DefaultNode>) {
     super({ ...props, nodeType: "node" });
     // 文本节点
     this.textNode.addClass("text").text(props.nodeData.text || "");

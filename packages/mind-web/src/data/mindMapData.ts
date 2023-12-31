@@ -243,18 +243,18 @@ export const mindMapData2 = [
     },
     icon: ["progress_2"],
   },
-  {
-    id: "mind#3a7dda90-6a2d-4793-89db-sg3ddd3345r52",
-    pid: "mind#1e3e635e-f533-4016-a0d7-8099f886f18a",
-    text: "第3层节点02-02",
-    expand: true,
-    isActive: false,
-    children: [],
-    generalization: {
-      text: "概要",
-      expand: true,
-      isActive: false,
-    },
-    icon: ["progress_2"],
-  },
+  // {
+  //   id: "mind#3a7dda90-6a2d-4793-89db-sg3ddd3345r52",
+  //   pid: "mind#1e3e635e-f533-4016-a0d7-8099f886f18a",
+  //   text: "第3层节点02-02",
+  //   expand: true,
+  //   isActive: false,
+  //   children: [],
+  //   generalization: {
+  //     text: "概要",
+  //     expand: true,
+  //     isActive: false,
+  //   },
+  //   icon: ["progress_2"],
+  // },
 ];

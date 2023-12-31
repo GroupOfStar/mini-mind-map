@@ -1,9 +1,10 @@
-import { Layout } from "./Layout";
-import { nonLayeredTidyTree } from "../algorithms";
+import { Layout, nonLayeredTidyTree, WrapperdTree } from "./../core";
+import { RootNode } from "./../../node";
 
-export class DownwardOrganizational extends Layout {
+export class DownwardOrganizational extends Layout<RootNode> {
   doLayout() {
-    const rootNode = this.rootNode;
-    return nonLayeredTidyTree(rootNode, false);
+    const wt = nonLayeredTidyTree(this.rootNode, false);
+    WrapperdTree.convertBack(wt, this.rootNode);
+    return this.rootNode;
   }
 }

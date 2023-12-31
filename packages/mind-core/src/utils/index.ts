@@ -1,4 +1,4 @@
-import type { IForEachNode, ITreeNode, IWarpperNode } from "./index.d";
+import type { IForEachNode, IWarpperNode } from "./index.d";
 
 /**
  * 防抖
@@ -34,7 +34,7 @@ export function forScopeEachTree<T extends ITreeNode<T>>(callback: IForEachNode<
     callback(item.current, item.index, item.parent);
     for (let i = 0; i < item.current.children.length; i++) {
       stack.push({
-        current: item.current.children[i],
+        current: item.current.children[i] as T,
         index: i,
         parent: item.current,
       });
@@ -48,8 +48,11 @@ export function forScopeEachTree<T extends ITreeNode<T>>(callback: IForEachNode<
  * @param callback 遍历时执行的回调
  * @param node 遍历的节点树
  */
-export function forDeepEachTree<T extends ITreeNode<T>>(callback: IForEachNode<T>, node: T) {
-  const stack: IWarpperNode<T>[] = [{ current: node, index: 0 }];
+export function forDeepEachTree<T extends ITreeNode<T>>(
+  callback: IForEachNode<ITreeNode<T>>,
+  node: T
+) {
+  const stack: IWarpperNode<ITreeNode<T>>[] = [{ current: node, index: 0 }];
   while (stack.length) {
     const item = stack.pop()!;
     callback(item.current, item.index, item.parent);

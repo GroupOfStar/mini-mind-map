@@ -81,6 +81,6 @@ export const layoutList = [
   {
     name: "向上分布",
     value: "UpwardOrganizational",
-    label: 3,
+    label: 4,
   },
 ];

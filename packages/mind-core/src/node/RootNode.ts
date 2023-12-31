@@ -1,11 +1,12 @@
 import { Rect, Text } from "@svgdotjs/svg.js";
 import { Node } from "./Node";
 import type { IRootNodeProps } from "./index.d";
+import { SecondNode } from "./SecondNode";
 
-export class RootNode extends Node {
+export class RootNode extends Node<null, SecondNode> {
   private textNode = new Text();
   private thisNode = new Rect();
-  constructor(props: IRootNodeProps) {
+  constructor(props: IRootNodeProps<null, SecondNode>) {
     super({ ...props, nodeType: "root" });
     const { nodeData } = props;
 

@@ -1,14 +1,39 @@
 import { Graph } from "src/graph";
-import { Node } from "src/node";
+import { DefaultNode, SecondNode } from "src/node";
 
-// 二次贝塞尔曲线
+/**
+ * 直线连接
+ * @param x1 开始位置的x轴
+ * @param y1 开始位置的y轴
+ * @param x2 结束位置的x轴
+ * @param y2 结束位置的y轴
+ * @returns path路径
+ */
+function straightLinePath(x1: number, y1: number, x2: number, y2: number) {
+  return `M ${x1},${y1} Q ${x2},${y2}`;
+}
+/**
+ * 二次贝塞尔曲线
+ * @param x1 开始位置的x轴
+ * @param y1 开始位置的y轴
+ * @param x2 结束位置的x轴
+ * @param y2 结束位置的y轴
+ * @returns path路径
+ */
 function quadraticCurvePath(x1: number, y1: number, x2: number, y2: number) {
   const cx = x1 + (x2 - x1) * 0.2;
   const cy = y1 + (y2 - y1) * 0.8;
   return `M ${x1},${y1} Q ${cx},${cy} ${x2},${y2}`;
 }
 
-// 三次贝塞尔曲线
+/**
+ * 三次贝塞尔曲线
+ * @param x1 开始位置的x轴
+ * @param y1 开始位置的y轴
+ * @param x2 结束位置的x轴
+ * @param y2 结束位置的y轴
+ * @returns path路径
+ */
 function cubicBezierPath(x1: number, y1: number, x2: number, y2: number) {
   const cx1 = x1 + (x2 - x1) / 2;
   const cy1 = y1;
@@ -18,16 +43,16 @@ function cubicBezierPath(x1: number, y1: number, x2: number, y2: number) {
 }
 
 // 画线
-export const drawEdge = function (
+export const drawEdge = function <T extends ITreeNode<SecondNode | DefaultNode>>(
   mindMap: Graph,
-  current: Node,
+  current: T,
   index: number,
-  parentNode: Node,
+  parentNode: T,
   isHorizontal: boolean
 ) {
   if (parentNode) {
-    let beginNode: Node;
-    let endNode: Node;
+    let beginNode: T;
+    let endNode: T;
     let beginX: number;
     let beginY: number;
     let endX: number;
@@ -66,7 +91,6 @@ export const drawEdge = function (
         endY = endNode.shape.y + endNode.shape.height / 2;
       }
     }
-
     let path = "";
     // 根节点连二级节点
     if (beginNode.depth === 1) {

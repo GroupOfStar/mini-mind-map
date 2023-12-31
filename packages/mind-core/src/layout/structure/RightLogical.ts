@@ -1,11 +1,10 @@
-import { Layout } from "./Layout";
-import { nonLayeredTidyTree2 } from "../algorithms";
-import { WrapperdTree2 } from "../hierarchy/WrapperdTree2";
+import { Layout, nonLayeredTidyTree, WrapperdTree } from "./../core";
+import { RootNode } from "./../../node";
 
-export class RightLogical extends Layout {
+export class RightLogical extends Layout<RootNode> {
   doLayout() {
-    const wt = nonLayeredTidyTree2(this.rootNode, true);
-    WrapperdTree2.convertBack(wt, this.rootNode);
+    const wt = nonLayeredTidyTree(this.rootNode, true);
+    WrapperdTree.convertBack(wt, this.rootNode);
     return this.rootNode;
   }
 }

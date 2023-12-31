@@ -1,12 +1,12 @@
 import { INodeTheme } from "./../style";
 
-export interface INodeData {
+export interface INodeData<T = unknown> extends ITreeNode<T> {
   id: string;
   pid: "root" | string;
   depth?: number;
   text?: string;
   theme?: INodeTheme;
-  children?: INodeData[];
+  children: INodeData<T>[];
   [key: string]: any;
 }
 

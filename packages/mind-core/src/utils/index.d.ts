@@ -1,10 +1,3 @@
-// 树的节点item
-export interface ITreeNode<T> {
-  id?: any;
-  children: T[];
-  [key: PropertyKey]: any;
-}
-
 // 包装节点
 export interface IWarpperNode<T> {
   current: T;

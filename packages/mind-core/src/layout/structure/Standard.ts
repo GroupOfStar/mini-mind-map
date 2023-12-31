@@ -1,8 +1,7 @@
-import { Layout } from "./Layout";
-import { nonLayeredTidyTree } from "../algorithms";
+import { Layout, nonLayeredTidyTree, WrapperdTree } from "./../core";
 import { RootNode } from "./../../node";
 
-export class Standard extends Layout {
+export class Standard extends Layout<RootNode> {
   doLayout() {
     // separate into left and right trees
     const leftTree = new RootNode({ nodeData: this.rootNode.nodeData });
@@ -18,17 +17,23 @@ export class Standard extends Layout {
       }
     }
     // do layout for left and right trees
-    nonLayeredTidyTree(rightTree, true);
-    nonLayeredTidyTree(leftTree, true);
-    leftTree.right2left();
+    const rightWt = nonLayeredTidyTree(rightTree, true);
+    WrapperdTree.convertBack(rightWt, rightTree);
+    const leftWt = nonLayeredTidyTree(leftTree, true);
+    WrapperdTree.convertBack(leftWt, leftTree);
+    this.right2left(leftTree, this.getBoundingBox(leftTree));
     // combine left and right trees
-    rightTree.translate(leftTree.shape.x - rightTree.shape.x, leftTree.shape.y - rightTree.shape.y);
+    this.translate(
+      rightTree,
+      leftTree.shape.x - rightTree.shape.x,
+      leftTree.shape.y - rightTree.shape.y
+    );
     // translate rootNode
     this.rootNode.shape.x = leftTree.shape.x;
     this.rootNode.shape.y = rightTree.shape.y;
-    const bb = this.rootNode.getBoundingBox();
+    const bb = this.getBoundingBox(this.rootNode);
     if (bb.top < 0) {
-      this.rootNode.translate(0, -bb.top);
+      this.translate(this.rootNode, 0, -bb.top);
     }
     return this.rootNode;
   }

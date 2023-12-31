@@ -13,7 +13,7 @@
     "sourceMap": false,
     "downlevelIteration": true,
     "lib": ["ESNext", "DOM"],
-    "types": ["vitest/globals", "node"]
+    "types": ["vitest/globals", "node", "./types.d.ts"]
   },
   "include": ["src", "__tests__"],
   "exclude": ["rollup.config.ts"],

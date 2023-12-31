@@ -1,11 +1,12 @@
-import { Layout } from "./Layout";
-import { nonLayeredTidyTree } from "../algorithms";
+import { Layout, nonLayeredTidyTree, WrapperdTree } from "./../core";
+import { RootNode } from "./../../node";
 
-export class UpwardOrganizational extends Layout {
+export class UpwardOrganizational extends Layout<RootNode> {
   doLayout() {
-    const rootNode = this.rootNode;
-    nonLayeredTidyTree(rootNode, false);
-    rootNode.down2up();
-    return rootNode;
+    const wt = nonLayeredTidyTree(this.rootNode, false);
+    WrapperdTree.convertBack(wt, this.rootNode);
+    const boundingBox = this.getBoundingBox(this.rootNode);
+    this.down2up(this.rootNode, boundingBox);
+    return this.rootNode;
   }
 }

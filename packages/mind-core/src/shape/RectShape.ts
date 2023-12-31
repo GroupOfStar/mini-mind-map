@@ -26,11 +26,11 @@ export class RectShape extends Shape {
   }
   get width(): number {
     // 最后一个是间距
-    return this.cWidth + (this.nodeStyle.borderWidth || 0) + 7;
+    return this.cWidth + (this.nodeStyle.borderWidth || 0) * 2 + 6 * 2;
   }
   get height(): number {
     // 最后一个是间距
-    return this.cHeight + (this.nodeStyle.borderWidth || 0) + 7;
+    return this.cHeight + (this.nodeStyle.borderWidth || 0) * 2 + 6 * 2;
   }
   // createBorderRect(w: number = 0, h: number = 0) {
   //   const rectNode = new Rect();
