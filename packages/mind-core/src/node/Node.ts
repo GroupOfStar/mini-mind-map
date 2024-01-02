@@ -78,6 +78,23 @@ export abstract class Node<P, C> implements ITreeNode<Node<P, C>> {
   }
   /** 节点点击事件 */
   onClick(event: Event) {
+    const { x, y, width, height } = this.shape;
+    const { marginX, marginY } = this.style;
+    console.log(
+      `${this.nodeData.text}:>>`,
+      " x :",
+      x,
+      " y :",
+      y,
+      " width :",
+      width,
+      " height :",
+      height,
+      " marginX :",
+      marginX,
+      " marginY :",
+      marginY
+    );
     event.stopPropagation();
     // 先取消容器组下所有的active样式
     this.nodesGroup.find("rect.active").forEach((item) => {

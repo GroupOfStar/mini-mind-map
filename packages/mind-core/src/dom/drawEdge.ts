@@ -69,7 +69,8 @@ export const drawEdge = function <T extends ITreeNode<SecondNode | DefaultNode>>
       beginX = beginNode.shape.x - beginNode.shape.width / 2;
       beginY = beginNode.shape.y;
       if (endNode.isRoot) {
-        endX = endNode.shape.x;
+        // endX = endNode.shape.x;
+        endX = endNode.shape.x + endNode.shape.width / 2;
       } else {
         endX = endNode.shape.x + endNode.shape.width / 2;
       }
@@ -86,7 +87,8 @@ export const drawEdge = function <T extends ITreeNode<SecondNode | DefaultNode>>
       beginY = beginNode.shape.y - beginNode.shape.height / 2;
       endX = endNode.shape.x;
       if (endNode.isRoot) {
-        endY = endNode.shape.y;
+        // endY = endNode.shape.y;
+        endY = endNode.shape.y + endNode.shape.height / 2;
       } else {
         endY = endNode.shape.y + endNode.shape.height / 2;
       }
@@ -99,6 +101,9 @@ export const drawEdge = function <T extends ITreeNode<SecondNode | DefaultNode>>
       path = cubicBezierPath(beginX, beginY, endX, endY);
     }
     const line = mindMap.linesGroup.path(path);
+    line.on("click", (event) => {
+      console.log("width :>> ", beginX - endX, "height :>> ", beginY - endY);
+    });
     line.fill("none");
     const { lineColor, lineWidth } = mindMap.canvas;
     line.stroke({ color: lineColor, width: lineWidth });
