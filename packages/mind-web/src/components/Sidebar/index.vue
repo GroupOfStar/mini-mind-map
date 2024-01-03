@@ -72,7 +72,6 @@ const onTestClick = (e: MouseEvent) => {
 };
 
 const layout = (item: any) => {
-  console.log("item.value :>> ", item.value);
   const mindMap = props.mindMap;
   mindMap.canvas.layout = item.value;
   mindMap.layout();
@@ -84,17 +83,14 @@ const layout = (item: any) => {
 .sider {
   .sidebarLeft {
     position: fixed;
-    left: 0;
-    margin-left: 15px;
+    right: 0;
+    margin-right: 15px;
     transition: all 0.3s;
     width: 49px;
     background-color: #fff;
     box-shadow: 0 3.5px 8.75px 0 #0000001a;
     border-radius: 14px;
     top: 36px;
-    &.show {
-      left: 0;
-    }
     .trigger {
       border-color: #eee;
       padding: 10px 0;
@@ -138,22 +134,19 @@ const layout = (item: any) => {
 
   .containerLeft {
     position: fixed;
-    left: 58px;
+    right: 58px;
     bottom: 0;
     top: 30px;
     width: 272px;
-    margin-left: 17px;
+    margin-right: 17px;
     background-color: #fff;
-    border-left: 1px solid #e8e8e8;
+    border-right: 1px solid #e8e8e8;
     display: flex;
     flex-direction: column;
     transition: all 0.3s;
     box-shadow: 0 3.5px 8.75px 0 #0000001a;
     border-radius: 14px;
     height: calc(100vh - 122px);
-    &.show {
-      left: 66px;
-    }
 
     .closeBtn {
       position: absolute;

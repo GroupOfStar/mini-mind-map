@@ -44,11 +44,15 @@ export class WrapperdTree<T extends ITreeNode<T>> {
   get childCount() {
     return this.children.length;
   }
+  /** 获取最后一个子节点 */
+  get lastChild() {
+    return this.children[this.children.length - 1];
+  }
   /** 轮廓底部的定位 */
   get contourBottom() {
     if (this.children.length > 0) {
-      const lastChild = this.children[this.children.length - 1];
-      return Math.max(lastChild.y + lastChild.height, lastChild.contourBottom);
+      const { y, height, contourBottom } = this.lastChild;
+      return Math.max(y + height, contourBottom);
     } else {
       return this.y + this.height;
     }
@@ -76,6 +80,20 @@ export class WrapperdTree<T extends ITreeNode<T>> {
     if (this.parentWt) {
       const fid = this.parentWt.children.findIndex((item) => item === this);
       return fid > 0 ? this.parentWt.children[fid - 1] : this.parentWt.prevContour;
+    } else {
+      return undefined;
+    }
+  }
+  /** 获取上一个同级轮廓节点 */
+  getPrevSameLevelContour<T extends ITreeNode<T>>(deep: number = 0) {
+    if (this.parentWt) {
+      const getDeepNode = (pn: WrapperdTree<T>, d: number) => {
+        return d > 1 ? getDeepNode(pn.lastChild, d - 1) : pn.lastChild;
+      };
+      const fid = this.parentWt.children.findIndex((item) => item === this);
+      return fid > 0
+        ? getDeepNode(this.parentWt.children[fid - 1], deep)
+        : this.parentWt.getPrevSameLevelContour(deep + 1);
     } else {
       return undefined;
     }

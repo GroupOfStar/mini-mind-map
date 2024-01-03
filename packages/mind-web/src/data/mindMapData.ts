@@ -258,3 +258,81 @@ export const mindMapData2 = [
   //   icon: ["progress_2"],
   // },
 ];
+
+export const mindMapData3 = [
+  {
+    id: "conf#b7a2e17cfa37b53e907ba00e258ef0ce",
+    config: {},
+    info: {
+      isZenMode: false,
+    },
+    layout: "logicalStructure",
+    theme: {
+      template: "onlyYellow",
+      config: {},
+    },
+    _start: true,
+  },
+  {
+    id: "mind#2aeb13ae-5d9b-43db-80fb-286c2515d78a",
+    expand: true,
+    pid: "conf#b7a2e17cfa37b53e907ba00e258ef0ce",
+    text: "中心节点",
+    isActive: false,
+  },
+  {
+    id: "mind#1e3e635e-f533-4016-a0d7-8099f886f18a",
+    pid: "mind#2aeb13ae-5d9b-43db-80fb-286c2515d78a",
+    text: "第二层节点02",
+    expand: true,
+    isActive: false,
+  },
+  {
+    id: "mind#3a7dda90-6a2d-4793-89db-d17e04cd0b1d",
+    pid: "mind#1e3e635e-f533-4016-a0d7-8099f886f18a",
+    text: "第3层节点02-01",
+    expand: true,
+    isActive: false,
+    children: [],
+  },
+  {
+    id: "mind#1e3e635e-gg33-ff33-a0d7-4456dd463534",
+    pid: "mind#3a7dda90-6a2d-4793-89db-d17e04cd0b1d",
+    text: "第3层节点02-01-01",
+    expand: true,
+    isActive: false,
+    children: [],
+  },
+  {
+    id: "mind#3a7dda90-6a2d-4793-89db-sg3ddd3345r52",
+    pid: "mind#1e3e635e-f533-4016-a0d7-8099f886f18a",
+    text: "第3层节点02-02",
+    expand: true,
+    isActive: false,
+    children: [],
+  },
+  {
+    id: "mind#1e3e635e-4gg6s-4016-a0d7-hd4rfff5535h",
+    pid: "mind#3a7dda90-6a2d-4793-89db-sg3ddd3345r52",
+    text: "第3层节点02-02-01",
+    expand: true,
+    isActive: false,
+    children: [],
+  },
+  {
+    id: "mind#3a7dda90-gg-5566-89db-666dfhgfu5673",
+    pid: "mind#1e3e635e-f533-4016-a0d7-8099f886f18a",
+    text: "第3层节点02-03",
+    expand: true,
+    isActive: false,
+    children: [],
+  },
+  {
+    id: "mind#1e3e635e-f533-4016-a0d7-44jj5476523",
+    pid: "mind#3a7dda90-gg-5566-89db-666dfhgfu5673",
+    text: "第3层节点02-03",
+    expand: true,
+    isActive: false,
+    children: [],
+  },
+];

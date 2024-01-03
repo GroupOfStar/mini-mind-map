@@ -1,5 +1,5 @@
 import { INodeData } from "@mini-mind-map/mind-core";
-import { mindMapData, mindMapData2 } from "./mindMapData";
+import { mindMapData, mindMapData2, mindMapData3 } from "./mindMapData";
 
 /**
  * 通过一维的节点数组生成节点树数据

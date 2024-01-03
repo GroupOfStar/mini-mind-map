@@ -3,6 +3,7 @@ import type { ITheme } from ".";
 /** 默认主题 */
 export const defaultTheme: ITheme = {
   layout: "RightLogical",
+  // layout: "DownwardOrganizational",
   imgMaxWidth: 100,
   imgMaxHeight: 100,
   iconSize: 20,

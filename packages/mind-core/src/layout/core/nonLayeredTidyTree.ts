@@ -23,18 +23,37 @@ export const nonLayeredTidyTree = <T extends ITreeNode<T>>(root: T, isHorizontal
     if (prevContour) {
       currentWt.y = prevContour.contourBottom + vGap;
     }
-    // 如果没有子节点
-    const children = currentWt.children;
-    children.forEach((item, index, arr) => walk(item, arr[index - 1], currentWt));
+    currentWt.children.forEach((item, index, arr) => walk(item, arr[index - 1], currentWt));
     if (prevWt) {
       if (curChildCount === 0) {
-        currentWt.y = prevWt.contourBottom + vGap;
-      } else {
+        currentWt.y =
+          prevWt.contourBottom +
+          (prevWt.contourBottom - prevWt.y - prevWt.height > vGap ? 0 : vGap);
+      } else if (curChildCount === 1) {
+        if (WrapperdTree.isHorizontal) {
+          currentWt.y = currentWt.contourCenter - curHeight / 2;
+        } else {
+          currentWt.y = currentWt.children[0].y;
+        }
+      } else if (curChildCount > 1) {
         currentWt.y = currentWt.contourCenter - curHeight / 2;
       }
     } else {
-      if (curChildCount === 1) {
-        currentWt.y = currentWt.children[0].y;
+      if (curChildCount === 0) {
+        // 上一个同级轮廓节点
+        const prevSameLevelNode = currentWt.getPrevSameLevelContour();
+        if (prevSameLevelNode) {
+          const { contourBottom, y, height } = prevSameLevelNode;
+          currentWt.y = contourBottom + (contourBottom - y - height > vGap ? 0 : vGap);
+        } else {
+          currentWt.y = currentWt.y;
+        }
+      } else if (curChildCount === 1) {
+        if (WrapperdTree.isHorizontal) {
+          currentWt.y = currentWt.contourCenter - curHeight / 2;
+        } else {
+          currentWt.y = currentWt.children[0].y;
+        }
       } else if (curChildCount > 1) {
         currentWt.y = currentWt.contourCenter - curHeight / 2;
       }

@@ -151,6 +151,7 @@ export class Graph {
   layout() {
     if (this.rootNode) {
       this.linesGroup.clear();
+      console.log("this.canvas.layout :>> ", this.canvas.layout);
       const MindmapLayout = Structure[this.canvas.layout];
       const layout = new MindmapLayout(this.rootNode);
       const rootNode = layout.doLayout();
