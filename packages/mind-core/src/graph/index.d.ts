@@ -2,7 +2,7 @@ import { INodeTheme } from "./../style";
 
 export interface INodeData<T = unknown> extends ITreeNode<T> {
   id: string;
-  pid: "root" | string;
+  pid?: "root" | string;
   depth?: number;
   text?: string;
   theme?: INodeTheme;

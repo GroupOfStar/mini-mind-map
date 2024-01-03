@@ -1,19 +1,20 @@
 import { SVG, G } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import * as Structure from "./../layout";
-import { DefaultNode, RootNode, SecondNode, Node } from "./../node";
+import { DefaultNode, Node, RootNode, SecondNode } from "./../node";
 import { Canvas } from "./../style";
 import { emitter } from "./../emitter";
 import type { Emitter } from "./../emitter/index.d";
 import { drawEdge } from "./../dom";
 import { INodeData, IEvents } from "./index.d";
 import { GraphEvent } from "./GraphEvent";
-import { forScopeEachTree } from "src/utils";
+import { forScopeEachTree, mapTree } from "src/utils";
 
 export class Graph {
   canvas: Canvas;
   el: HTMLElement;
-  dataTree: INodeData[];
+  // dataTree: Node<null | RootNode | SecondNode | DefaultNode, RootNode | SecondNode | DefaultNode>[];
+  dataTree: INodeData<RootNode | SecondNode | DefaultNode>[];
   rootNode?: RootNode;
   svg: SVGType.Svg;
   graphGroup: SVGType.G;
@@ -68,21 +69,6 @@ export class Graph {
       this.dataTree = [{ ...fidRoot, depth: 0, children: treeLoop(list, fidRoot.id, 0) }];
     }
   }
-  /** 遍历树得到新的数据 */
-  mapTree<T extends RootNode | SecondNode | DefaultNode>(
-    callback: (nodeData: INodeData, index: number, parentNode?: T) => T
-  ): T[] {
-    function walk(data: any[], parentNode?: T) {
-      return data.map((item, index) => {
-        const node = callback(item, index, parentNode);
-        if (Array.isArray(item.children)) {
-          node.children = walk(item.children, node);
-        }
-        return node;
-      });
-    }
-    return walk(this.dataTree);
-  }
   /**
    * window 的resize事件
    * 始终保持根节点的y在窗口中间，x根据布局类型来设置在窗口1/3处
@@ -116,13 +102,13 @@ export class Graph {
   }
   /** 渲染 */
   render() {
-    const nodeTree = this.mapTree((nodeData, index, parentNode) => {
+    const nodeTree = mapTree((nodeData, index, parentNode) => {
       const depth = nodeData.depth || 0;
       let node: RootNode | SecondNode | DefaultNode;
       const nodePorps = {
         nodeData,
         nodesGroup: this.nodesGroup,
-        parentNode,
+        parentNode: parentNode as Node<RootNode, DefaultNode>,
         emitter: this.emitter,
       };
       switch (depth) {
@@ -141,7 +127,7 @@ export class Graph {
       node.setNodeStyle();
       node.bindEvent();
       return node;
-    });
+    }, this.dataTree);
     this.rootNode = nodeTree[0] as RootNode;
 
     this.bindEvent();
@@ -161,12 +147,6 @@ export class Graph {
         });
         node.group.cx(node.shape.x).cy(node.shape.y);
       }, rootNode);
-      // rootNode.eachNode((node) => {
-      //   node.children.forEach((child, index) => {
-      //     drawEdge(this, child, index, node, this.canvas.isHorizontal);
-      //   });
-      //   node.group.cx(node.shape.x).cy(node.shape.y);
-      // });
     }
   }
   /** 画布点击事件 */

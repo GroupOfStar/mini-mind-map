@@ -20,6 +20,28 @@ export function debounce(fn: Function, time: number = 300) {
 }
 
 /**
+ * 遍历树得到新的数据
+ * @param callback 遍历时执行的回调
+ * @param dataTree 节点树
+ * @returns 遍历后的节点树
+ */
+export function mapTree<K extends PropertyKey, T extends ITreeNode<K>>(
+  callback: (nodeData: T, index: number, parentNode?: T) => T,
+  dataTree: T[]
+): any[] {
+  function walk(data: T[], parentNode?: T) {
+    return data.map((item, index) => {
+      const node = callback(item, index, parentNode);
+      return {
+        ...node,
+        children: walk(item.children as T[], node),
+      };
+    });
+  }
+  return walk(dataTree);
+}
+
+/**
  * 广度优先
  * 遍历节点及子节点 by while
  * @param callback 遍历时执行的回调
@@ -48,17 +70,14 @@ export function forScopeEachTree<T extends ITreeNode<T>>(callback: IForEachNode<
  * @param callback 遍历时执行的回调
  * @param node 遍历的节点树
  */
-export function forDeepEachTree<T extends ITreeNode<T>>(
-  callback: IForEachNode<ITreeNode<T>>,
-  node: T
-) {
-  const stack: IWarpperNode<ITreeNode<T>>[] = [{ current: node, index: 0 }];
+export function forDeepEachTree<T extends ITreeNode<T>>(callback: IForEachNode<T>, node: T) {
+  const stack: IWarpperNode<T>[] = [{ current: node, index: 0 }];
   while (stack.length) {
     const item = stack.pop()!;
     callback(item.current, item.index, item.parent);
     for (let i = item.current.children.length - 1; i > -1; i--) {
       stack.push({
-        current: item.current.children[i],
+        current: item.current.children[i] as T,
         index: i,
         parent: item.current,
       });
