@@ -1,3 +1,5 @@
+import type { TNodeTypeOfKey } from "./../../node/index.d";
+
 export interface INodeTheme {
   /** 节点字体 */
   fontFamily?: string;
@@ -100,8 +102,5 @@ export interface IDefaultTheme {
   fontFamily?: string;
 }
 
-/** 节点类型 */
-export type INodeType = "root" | "second" | "node" | "generalization";
-
 /** 主题配置 */
-export type ITheme = Record<INodeType, INodeTheme> & IDefaultTheme;
+export type ITheme = Record<TNodeTypeOfKey, INodeTheme> & IDefaultTheme;

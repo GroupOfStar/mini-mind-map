@@ -1,6 +1,7 @@
 import { G, Rect, Text } from "@svgdotjs/svg.js";
 import { Theme } from "./theme";
-import type { INodeType, INodeTheme } from "./theme";
+import type { TNodeTypeOfKey } from "./../node/index.d";
+import type { INodeTheme } from "./theme";
 import type { INodeData } from "./../graph/index.d";
 
 // // 获取类型中的函数名称
@@ -9,14 +10,14 @@ import type { INodeData } from "./../graph/index.d";
 // }[keyof T];
 
 // /** 节点类型 */
-// export type INodeType = Exclude<
+// export type TNodeTypeOfKey = Exclude<
 //   keyof Theme,
 //   "defalutTheme" | MethodNames<Theme>
 // >;
 
 export class Style implements INodeTheme {
   /** 节点类型 */
-  nodeType: INodeType;
+  nodeType: TNodeTypeOfKey;
 
   /** 节点横向边距 */
   paddingX?: number;
@@ -51,7 +52,7 @@ export class Style implements INodeTheme {
     rectBorder?: string;
   };
 
-  constructor(nodeType: INodeType) {
+  constructor(nodeType: TNodeTypeOfKey) {
     this.nodeType = nodeType;
     const theme = new Theme();
     const nodeThemeStyle = theme[this.nodeType];
@@ -65,7 +66,7 @@ export class Style implements INodeTheme {
   /**
    *
    * @param {INodeData["theme"]} nodeTheme 节点自身样式
-   * @param {INodeType} nodeType 节点类型
+   * @param {TNodeTypeOfKey} nodeType 节点类型
    */
   setStyle(nodeTheme: INodeData["theme"] = {}) {
     // const nodeThemeStyle = this.theme[this.nodeType];

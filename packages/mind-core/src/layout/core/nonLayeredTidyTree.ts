@@ -6,7 +6,7 @@ import { WrapperdTree } from "./WrapperdTree";
  * @param isHorizontal 是否为水平方向
  * @returns 布局节点树
  */
-export const nonLayeredTidyTree = <T extends ITreeNode<T>>(root: T, isHorizontal: boolean) => {
+export const nonLayeredTidyTree = <T extends ITreeNode<{}>>(root: T, isHorizontal: boolean) => {
   /**
    * 循环深度遍历，设置节点的x,y
    * @param currentWt 当前节点

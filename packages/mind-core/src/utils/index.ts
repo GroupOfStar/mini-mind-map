@@ -25,7 +25,7 @@ export function debounce(fn: Function, time: number = 300) {
  * @param dataTree 节点树
  * @returns 遍历后的节点树
  */
-export function mapTree<K extends PropertyKey, T extends ITreeNode<K>>(
+export function mapTree<T extends ITreeNode>(
   callback: (nodeData: T, index: number, parentNode?: T) => T,
   dataTree: T[]
 ): any[] {
@@ -34,7 +34,7 @@ export function mapTree<K extends PropertyKey, T extends ITreeNode<K>>(
       const node = callback(item, index, parentNode);
       return {
         ...node,
-        children: walk(item.children as T[], node),
+        children: walk(item.children, node),
       };
     });
   }
@@ -47,7 +47,7 @@ export function mapTree<K extends PropertyKey, T extends ITreeNode<K>>(
  * @param callback 遍历时执行的回调
  * @param node 当前节点
  */
-export function forScopeEachTree<T extends ITreeNode<T>>(callback: IForEachNode<T>, node: T) {
+export function forScopeEachTree<T extends ITreeNode>(callback: IForEachNode<T>, node: T) {
   const nodeList: IWarpperNode<T>[] = [];
   const stack: IWarpperNode<T>[] = [{ current: node, index: 0 }];
   while (stack.length) {
@@ -56,7 +56,7 @@ export function forScopeEachTree<T extends ITreeNode<T>>(callback: IForEachNode<
     callback(item.current, item.index, item.parent);
     for (let i = 0; i < item.current.children.length; i++) {
       stack.push({
-        current: item.current.children[i] as T,
+        current: item.current.children[i],
         index: i,
         parent: item.current,
       });
@@ -70,14 +70,14 @@ export function forScopeEachTree<T extends ITreeNode<T>>(callback: IForEachNode<
  * @param callback 遍历时执行的回调
  * @param node 遍历的节点树
  */
-export function forDeepEachTree<T extends ITreeNode<T>>(callback: IForEachNode<T>, node: T) {
+export function forDeepEachTree<T extends ITreeNode>(callback: IForEachNode<T>, node: T) {
   const stack: IWarpperNode<T>[] = [{ current: node, index: 0 }];
   while (stack.length) {
     const item = stack.pop()!;
     callback(item.current, item.index, item.parent);
     for (let i = item.current.children.length - 1; i > -1; i--) {
       stack.push({
-        current: item.current.children[i] as T,
+        current: item.current.children[i],
         index: i,
         parent: item.current,
       });

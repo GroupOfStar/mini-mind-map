@@ -1,5 +1,5 @@
 import { Graph } from "src/graph";
-import { DefaultNode, SecondNode } from "src/node";
+import { DefaultNode, Node, SecondNode } from "src/node";
 
 /**
  * 直线连接
@@ -43,13 +43,9 @@ function cubicBezierPath(x1: number, y1: number, x2: number, y2: number) {
 }
 
 // 画线
-export const drawEdge = function <T extends ITreeNode<SecondNode | DefaultNode>>(
-  mindMap: Graph,
-  current: T,
-  index: number,
-  parentNode: T,
-  isHorizontal: boolean
-) {
+export const drawEdge = function <
+  T extends Node<SecondNode | DefaultNode, SecondNode | DefaultNode>
+>(mindMap: Graph, current: T, index: number, parentNode: T, isHorizontal: boolean) {
   if (parentNode) {
     let beginNode: T;
     let endNode: T;

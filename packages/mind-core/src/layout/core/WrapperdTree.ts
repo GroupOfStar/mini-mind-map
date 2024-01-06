@@ -1,5 +1,5 @@
 /** 布局节点 */
-export class WrapperdTree<T extends ITreeNode<T>> {
+export class WrapperdTree<T extends ITreeNode> {
   /** 是否水平布局 */
   static isHorizontal: boolean = true;
   /** 名称 */
@@ -85,7 +85,7 @@ export class WrapperdTree<T extends ITreeNode<T>> {
     }
   }
   /** 获取上一个同级轮廓节点 */
-  getPrevSameLevelContour<T extends ITreeNode<T>>(deep: number = 0) {
+  getPrevSameLevelContour(deep: number = 0) {
     if (this.parentWt) {
       const getDeepNode = (pn: WrapperdTree<T>, d: number) => {
         return d > 1 ? getDeepNode(pn.lastChild, d - 1) : pn.lastChild;
@@ -103,7 +103,7 @@ export class WrapperdTree<T extends ITreeNode<T>> {
    * @param node 节点树
    * @returns 布局节点树
    */
-  static fromNode<T extends ITreeNode<T>>(node: T): WrapperdTree<T> {
+  static fromNode<T extends ITreeNode>(node: T): WrapperdTree<T> {
     return new WrapperdTree(
       node,
       node.children.map((item) => WrapperdTree.fromNode(item))
@@ -114,7 +114,7 @@ export class WrapperdTree<T extends ITreeNode<T>> {
    * @param wt 布局后的节点树
    * @param root 传入的节点树
    */
-  static convertBack<T extends ITreeNode<T>>(wt: WrapperdTree<T>, root: T) {
+  static convertBack<T extends ITreeNode>(wt: WrapperdTree<T>, root: T) {
     if (WrapperdTree.isHorizontal) {
       root.shape.x = wt.x;
       root.shape.y = wt.y;

@@ -14,7 +14,7 @@ export class Graph {
   canvas: Canvas;
   el: HTMLElement;
   // dataTree: Node<null | RootNode | SecondNode | DefaultNode, RootNode | SecondNode | DefaultNode>[];
-  dataTree: INodeData<RootNode | SecondNode | DefaultNode>[];
+  dataTree: INodeData[];
   rootNode?: RootNode;
   svg: SVGType.Svg;
   graphGroup: SVGType.G;

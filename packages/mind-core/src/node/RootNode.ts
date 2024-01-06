@@ -1,7 +1,7 @@
 import { Rect, Text } from "@svgdotjs/svg.js";
 import { Node } from "./Node";
 import type { IRootNodeProps } from "./index.d";
-import { SecondNode } from "./SecondNode";
+import type { SecondNode } from "./index";
 
 export class RootNode extends Node<null, SecondNode> {
   private textNode = new Text();

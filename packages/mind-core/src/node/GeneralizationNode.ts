@@ -1,17 +1,15 @@
 import { Rect, Text } from "@svgdotjs/svg.js";
 import { Node } from "./Node";
-import type { ISecondNodeProps } from "./index.d";
-import type { DefaultNode } from "./DefaultNode";
-import type { RootNode } from "./index";
+import type { IGeneralizationNodeProps } from "./index.d";
+import { DefaultNode } from "./DefaultNode";
 
-export class SecondNode extends Node<RootNode, DefaultNode> {
+export class GeneralizationNode extends Node<DefaultNode, unknown> {
   private textNode = new Text();
   private thisNode = new Rect();
-  constructor(props: ISecondNodeProps<RootNode, DefaultNode>) {
-    super({ ...props, nodeType: "second" });
-    const { nodeData } = props;
+  constructor(props: IGeneralizationNodeProps<DefaultNode, unknown>) {
+    super({ ...props, nodeType: "node" });
     // 文本节点
-    this.textNode.addClass("text").text(nodeData.text || "");
+    this.textNode.addClass("text").text(props.nodeData.text || "");
     // 节点边框
     this.borderNode.addTo(this.group).addClass("node-border");
     // 节点本身

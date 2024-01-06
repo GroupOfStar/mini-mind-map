@@ -6,7 +6,7 @@ import { RectShape } from "./../shape";
 import type { INodeProps } from "./index.d";
 import { Emitter } from "./../emitter/index.d";
 
-export abstract class Node<P, C> implements ITreeNode<Node<P, C>> {
+export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
   /** 节点group挂载的group容器 */
   nodesGroup: G;
   /** 节点group */
@@ -24,7 +24,7 @@ export abstract class Node<P, C> implements ITreeNode<Node<P, C>> {
   /** 父节点 */
   parentNode?: Node<P, C>;
   /** 子节点 */
-  children: Node<P, C>[] = [];
+  children: Node<C, C>[] = [];
   /** 边框节点 */
   protected borderNode = new Rect();
   /** 事件广播 */

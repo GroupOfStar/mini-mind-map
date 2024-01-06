@@ -1,7 +1,8 @@
 import { defaultTheme } from "./default";
-import type { ITheme, IDefaultTheme, INodeTheme, INodeType } from "./index.d";
+import type { TNodeTypeOfKey } from "./../../node/index.d";
+import type { ITheme, IDefaultTheme, INodeTheme } from "./index.d";
 
-export class Theme implements Record<INodeType, INodeTheme> {
+export class Theme implements Record<TNodeTypeOfKey, INodeTheme> {
   static instance?: Theme;
 
   root!: INodeTheme;
