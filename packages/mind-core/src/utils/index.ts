@@ -20,7 +20,7 @@ export function debounce(fn: Function, time: number = 300) {
 }
 
 /**
- * 遍历树得到新的数据
+ * 深度先序遍历树得到新的数据
  * @param callback 遍历时执行的回调
  * @param dataTree 节点树
  * @returns 遍历后的节点树
@@ -83,4 +83,16 @@ export function forDeepEachTree<T extends ITreeNode>(callback: IForEachNode<T>, 
       });
     }
   }
+}
+
+/**
+ * 深度获取子节点总数
+ * @param node 节点数
+ * @returns 子节点的总数
+ */
+export function getTreeNodeTotal<T extends ITreeNode>(node: T): number {
+  return node.children.reduce(
+    (total, item) => total + getTreeNodeTotal(item),
+    node.children.length
+  );
 }

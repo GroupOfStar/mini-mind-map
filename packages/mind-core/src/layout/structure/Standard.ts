@@ -17,10 +17,10 @@ export class Standard extends Layout<RootNode> {
       }
     }
     // do layout for left and right trees
-    const rightWt = nonLayeredTidyTree(rightTree, true);
-    WrapperdTree.convertBack(rightWt, rightTree);
-    const leftWt = nonLayeredTidyTree(leftTree, true);
-    WrapperdTree.convertBack(leftWt, leftTree);
+    const rightWt = nonLayeredTidyTree(rightTree, true, this.option);
+    WrapperdTree.convertBack(rightWt, rightTree, this.option);
+    const leftWt = nonLayeredTidyTree(leftTree, true, this.option);
+    WrapperdTree.convertBack(leftWt, leftTree, this.option);
     this.right2left(leftTree, this.getBoundingBox(leftTree));
     // combine left and right trees
     this.translate(

@@ -1,6 +1,6 @@
 import { defaultTheme } from "./default";
 import type { TNodeTypeOfKey } from "./../../node/index.d";
-import type { ITheme, IDefaultTheme, INodeTheme } from "./index.d";
+import type { ITheme, IConfig, INodeTheme } from "./index.d";
 
 export class Theme implements Record<TNodeTypeOfKey, INodeTheme> {
   static instance?: Theme;
@@ -8,7 +8,7 @@ export class Theme implements Record<TNodeTypeOfKey, INodeTheme> {
   root!: INodeTheme;
   second!: INodeTheme;
   node!: INodeTheme;
-  defalutTheme!: IDefaultTheme;
+  config!: IConfig;
   generalization!: INodeTheme;
 
   constructor(theme: ITheme = defaultTheme) {
@@ -51,10 +51,15 @@ export class Theme implements Record<TNodeTypeOfKey, INodeTheme> {
    */
   useTheme(theme: ITheme) {
     const { root, second, node, generalization, ...config } = Theme.mergeTheme(theme);
-    this.defalutTheme = config;
+    this.config = config;
     this.root = root;
     this.second = second;
     this.node = node;
     this.generalization = generalization;
+  }
+
+  /** 是否为水平布局 */
+  get isHorizontal() {
+    return ["LeftLogical", "RightLogical", "Standard"].indexOf(this.config.layout) > -1;
   }
 }

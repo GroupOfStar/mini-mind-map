@@ -1,7 +1,7 @@
 import { G, Rect, Text } from "@svgdotjs/svg.js";
 import { Theme } from "./theme";
 import type { TNodeTypeOfKey } from "./../node/index.d";
-import type { INodeTheme } from "./theme";
+import type { IConfig, INodeTheme } from "./theme";
 import type { INodeData } from "./../graph/index.d";
 
 // // 获取类型中的函数名称
@@ -51,6 +51,7 @@ export class Style implements INodeTheme {
     /** 选中状态的边框颜色 */
     rectBorder?: string;
   };
+  theme: Theme;
 
   constructor(nodeType: TNodeTypeOfKey) {
     this.nodeType = nodeType;
@@ -60,6 +61,7 @@ export class Style implements INodeTheme {
       // 深度赋值
       Object.assign(this, nodeThemeStyle);
     }
+    this.theme = theme;
     this.setStyle({});
   }
 

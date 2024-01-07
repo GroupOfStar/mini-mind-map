@@ -58,7 +58,7 @@ export type ILayoutType =
   | "RightLogical";
 
 /** 画布配置 */
-export interface IDefaultTheme {
+export interface IConfig {
   /** 布局类型 */
   layout: ILayoutType;
   /** 图片显示的最大宽度 */
@@ -100,7 +100,21 @@ export interface IDefaultTheme {
   nodeUseLineStyle?: boolean;
   /** 默认鸿蒙字体 */
   fontFamily?: string;
+  /** 选中节点后边框内的边距 */
+  selectedBorderPadding?: number;
+  /** 展开图标的边框宽度 */
+  expandborderWidth?: number;
+  /** 展开图标上下内边距 */
+  expandTBPadding?: number;
+  /** 展开图标左右内边距 */
+  expandLRPading?: number;
+  /** 展开图标字体大小 */
+  expandFontSize?: number;
+  /** 展开图标圆角大小 */
+  expandRadius?: number;
+  /** 展开图标的偏移 */
+  expandOffset?: number;
 }
 
 /** 主题配置 */
-export type ITheme = Record<TNodeTypeOfKey, INodeTheme> & IDefaultTheme;
+export type ITheme = Record<TNodeTypeOfKey, INodeTheme> & IConfig;

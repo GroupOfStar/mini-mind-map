@@ -1,3 +1,4 @@
+import { LayoutOption } from "./Layout";
 import { WrapperdTree } from "./WrapperdTree";
 
 /**
@@ -6,7 +7,11 @@ import { WrapperdTree } from "./WrapperdTree";
  * @param isHorizontal 是否为水平方向
  * @returns 布局节点树
  */
-export const nonLayeredTidyTree = <T extends ITreeNode<{}>>(root: T, isHorizontal: boolean) => {
+export const nonLayeredTidyTree = <T extends ITreeNode<{}>>(
+  root: T,
+  isHorizontal: boolean,
+  layoutOption: LayoutOption<T>
+) => {
   /**
    * 循环深度遍历，设置节点的x,y
    * @param currentWt 当前节点
@@ -62,7 +67,7 @@ export const nonLayeredTidyTree = <T extends ITreeNode<{}>>(root: T, isHorizonta
 
   WrapperdTree.isHorizontal = isHorizontal;
   // do layout
-  const wt = WrapperdTree.fromNode(root);
+  const wt = WrapperdTree.fromNode(root, layoutOption);
   walk(wt);
   return wt;
 };

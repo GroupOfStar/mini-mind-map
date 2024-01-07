@@ -1,4 +1,4 @@
-import type { ITheme } from ".";
+import type { ITheme } from "./index.d";
 
 /** 默认主题 */
 export const defaultTheme: ITheme = {
@@ -22,6 +22,13 @@ export const defaultTheme: ITheme = {
   backgroundSize: "cover",
   nodeUseLineStyle: false,
   fontFamily: "Harmony Medium",
+  selectedBorderPadding: 3,
+  expandborderWidth: 2,
+  expandTBPadding: 3,
+  expandLRPading: 6,
+  expandFontSize: 14,
+  expandRadius: 8,
+  expandOffset: 14,
   root: {
     fontFamily: "Harmony Medium",
     paddingX: 32,
@@ -37,7 +44,7 @@ export const defaultTheme: ITheme = {
     lineColor: "#257BF1",
     lineDasharray: "none",
     borderColor: "transparent",
-    borderWidth: 0,
+    borderWidth: 1,
     borderDasharray: "none",
     borderRadius: 8,
     textDecoration: "none",

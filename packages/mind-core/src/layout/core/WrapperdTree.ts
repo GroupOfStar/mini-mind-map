@@ -1,9 +1,9 @@
+import { LayoutOption } from "./Layout";
+
 /** 布局节点 */
-export class WrapperdTree<T extends ITreeNode> {
+export class WrapperdTree<T extends ITreeNode<{}>> {
   /** 是否水平布局 */
   static isHorizontal: boolean = true;
-  /** 名称 */
-  readonly name: string;
   /** 水平方向上的间距 */
   readonly hGap: number;
   /** 垂直方向上的间距 */
@@ -21,20 +21,17 @@ export class WrapperdTree<T extends ITreeNode> {
   /** children数组 */
   readonly children: WrapperdTree<T>[] = [];
 
-  constructor(node: T, children: WrapperdTree<T>[] = []) {
-    const { text = "" } = node.nodeData;
-    const { marginX, marginY } = node.style;
-    this.name = text;
-    this.hGap = marginX;
-    this.vGap = marginY;
+  constructor(node: T, children: WrapperdTree<T>[] = [], layoutOption: LayoutOption<T>) {
+    const { getWidth, getHeight, getHGap, getVGap } = layoutOption;
+    this.hGap = getHGap(node);
+    this.vGap = getVGap(node);
 
-    const { height, width } = node.shape;
     if (WrapperdTree.isHorizontal) {
-      this.width = width;
-      this.height = height;
+      this.width = getWidth(node);
+      this.height = getHeight(node);
     } else {
-      this.width = height;
-      this.height = width;
+      this.width = getHeight(node);
+      this.height = getWidth(node);
     }
     // 设置父节点
     children.forEach((item) => (item.parentWt = this));
@@ -103,10 +100,14 @@ export class WrapperdTree<T extends ITreeNode> {
    * @param node 节点树
    * @returns 布局节点树
    */
-  static fromNode<T extends ITreeNode>(node: T): WrapperdTree<T> {
+  static fromNode<T extends ITreeNode<{}>>(
+    node: T,
+    layoutOption: LayoutOption<T>
+  ): WrapperdTree<T> {
     return new WrapperdTree(
       node,
-      node.children.map((item) => WrapperdTree.fromNode(item))
+      node.children.map((item) => WrapperdTree.fromNode(item, layoutOption)),
+      layoutOption
     );
   }
   /**
@@ -114,16 +115,21 @@ export class WrapperdTree<T extends ITreeNode> {
    * @param wt 布局后的节点树
    * @param root 传入的节点树
    */
-  static convertBack<T extends ITreeNode>(wt: WrapperdTree<T>, root: T) {
+  static convertBack<T extends ITreeNode<{}>>(
+    wt: WrapperdTree<T>,
+    root: T,
+    layoutOption: LayoutOption<T>
+  ) {
+    const { setX, setY } = layoutOption;
     if (WrapperdTree.isHorizontal) {
-      root.shape.x = wt.x;
-      root.shape.y = wt.y;
+      setX(root, wt.x);
+      setY(root, wt.y);
     } else {
-      root.shape.x = wt.y;
-      root.shape.y = wt.x;
+      setX(root, wt.y);
+      setY(root, wt.x);
     }
     wt.children.forEach((child, i) => {
-      WrapperdTree.convertBack(child, root.children[i]);
+      WrapperdTree.convertBack(child, root.children[i], layoutOption);
     });
   }
 }

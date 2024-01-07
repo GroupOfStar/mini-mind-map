@@ -12,15 +12,15 @@ export const deepPurple = Theme.mergeTheme({
   root: {
     // 连线的颜色
     lineColor: "#534E96",
-    fillColor: "#5E3295"
+    fillColor: "#5E3295",
   },
   // 二级节点样式
   second: {
     // 连线的颜色
     lineColor: "#534E96",
     fillColor: "#534E96",
-    borderWidth: 0,
-    color: "#FFFFFF"
+    borderWidth: 1,
+    color: "#FFFFFF",
   },
   // 三级及以下节点样式
   node: {
@@ -28,13 +28,13 @@ export const deepPurple = Theme.mergeTheme({
     lineColor: "#534E96",
     fillColor: "#DDDCEA",
     color: "#534E96",
-    borderWidth: 0
+    borderWidth: 1,
   },
   // 概要节点样式
   generalization: {
     fillColor: "#5E3295",
     borderColor: "rgb(56, 123, 233)",
     color: "#fff",
-    borderWidth: 0
-  }
+    borderWidth: 0,
+  },
 });

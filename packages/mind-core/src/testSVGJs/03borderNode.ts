@@ -1,6 +1,6 @@
 import { SVG, G, Rect, Text } from "@svgdotjs/svg.js";
 import { Style } from "../style";
-import type { INodeType } from "./../style";
+import type { TNodeTypeOfKey } from "./../node/index.d";
 
 const initDraw = (el: HTMLElement) => {
   const draw = SVG().size("100%", "100%");
@@ -13,7 +13,7 @@ const initDraw = (el: HTMLElement) => {
 
   // 取消所有节点的active样式状态
   draw.on("click", () => {
-    draw.find("rect.active").forEach(item => {
+    draw.find("rect.active").forEach((item) => {
       item.stroke({ width: 1, color: "transparent" });
       item.removeClass("active");
     });
@@ -22,7 +22,7 @@ const initDraw = (el: HTMLElement) => {
   return group;
 };
 
-function createNode(nodesGroup: G, nodeType: INodeType = "node") {
+function createNode(nodesGroup: G, nodeType: TNodeTypeOfKey = "node") {
   const group = new G().addTo(nodesGroup);
 
   // 文本节点
@@ -48,27 +48,27 @@ function createNode(nodesGroup: G, nodeType: INodeType = "node") {
  * @param nodesGroup 节点G组
  */
 const addEventListener = (nodesGroup: G) => {
-  nodesGroup.children().forEach(group => {
+  nodesGroup.children().forEach((group) => {
     const borderNode = group.findOne("rect.node-border") as Rect | null;
     if (borderNode) {
-      group.on("mouseover", event => {
+      group.on("mouseover", (event) => {
         event.stopPropagation();
         if (!borderNode.hasClass("active")) {
           borderNode.stroke({ width: 1, color: "#caa2ff" });
         }
       });
 
-      group.on("mouseout", event => {
+      group.on("mouseout", (event) => {
         event.stopPropagation();
         if (!borderNode.hasClass("active")) {
           borderNode.stroke({ width: 1, color: "transparent" });
         }
       });
 
-      group.on("click", event => {
+      group.on("click", (event) => {
         event.stopPropagation();
         // 先取消容器组下所有的active样式
-        nodesGroup.find("rect.active").forEach(item => {
+        nodesGroup.find("rect.active").forEach((item) => {
           item.stroke({ width: 1, color: "transparent" });
           item.removeClass("active");
         });
@@ -89,7 +89,7 @@ export const borderNode = (el: HTMLElement) => {
     rotate: 0,
     translateX: 100,
     translateY: 100,
-    scale: 1
+    scale: 1,
   });
 
   const group2 = createNode(nodesGroup, "node");
@@ -97,12 +97,10 @@ export const borderNode = (el: HTMLElement) => {
     rotate: 0,
     translateX: -100,
     translateY: -100,
-    scale: 1
+    scale: 1,
   });
 
   addEventListener(nodesGroup);
 
-  (nodesGroup.parent() as G)
-    .cx(window.innerWidth / 2)
-    .cy(window.innerHeight / 2);
+  (nodesGroup.parent() as G).cx(window.innerWidth / 2).cy(window.innerHeight / 2);
 };

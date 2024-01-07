@@ -2,16 +2,16 @@ import { SVG, G } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import * as Structure from "./../layout";
 import { DefaultNode, Node, RootNode, SecondNode } from "./../node";
-import { Canvas } from "./../style";
+import { Theme } from "./../style";
 import { emitter } from "./../emitter";
 import type { Emitter } from "./../emitter/index.d";
-import { drawEdge } from "./../dom";
+import { getEdgePoint, quadraticCurvePath, cubicBezierPath, drawEdge } from "./../dom";
 import { INodeData, IEvents } from "./index.d";
 import { GraphEvent } from "./GraphEvent";
 import { forScopeEachTree, mapTree } from "src/utils";
 
 export class Graph {
-  canvas: Canvas;
+  theme: Theme;
   el: HTMLElement;
   // dataTree: Node<null | RootNode | SecondNode | DefaultNode, RootNode | SecondNode | DefaultNode>[];
   dataTree: INodeData[];
@@ -32,7 +32,7 @@ export class Graph {
     this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
     this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
 
-    this.canvas = new Canvas();
+    this.theme = new Theme();
     this.el = document.body;
     this.dataTree = [];
 
@@ -78,7 +78,7 @@ export class Graph {
     const { x = 0, y = 0, width = 0, height = 0 } = this.rootNode?.shape || {};
     let pointX = 0;
     let pointY = window.innerHeight / 2 - y - height / 2;
-    switch (this.canvas.layout) {
+    switch (this.theme.config.layout) {
       case "LeftLogical":
         pointX = (window.innerWidth * 2) / 3 - x - width / 2;
         break;
@@ -137,13 +137,39 @@ export class Graph {
   layout() {
     if (this.rootNode) {
       this.linesGroup.clear();
-      console.log("this.canvas.layout :>> ", this.canvas.layout);
-      const MindmapLayout = Structure[this.canvas.layout];
-      const layout = new MindmapLayout(this.rootNode);
+      const { config, isHorizontal } = this.theme;
+      console.log("this.theme.config.layout :>> ", config.layout);
+      const MindmapLayout = Structure[config.layout];
+      const layoutOption: Structure.LayoutOption<RootNode> = {
+        getWidth: (node) => {
+          const { width, selectedWidth } = node.shape;
+          return isHorizontal ? width : selectedWidth;
+        },
+        getHeight: (node) => {
+          const { height, selectedHeight } = node.shape;
+          return isHorizontal ? selectedHeight : height;
+        },
+        getHGap: (node) => node.style.marginX,
+        getVGap: (node) => node.style.marginY,
+        getHOffset: (node) => node.shape.visibleHOffset,
+        getVOffset: (node) => node.shape.visibleVOffset,
+
+        getX: (node) => node.shape.x,
+        setX: (node, val) => {
+          node.shape.x = val;
+        },
+        getY: (node) => node.shape.y,
+        setY: (node, val) => {
+          node.shape.y = val;
+        },
+      };
+      const layout = new MindmapLayout(this.rootNode, layoutOption);
       const rootNode = layout.doLayout();
       forScopeEachTree((node) => {
-        node.children.forEach((child, index) => {
-          drawEdge(this, child, index, node, this.canvas.isHorizontal);
+        node.children.forEach((child) => {
+          const edgePoint = getEdgePoint(child, node, isHorizontal, layoutOption);
+          const path = node?.isRoot ? quadraticCurvePath(edgePoint) : cubicBezierPath(edgePoint);
+          drawEdge(this, path, edgePoint);
         });
         node.group.cx(node.shape.x).cy(node.shape.y);
       }, rootNode);
