@@ -27,7 +27,7 @@ export const defaultTheme: ITheme = {
   expandTBPadding: 3,
   expandLRPading: 6,
   expandFontSize: 14,
-  expandRadius: 8,
+  expandRadius: 10,
   expandOffset: 14,
   root: {
     fontFamily: "Harmony Medium",

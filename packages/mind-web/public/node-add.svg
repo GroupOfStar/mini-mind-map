@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="design-iconfont">
+  <g stroke="#257BF1" fill="none" fill-rule="evenodd">
+    <path stroke-width="2" d="M10 1A9 9 0 1 0 10 19A9 9 0 1 0 10 1Z" />
+    <rect fill="#D8D8D8" x="5.5" y="9.5" width="9" height="1" rx=".5" />
+    <rect fill="#D8D8D8" x="9.5" y="5.5" width="1" height="9" rx=".5" />
+  </g>
+</svg>

@@ -6,15 +6,14 @@ import { Theme } from "./../style";
 import { emitter } from "./../emitter";
 import type { Emitter } from "./../emitter/index.d";
 import { getEdgePoint, quadraticCurvePath, cubicBezierPath, drawEdge } from "./../dom";
-import { INodeData, IEvents } from "./index.d";
+import { forScopeEachTree, mapTree } from "./../utils";
 import { GraphEvent } from "./GraphEvent";
-import { forScopeEachTree, mapTree } from "src/utils";
+import { INodeData, IEvents } from "./index.d";
 
 export class Graph {
   theme: Theme;
-  el: HTMLElement;
-  // dataTree: Node<null | RootNode | SecondNode | DefaultNode, RootNode | SecondNode | DefaultNode>[];
-  dataTree: INodeData[];
+  el: HTMLElement = document.body;
+  dataTree: INodeData[] = [];
   rootNode?: RootNode;
   svg: SVGType.Svg;
   graphGroup: SVGType.G;
@@ -31,11 +30,7 @@ export class Graph {
     this.graphGroup = new G({ class: "g-graph" }).addTo(this.svg);
     this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
     this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
-
     this.theme = new Theme();
-    this.el = document.body;
-    this.dataTree = [];
-
     this.emitter = emitter();
     this.graphEvent = new GraphEvent(this);
   }
@@ -124,7 +119,7 @@ export class Graph {
           break;
       }
       node.depth = depth;
-      node.setNodeStyle();
+      node.init();
       node.bindEvent();
       return node;
     }, this.dataTree);
@@ -153,7 +148,6 @@ export class Graph {
         getVGap: (node) => node.style.marginY,
         getHOffset: (node) => node.shape.visibleHOffset,
         getVOffset: (node) => node.shape.visibleVOffset,
-
         getX: (node) => node.shape.x,
         setX: (node, val) => {
           node.shape.x = val;
