@@ -1,4 +1,4 @@
-import { LayoutOption } from "./Layout";
+import { ILayoutOption } from "./Layout";
 
 /** 布局节点 */
 export class WrapperdTree<T extends ITreeNode<{}>> {
@@ -21,7 +21,7 @@ export class WrapperdTree<T extends ITreeNode<{}>> {
   /** children数组 */
   readonly children: WrapperdTree<T>[] = [];
 
-  constructor(node: T, children: WrapperdTree<T>[] = [], layoutOption: LayoutOption<T>) {
+  constructor(node: T, children: WrapperdTree<T>[] = [], layoutOption: ILayoutOption<T>) {
     const { getWidth, getHeight, getHGap, getVGap } = layoutOption;
     this.hGap = getHGap(node);
     this.vGap = getVGap(node);
@@ -102,7 +102,7 @@ export class WrapperdTree<T extends ITreeNode<{}>> {
    */
   static fromNode<T extends ITreeNode<{}>>(
     node: T,
-    layoutOption: LayoutOption<T>
+    layoutOption: ILayoutOption<T>
   ): WrapperdTree<T> {
     return new WrapperdTree(
       node,
@@ -118,7 +118,7 @@ export class WrapperdTree<T extends ITreeNode<{}>> {
   static convertBack<T extends ITreeNode<{}>>(
     wt: WrapperdTree<T>,
     root: T,
-    layoutOption: LayoutOption<T>
+    layoutOption: ILayoutOption<T>
   ) {
     const { setX, setY } = layoutOption;
     if (WrapperdTree.isHorizontal) {

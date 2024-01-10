@@ -1,11 +1,19 @@
-import { LayoutOption } from "../layout";
+import { ILayoutOption } from "../layout";
 
 export type getEdgePoint = <T extends ITreeNode<{}>>(
   current: T,
   parentNode: T,
   isHorizontal: boolean,
-  option: LayoutOption<T>
+  option: ILayoutOption<T>
 ) => { beginX: number; beginY: number; endX: number; endY: number };
+
+/** 连线偏移配置 */
+export interface IEdgeOffsetOption<T extends ITreeNode<{}>> {
+  /** 获取前方侧的偏移量 */
+  getFrontSideOffset(node: T): number;
+  /** 获取按钮侧的偏移量 */
+  getBtnSideOffset(node: T): number;
+}
 
 /**
  * 获取连线坐标点
@@ -18,7 +26,7 @@ export const getEdgePoint = function <T extends ITreeNode<{}>>(
   current: T,
   parentNode: T,
   isHorizontal: boolean,
-  option: LayoutOption<T>
+  option: ILayoutOption<T> & IEdgeOffsetOption<T>
 ) {
   let beginNode: T;
   let endNode: T;
@@ -27,7 +35,7 @@ export const getEdgePoint = function <T extends ITreeNode<{}>>(
   let endX: number;
   let endY: number;
 
-  const { getX, getY, getWidth, getHeight, getHOffset, getVOffset } = option;
+  const { getX, getY, getWidth, getHeight, getFrontSideOffset, getBtnSideOffset } = option;
   // 水平节点布局
   if (isHorizontal) {
     if (getX(current) > getX(parentNode)) {
@@ -37,10 +45,10 @@ export const getEdgePoint = function <T extends ITreeNode<{}>>(
       beginNode = parentNode;
       endNode = current;
     }
-    beginX = getX(beginNode) - getWidth(beginNode) / 2;
+    beginX = getX(beginNode) - getWidth(beginNode) / 2 + getFrontSideOffset(beginNode);
     beginY = getY(beginNode);
 
-    endX = getX(endNode) + getWidth(endNode) / 2 - getHOffset(endNode);
+    endX = getX(endNode) + getWidth(endNode) / 2 - getBtnSideOffset(endNode);
     endY = getY(endNode);
   } else {
     if (getY(current) > getY(parentNode)) {
@@ -51,9 +59,9 @@ export const getEdgePoint = function <T extends ITreeNode<{}>>(
       endNode = current;
     }
     beginX = getX(beginNode);
-    beginY = getY(beginNode) - getHeight(beginNode) / 2;
+    beginY = getY(beginNode) - getHeight(beginNode) / 2 - getFrontSideOffset(beginNode);
     endX = getX(endNode);
-    endY = getY(endNode) + getHeight(endNode) / 2 - getVOffset(endNode);
+    endY = getY(endNode) + getHeight(endNode) / 2 - getBtnSideOffset(endNode);
   }
   return { beginX, beginY, endX, endY };
 };

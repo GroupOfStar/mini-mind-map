@@ -1,7 +1,7 @@
 import { G, Rect, Text } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import type { INodeData } from "./../graph/index.d";
-import { getTreeNodeTotal, normalNodeId } from "./../utils";
+import { getTreeNodeTotal } from "./../utils";
 
 export abstract class Shape {
   private group: SVGType.G;
@@ -22,10 +22,6 @@ export abstract class Shape {
 
   public x: number = 0;
   public y: number = 0;
-  /** 文本的宽 */
-  // protected _tWidth: number;
-  // /** 文本的高 */
-  // protected _tHeight: number;
   /** 子节点总数 */
   protected childTotal: number;
 
@@ -39,14 +35,16 @@ export abstract class Shape {
   abstract get visibleWidth(): number;
   /** 可视节点的高 */
   abstract get visibleHeight(): number;
-  /** 可视节点的水平偏移 */
-  abstract get visibleHOffset(): number;
-  /** 可视节点的垂直偏移 */
-  abstract get visibleVOffset(): number;
+  /** 选中盒子的内边距 */
+  abstract get selectedBoxPadding(): number;
   /** 选中后节点的宽 */
   abstract get selectedWidth(): number;
   /** 选中后节点的高 */
   abstract get selectedHeight(): number;
+  /** 展开收缩节点所占宽度 */
+  abstract get expandNodeWidth(): number;
+  /** 展开收缩节点所占高度 */
+  abstract get expandNodeHeight(): number;
   /** 整个节点的宽 */
   abstract get width(): number;
   /** 整个节点的高 */
@@ -74,8 +72,8 @@ export abstract class Shape {
     this.expandTextNodeEl.text(this.childTotal.toString());
     this.expandBoxNodeEl = new Rect().addClass("expand-box");
 
-    this.expandNodeGroup.add(this.expandTextNodeEl);
     this.expandNodeGroup.add(this.expandBoxNodeEl);
+    this.expandNodeGroup.add(this.expandTextNodeEl);
     // 添加展开节点
     this.expandNodeGroup.addTo(this.group);
   }

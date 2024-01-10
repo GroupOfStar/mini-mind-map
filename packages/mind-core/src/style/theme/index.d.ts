@@ -104,9 +104,9 @@ export interface IConfig {
   selectedBorderPadding?: number;
   /** 展开图标的边框宽度 */
   expandborderWidth?: number;
-  /** 展开图标上下内边距 */
+  /** 展开图标上下内边距, 注：内边距是不包含边框的 */
   expandTBPadding?: number;
-  /** 展开图标左右内边距 */
+  /** 展开图标左右内边距, 注：内边距是不包含边框的 */
   expandLRPading?: number;
   /** 展开图标字体大小 */
   expandFontSize?: number;

@@ -25,12 +25,13 @@ export class Graph {
   graphEvent: GraphEvent;
 
   constructor() {
+    this.theme = new Theme();
     this.svg = SVG().size("100%", "100%");
-    this.svg.node.style.backgroundColor = "rgb(242, 242, 242)";
+    const { backgroundColor = "#fff" } = this.theme.config;
+    this.svg.node.style.backgroundColor = backgroundColor;
     this.graphGroup = new G({ class: "g-graph" }).addTo(this.svg);
     this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
     this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
-    this.theme = new Theme();
     this.emitter = emitter();
     this.graphEvent = new GraphEvent(this);
   }
@@ -135,7 +136,7 @@ export class Graph {
       const { config, isHorizontal } = this.theme;
       console.log("this.theme.config.layout :>> ", config.layout);
       const MindmapLayout = Structure[config.layout];
-      const layoutOption: Structure.LayoutOption<RootNode> = {
+      const layoutOption: Structure.ILayoutOption<RootNode> = {
         getWidth: (node) => {
           const { width, selectedWidth } = node.shape;
           return isHorizontal ? width : selectedWidth;
@@ -146,8 +147,6 @@ export class Graph {
         },
         getHGap: (node) => node.style.marginX,
         getVGap: (node) => node.style.marginY,
-        getHOffset: (node) => node.shape.visibleHOffset,
-        getVOffset: (node) => node.shape.visibleVOffset,
         getX: (node) => node.shape.x,
         setX: (node, val) => {
           node.shape.x = val;
@@ -161,7 +160,14 @@ export class Graph {
       const rootNode = layout.doLayout();
       forScopeEachTree((node) => {
         node.children.forEach((child) => {
-          const edgePoint = getEdgePoint(child, node, isHorizontal, layoutOption);
+          const edgePoint = getEdgePoint(child, node, isHorizontal, {
+            ...layoutOption,
+            getFrontSideOffset: (node) => node.shape.selectedBoxPadding,
+            getBtnSideOffset: (node) => {
+              const { selectedBoxPadding, expandNodeWidth } = node.shape;
+              return selectedBoxPadding + expandNodeWidth;
+            },
+          });
           const path = node?.isRoot ? quadraticCurvePath(edgePoint) : cubicBezierPath(edgePoint);
           drawEdge(this, path, edgePoint);
         });

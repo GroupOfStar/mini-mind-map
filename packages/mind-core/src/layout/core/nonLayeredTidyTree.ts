@@ -1,4 +1,4 @@
-import { LayoutOption } from "./Layout";
+import { ILayoutOption } from "./Layout";
 import { WrapperdTree } from "./WrapperdTree";
 
 /**
@@ -10,7 +10,7 @@ import { WrapperdTree } from "./WrapperdTree";
 export const nonLayeredTidyTree = <T extends ITreeNode<{}>>(
   root: T,
   isHorizontal: boolean,
-  layoutOption: LayoutOption<T>
+  layoutOption: ILayoutOption<T>
 ) => {
   /**
    * 循环深度遍历，设置节点的x,y

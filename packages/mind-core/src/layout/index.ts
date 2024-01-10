@@ -1,2 +1,2 @@
 export * from "./structure";
-export { LayoutOption } from "./core/Layout";
+export { ILayoutOption } from "./core/Layout";

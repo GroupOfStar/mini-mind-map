@@ -1,34 +1,30 @@
 import { forScopeEachTree } from "src/utils";
 
 /** layout布局参数配置 */
-export abstract class LayoutOption<T extends ITreeNode<{}>> {
+export interface ILayoutOption<T extends ITreeNode<{}>> {
   /** 获取节点宽度 */
-  abstract getWidth(node: T): number;
+  getWidth(node: T): number;
   /** 获取节点高度 */
-  abstract getHeight(node: T): number;
+  getHeight(node: T): number;
   /** 获取水平方向上的间距 */
-  abstract getHGap(node: T): number;
+  getHGap(node: T): number;
   /** 获取垂直方向上的间距 */
-  abstract getVGap(node: T): number;
-  /** 获取水平方向上的偏移 */
-  abstract getHOffset(node: T): number;
-  /** 获取垂直方向上的偏移 */
-  abstract getVOffset(node: T): number;
+  getVGap(node: T): number;
 
   /** 获取X轴的位置 */
-  abstract getX(node: T): number;
+  getX(node: T): number;
   /** 设置X轴的位置 */
-  abstract setX(node: T, value: number): void;
+  setX(node: T, value: number): void;
   /** 获取Y轴的位置 */
-  abstract getY(node: T): number;
+  getY(node: T): number;
   /** 设置Y轴的位置 */
-  abstract setY(node: T, value: number): void;
+  setY(node: T, value: number): void;
 }
 
 export abstract class Layout<T extends ITreeNode<{}>> {
   rootNode: T;
-  option: LayoutOption<T>;
-  constructor(rootNode: T, option: LayoutOption<T>) {
+  option: ILayoutOption<T>;
+  constructor(rootNode: T, option: ILayoutOption<T>) {
     this.rootNode = rootNode;
     this.option = option;
   }

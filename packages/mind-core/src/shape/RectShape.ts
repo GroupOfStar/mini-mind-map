@@ -18,39 +18,32 @@ export class RectShape extends Shape {
     const { height } = this.textNodeEl.bbox();
     return height + (this.nodeStyle.paddingY || 0) * 2;
   }
-  get visibleHOffset(): number {
+  get selectedBoxPadding(): number {
     const { borderWidth = 0, theme } = this.nodeStyle;
-    const { selectedBorderPadding = 0, expandborderWidth = 0, expandLRPading = 0 } = theme.config;
-    const { width = 0 } = this.expandTextNodeEl?.bbox() || {};
-    const expandWidth = width > 0 ? width + (expandborderWidth + expandLRPading) * 2 : 0;
-    return selectedBorderPadding + borderWidth + expandWidth;
-  }
-  get visibleVOffset(): number {
-    const { borderWidth = 0, theme } = this.nodeStyle;
-    const { selectedBorderPadding = 0, expandborderWidth = 0, expandTBPadding = 0 } = theme.config;
-    const { height = 0 } = this.expandTextNodeEl?.bbox() || {};
-    const expandHeight = height > 0 ? height + (expandborderWidth + expandTBPadding) * 2 : 0;
-    return selectedBorderPadding + borderWidth + expandHeight;
+    const { selectedBorderPadding = 0 } = theme.config;
+    return selectedBorderPadding + borderWidth;
   }
   get selectedWidth(): number {
-    const { borderWidth = 0, theme } = this.nodeStyle;
-    const { selectedBorderPadding = 0 } = theme.config;
-    return this.visibleWidth + (selectedBorderPadding + borderWidth) * 2;
+    return this.visibleWidth + this.selectedBoxPadding * 2;
   }
   get selectedHeight(): number {
-    const { borderWidth = 0, theme } = this.nodeStyle;
-    const { selectedBorderPadding = 0 } = theme.config;
-    return this.visibleHeight + (selectedBorderPadding + borderWidth) * 2;
+    return this.visibleHeight + this.selectedBoxPadding * 2;
+  }
+  get expandNodeWidth(): number {
+    const { expandOffset = 0 } = this.nodeStyle.theme.config;
+    const { width = 0 } = this.expandNodeGroup?.bbox() || {};
+    return width ? expandOffset + width : 0;
+  }
+  get expandNodeHeight(): number {
+    const { expandOffset = 0 } = this.nodeStyle.theme.config;
+    const { height = 0 } = this.expandNodeGroup?.bbox() || {};
+    return height > 0 ? expandOffset + height : 0;
   }
   get width(): number {
-    const { borderWidth = 0, theme } = this.nodeStyle;
-    const { selectedBorderPadding = 0 } = theme.config;
-    return borderWidth + selectedBorderPadding + this.visibleWidth + this.visibleHOffset;
+    return this.selectedWidth + this.expandNodeWidth;
   }
   get height(): number {
-    const { borderWidth = 0, theme } = this.nodeStyle;
-    const { selectedBorderPadding = 0 } = theme.config;
-    return borderWidth + selectedBorderPadding + this.visibleHeight + this.visibleVOffset;
+    return this.selectedHeight + this.expandNodeHeight;
   }
   /** 设置样式 */
   setNodeStyle() {
@@ -79,33 +72,37 @@ export class RectShape extends Shape {
   }
   /** 设置展开收缩节点样式 */
   setExpandNodeStyle() {
-    const {
-      expandborderWidth = 1,
-      expandTBPadding = 0,
-      expandLRPading = 0,
-      expandFontSize = 14,
-      expandRadius = 0,
-      expandOffset = 0,
-    } = this.nodeStyle.theme.config;
-    const { width = 0, height = 0 } = this.expandTextNodeEl?.bbox() || {};
     if (this.expandTextNodeEl) {
+      const {
+        backgroundColor = "#fff",
+        expandborderWidth = 2,
+        expandTBPadding = 0,
+        expandLRPading = 0,
+        expandFontSize = 14,
+        expandRadius = 0,
+      } = this.nodeStyle.theme.config;
       this.expandTextNodeEl.font({ size: expandFontSize, family: "Arial" });
-      this.expandTextNodeEl.fill({ color: "#257BF1" });
-    }
-    if (this.expandBoxNodeEl) {
-      this.expandBoxNodeEl.size(width + (expandborderWidth + expandLRPading) * 2, height);
-      this.expandBoxNodeEl.fill({ color: "#257BF1", opacity: 0 });
-      this.expandBoxNodeEl.stroke({ color: "#257BF1", width: expandborderWidth });
-      this.expandBoxNodeEl.radius(expandRadius);
+      this.expandTextNodeEl.css({ cursor: "pointer", fill: "#257BF1" });
+      if (this.expandBoxNodeEl) {
+        this.expandBoxNodeEl.css({ cursor: "pointer", fill: backgroundColor });
+        this.expandBoxNodeEl.stroke({ color: "#257BF1", width: expandborderWidth });
+        this.expandBoxNodeEl.radius(expandRadius);
+        const { width = 0, height = 0 } = this.expandTextNodeEl.bbox() || {};
+        this.expandBoxNodeEl.size(
+          width + (expandborderWidth + expandLRPading) * 2,
+          height + (expandborderWidth + expandTBPadding) * 2
+        );
+      }
     }
   }
   /** 展开收缩布局 */
   doExpandNodeLayout() {
     this.expandTextNodeEl?.cx(0).cy(0);
     this.expandBoxNodeEl?.cx(0).cy(0);
+    const { expandOffset = 0 } = this.nodeStyle.theme.config;
     // 设置展开节点位置
     const { width } = this.expandNodeGroup.bbox();
-    this.expandNodeGroup.relative(this.width / 2 + width / 2, 0);
+    this.expandNodeGroup.relative(this.selectedWidth / 2 + width / 2 + expandOffset, 0);
   }
   /** init */
   init() {
