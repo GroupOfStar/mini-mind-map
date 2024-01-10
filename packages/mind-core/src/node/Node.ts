@@ -6,10 +6,11 @@ import { RectShape } from "./../shape";
 import { normalNodeId } from "./../utils";
 import type { INodeProps } from "./index.d";
 import { Emitter } from "./../emitter/index.d";
+import type { ExpandNode } from "./ExpandNode";
 
 export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
   /** 节点group挂载的group容器 */
-  private nodesGroup: SVGType.G | undefined;
+  protected nodesGroup: SVGType.G | undefined;
   /** 节点group */
   public group = new G();
   /** id */
@@ -18,15 +19,17 @@ export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
   public nodeData: INodeData;
   /** 深度 */
   public depth: number = 0;
-  /** 样式主题 */
-  public style: Style;
-  /** 形状 */
-  public shape: RectShape;
   /** 父节点 */
   public parentNode?: Node<P, C>;
   /** 子节点 */
   public children: Node<C, C>[] = [];
 
+  /** 样式主题 */
+  public style: Style;
+  /** 展开收缩节点 */
+  public abstract expandNode?: ExpandNode;
+  /** 形状 */
+  public abstract shape: RectShape;
   /** 事件广播 */
   public emitter?: Emitter<IEvents>;
 
@@ -37,7 +40,6 @@ export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
     this.nodeData = nodeData;
     this.parentNode = parentNode;
     this.style = new Style(nodeType);
-    this.shape = new RectShape(nodeData, this.style, this.group);
     this.emitter = emitter;
   }
   /** 是否为根节点 */
@@ -45,13 +47,7 @@ export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
     return this.depth === 0;
   }
   /** init */
-  init() {
-    if (this.nodesGroup) {
-      this.group.id(this.id);
-      this.group.addTo(this.nodesGroup);
-      this.shape.init();
-    }
-  }
+  public abstract init(): void;
   /** 设置位置 */
   transform(matrixAlias: {
     rotate: number;
@@ -64,22 +60,22 @@ export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
   /** 节点鼠标移入事件 */
   onMouseover(event: Event) {
     event.stopPropagation();
-    const { borderNodeEl } = this.shape;
-    if (!borderNodeEl.hasClass("active")) {
-      borderNodeEl.stroke({ width: 1, color: "#caa2ff" });
+    const { selectedNodeEl } = this.shape;
+    if (!selectedNodeEl.hasClass("active")) {
+      selectedNodeEl.stroke({ width: 1, color: "#caa2ff" });
     }
   }
   /** 节点鼠标移出事件 */
   onMouseout(event: Event) {
     event.stopPropagation();
-    const { borderNodeEl } = this.shape;
-    if (!borderNodeEl.hasClass("active")) {
-      borderNodeEl.stroke({ width: 1, color: "transparent" });
+    const { selectedNodeEl } = this.shape;
+    if (!selectedNodeEl.hasClass("active")) {
+      selectedNodeEl.stroke({ width: 1, color: "transparent" });
     }
   }
   /** 节点点击事件 */
   onClick(event: Event) {
-    const { x, y, width, height, borderNodeEl } = this.shape;
+    const { x, y, width, height, selectedNodeEl } = this.shape;
     const { marginX, marginY } = this.style;
     console.log(
       `${this.nodeData.text}:>>`,
@@ -103,8 +99,8 @@ export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
       item.removeClass("active");
     });
     // 再给当前的节点加上active样式
-    borderNodeEl.addClass("active");
-    borderNodeEl.stroke({ width: 1, color: "#7716d9" });
+    selectedNodeEl.addClass("active");
+    selectedNodeEl.stroke({ width: 1, color: "#7716d9" });
   }
   /** 注册事件 */
   bindEvent() {

@@ -2,7 +2,7 @@ import { SVG, G } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import * as Structure from "./../layout";
 import { DefaultNode, Node, RootNode, SecondNode } from "./../node";
-import { Theme } from "./../style";
+import { ILayoutType, Theme } from "./../style";
 import { emitter } from "./../emitter";
 import type { Emitter } from "./../emitter/index.d";
 import { getEdgePoint, quadraticCurvePath, cubicBezierPath, drawEdge } from "./../dom";
@@ -12,6 +12,7 @@ import { INodeData, IEvents } from "./index.d";
 
 export class Graph {
   theme: Theme;
+  layoutType: ILayoutType;
   el: HTMLElement = document.body;
   dataTree: INodeData[] = [];
   rootNode?: RootNode;
@@ -26,6 +27,7 @@ export class Graph {
 
   constructor() {
     this.theme = new Theme();
+    this.layoutType = this.theme.config.layout;
     this.svg = SVG().size("100%", "100%");
     const { backgroundColor = "#fff" } = this.theme.config;
     this.svg.node.style.backgroundColor = backgroundColor;
@@ -74,7 +76,7 @@ export class Graph {
     const { x = 0, y = 0, width = 0, height = 0 } = this.rootNode?.shape || {};
     let pointX = 0;
     let pointY = window.innerHeight / 2 - y - height / 2;
-    switch (this.theme.config.layout) {
+    switch (this.layoutType) {
       case "LeftLogical":
         pointX = (window.innerWidth * 2) / 3 - x - width / 2;
         break;
@@ -131,19 +133,19 @@ export class Graph {
   }
   /** 布局 */
   layout() {
+    console.log("layout");
     if (this.rootNode) {
       this.linesGroup.clear();
-      const { config, isHorizontal } = this.theme;
-      console.log("this.theme.config.layout :>> ", config.layout);
-      const MindmapLayout = Structure[config.layout];
+      const { isHorizontal } = this.theme;
+      const MindmapLayout = Structure[this.layoutType];
       const layoutOption: Structure.ILayoutOption<RootNode> = {
         getWidth: (node) => {
-          const { width, selectedWidth } = node.shape;
-          return isHorizontal ? width : selectedWidth;
+          const { width, selectedNodeWidth } = node.shape;
+          return isHorizontal ? width : selectedNodeWidth;
         },
         getHeight: (node) => {
-          const { height, selectedHeight } = node.shape;
-          return isHorizontal ? selectedHeight : height;
+          const { height, selectedNodeHeight } = node.shape;
+          return isHorizontal ? selectedNodeHeight : height;
         },
         getHGap: (node) => node.style.marginX,
         getVGap: (node) => node.style.marginY,
@@ -162,10 +164,11 @@ export class Graph {
         node.children.forEach((child) => {
           const edgePoint = getEdgePoint(child, node, isHorizontal, {
             ...layoutOption,
-            getFrontSideOffset: (node) => node.shape.selectedBoxPadding,
-            getBtnSideOffset: (node) => {
-              const { selectedBoxPadding, expandNodeWidth } = node.shape;
-              return selectedBoxPadding + expandNodeWidth;
+            getFrontSideOffset: (n) => n.shape.selectedBoxPadding,
+            getBtnSideOffset: (n) => {
+              const { selectedBoxPadding } = n.shape;
+              const { nodeWidth = 0 } = n.expandNode || {};
+              return selectedBoxPadding + nodeWidth;
             },
           });
           const path = node?.isRoot ? quadraticCurvePath(edgePoint) : cubicBezierPath(edgePoint);

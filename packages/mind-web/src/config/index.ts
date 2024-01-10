@@ -1,3 +1,4 @@
+import type { ILayoutType } from "@mini-mind-map/mind-core";
 // 侧边栏列表
 export const sidebarTriggerList = [
   {
@@ -57,30 +58,25 @@ export const sidebarTriggerList = [
 ];
 
 //  布局结构列表
-export const layoutList = [
+export const layoutList: Array<IStatusEnum<ILayoutType>> = [
   {
-    name: "右侧分布",
+    title: "右侧分布",
     value: "RightLogical",
-    label: 0,
   },
   {
-    name: "左侧分布",
+    title: "左侧分布",
     value: "LeftLogical",
-    label: 1,
   },
   {
-    name: "标准分布",
+    title: "标准分布",
     value: "Standard",
-    label: 2,
   },
   {
-    name: "组织架构图",
+    title: "组织架构图",
     value: "DownwardOrganizational",
-    label: 3,
   },
   {
-    name: "向上分布",
+    title: "向上分布",
     value: "UpwardOrganizational",
-    label: 4,
   },
 ];

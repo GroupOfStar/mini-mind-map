@@ -22,8 +22,8 @@
       <div class="sidebarHeader">title</div>
 
       <div class="sidebarContent">
-        <button v-for="item in layoutList" :key="item.value" @click="() => layout(item)">
-          {{ item.name }}
+        <button v-for="item in layoutList" :key="item.value" @click="() => onLayout(item)">
+          {{ item.title }}
         </button>
         <div>
           <button @click="onTestClick">测试按钮</button>
@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { Graph } from "@mini-mind-map/mind-core";
+import { Graph, ILayoutType } from "@mini-mind-map/mind-core";
 import { sidebarTriggerList, layoutList } from "./../../config";
 
 const props = defineProps({
@@ -71,9 +71,9 @@ const onTestClick = (e: MouseEvent) => {
   console.log("height :>> ", height);
 };
 
-const layout = (item: any) => {
+const onLayout = (item: IStatusEnum<ILayoutType>) => {
   const mindMap = props.mindMap;
-  mindMap.canvas.layout = item.value;
+  mindMap.layoutType = item.value;
   mindMap.layout();
   mindMap.onResize();
 };
