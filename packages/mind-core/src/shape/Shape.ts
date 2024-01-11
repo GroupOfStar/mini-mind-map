@@ -41,9 +41,9 @@ export abstract class Shape {
     // 节点边框
     this.selectedNodeEl.addTo(this.group).addClass("node-border");
     // 节点本身
-    this.visibleNodeEl.addTo(this.group).addClass("node");
+    this.visibleNodeEl.addTo(this.group).addClass("node").attr("pointer-events", "none");
     // 确保text节点在最后一个, 所以最后添加
-    this.textNodeEl.addTo(this.group);
+    this.textNodeEl.addTo(this.group).attr("pointer-events", "none");
   }
   /** 设置样式 */
   abstract setNodeStyle(): void;

@@ -21,11 +21,8 @@ onMounted(() => {
     mindMap.setContainer(mindMapRef.value);
     mindMap.setDataByList(nodeList, rootId);
     mindMap.render();
-
     console.log("mindMap :>> ", mindMap);
-
     mindMap.layout();
-
     mindMap.onResize();
   }
 

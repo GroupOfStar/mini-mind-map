@@ -5,33 +5,38 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/home",
     name: "vHome", // 首页
-    component: () => import("../views/home/index.vue")
+    component: () => import("../views/home/index.vue"),
+  },
+  {
+    path: "/mind",
+    name: "vMind", // mind
+    component: () => import("../views/mind/index"),
   },
   {
     path: "/svgjs",
     name: "vSvgjs", // svgjs Demo
-    component: () => import("../views/svgjs/index")
+    component: () => import("../views/svgjs/index"),
   },
   {
     path: "/bbox",
     name: "VBbox", // bbox Demo
-    component: () => import("../views/bbox/index")
+    component: () => import("../views/bbox/index"),
   },
   {
     path: "/node",
     name: "VNode", // node Demo
-    component: () => import("../views/node/index")
+    component: () => import("../views/node/index"),
   },
   {
     path: "/layout",
     name: "vLayout", // 布局页
-    component: () => import("../views/layout/index")
-  }
+    component: () => import("../views/layout/index"),
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
 });
 
 export default router;

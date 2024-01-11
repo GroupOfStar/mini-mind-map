@@ -115,12 +115,12 @@ export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
     this.onMouseout = this.onMouseout.bind(this);
     this.onClick = this.onClick.bind(this);
 
-    this.group.on("mouseover", this.onMouseover);
-    this.group.on("mouseout", this.onMouseout);
-    this.group.on("click", this.onClick);
+    this.shape.selectedNodeEl.on("mouseover", this.onMouseover);
+    this.shape.selectedNodeEl.on("mouseout", this.onMouseout);
+    this.shape.selectedNodeEl.on("click", this.onClick);
   }
   /** 解除事件 */
   unbindEvent() {
-    this.group.off();
+    this.shape.selectedNodeEl.off();
   }
 }
