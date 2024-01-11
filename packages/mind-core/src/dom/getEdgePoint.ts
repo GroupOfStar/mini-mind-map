@@ -11,8 +11,6 @@ export type getEdgePoint = <T extends ITreeNode<{}>>(
 export interface IEdgeOffsetOption<T extends ITreeNode<{}>> {
   /** 获取前方侧的偏移量 */
   getFrontSideOffset(node: T): number;
-  /** 获取按钮侧的偏移量 */
-  getBtnSideOffset(node: T): number;
 }
 
 /**
@@ -35,7 +33,7 @@ export const getEdgePoint = function <T extends ITreeNode<{}>>(
   let endX: number;
   let endY: number;
 
-  const { getX, getY, getWidth, getHeight, getFrontSideOffset, getBtnSideOffset } = option;
+  const { getX, getY, getWidth, getHeight, getFrontSideOffset } = option;
   // 水平节点布局
   if (isHorizontal) {
     if (getX(current) > getX(parentNode)) {
@@ -45,11 +43,11 @@ export const getEdgePoint = function <T extends ITreeNode<{}>>(
       beginNode = parentNode;
       endNode = current;
     }
-    beginX = getX(beginNode) - getWidth(beginNode) / 2 + getFrontSideOffset(beginNode);
-    beginY = getY(beginNode);
+    beginX = getX(beginNode) + getFrontSideOffset(beginNode);
+    beginY = getY(beginNode) + getHeight(beginNode) / 2;
 
-    endX = getX(endNode) + getWidth(endNode) / 2 - getBtnSideOffset(endNode);
-    endY = getY(endNode);
+    endX = getX(endNode) + getWidth(endNode) - getFrontSideOffset(endNode);
+    endY = getY(endNode) + getHeight(endNode) / 2;
   } else {
     if (getY(current) > getY(parentNode)) {
       beginNode = current;
@@ -58,10 +56,10 @@ export const getEdgePoint = function <T extends ITreeNode<{}>>(
       beginNode = parentNode;
       endNode = current;
     }
-    beginX = getX(beginNode);
-    beginY = getY(beginNode) - getHeight(beginNode) / 2 - getFrontSideOffset(beginNode);
-    endX = getX(endNode);
-    endY = getY(endNode) + getHeight(endNode) / 2 - getBtnSideOffset(endNode);
+    beginX = getX(beginNode) + getWidth(beginNode) / 2;
+    beginY = getY(beginNode) + getFrontSideOffset(beginNode);
+    endX = getX(endNode) + getWidth(endNode) / 2;
+    endY = getY(endNode) + getHeight(endNode) - getFrontSideOffset(beginNode);
   }
   return { beginX, beginY, endX, endY };
 };

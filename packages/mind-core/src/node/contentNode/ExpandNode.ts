@@ -1,6 +1,6 @@
 import { G, Rect, Text } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
-import type { Style } from "./../style";
+import type { Style } from "../../style";
 
 /** 展开节点 */
 export class ExpandNode {
@@ -25,19 +25,19 @@ export class ExpandNode {
     this.nodeGroup.addTo(group);
   }
   /** 节点所占宽度 */
-  get nodeWidth(): number {
+  public get nodeWidth(): number {
     const { expandOffset = 0 } = this.nodeStyle.theme.config;
     const { width = 0 } = this.nodeGroup?.bbox() || {};
     return width ? expandOffset + width : 0;
   }
   /** 节点所占高度 */
-  get nodeHeight(): number {
+  public get nodeHeight(): number {
     const { expandOffset = 0 } = this.nodeStyle.theme.config;
     const { height = 0 } = this.nodeGroup?.bbox() || {};
     return height > 0 ? expandOffset + height : 0;
   }
   /** 设置节点样式 */
-  setNodeStyle() {
+  public setNodeStyle() {
     if (this.textNodeEl) {
       const {
         backgroundColor = "#fff",
@@ -62,12 +62,12 @@ export class ExpandNode {
     }
   }
   /** 设置布局 */
-  doNodeLayout(offset: number = 0) {
+  public doNodeLayout(offset: number = 0) {
     this.textNodeEl?.cx(0).cy(0);
     this.boxNodeEl?.cx(0).cy(0);
     const { expandOffset = 0 } = this.nodeStyle.theme.config;
-    // 设置展开节点位置
     const { width } = this.nodeGroup.bbox();
+    // 设置展开节点位置
     this.nodeGroup.relative(offset + width / 2 + expandOffset, 0);
   }
 }

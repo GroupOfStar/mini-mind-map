@@ -1,7 +1,7 @@
 import { G, Rect, Text } from "@svgdotjs/svg.js";
 import { Theme } from "./theme";
+import type { INodeTheme } from "./theme";
 import type { TNodeTypeOfKey } from "./../node/index.d";
-import type { IConfig, INodeTheme } from "./theme";
 import type { INodeData } from "./../graph/index.d";
 
 // // 获取类型中的函数名称

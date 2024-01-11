@@ -6,7 +6,7 @@ import { RectShape } from "./../shape";
 import { normalNodeId } from "./../utils";
 import type { INodeProps } from "./index.d";
 import { Emitter } from "./../emitter/index.d";
-import type { ExpandNode } from "./ExpandNode";
+import type { ExpandNode } from "./contentNode/ExpandNode";
 
 export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
   /** 节点group挂载的group容器 */
@@ -22,14 +22,14 @@ export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
   /** 父节点 */
   public parentNode?: Node<P, C>;
   /** 子节点 */
-  public children: Node<C, C>[] = [];
+  protected _children: Node<C, C>[] = [];
 
   /** 样式主题 */
   public style: Style;
   /** 展开收缩节点 */
   public abstract expandNode?: ExpandNode;
   /** 形状 */
-  public abstract shape: RectShape;
+  public shape: RectShape;
   /** 事件广播 */
   public emitter?: Emitter<IEvents>;
 
@@ -40,16 +40,23 @@ export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
     this.nodeData = nodeData;
     this.parentNode = parentNode;
     this.style = new Style(nodeType);
+    this.shape = new RectShape({
+      nodeData: this.nodeData,
+      nodeStyle: this.style,
+      group: this.group,
+    });
     this.emitter = emitter;
   }
   /** 是否为根节点 */
   get isRoot() {
     return this.depth === 0;
   }
+  public abstract get children();
+  public abstract set children(children: Node<C, C>[]);
   /** init */
   public abstract init(): void;
   /** 设置位置 */
-  transform(matrixAlias: {
+  public transform(matrixAlias: {
     rotate: number;
     translateX: number;
     translateY: number;
@@ -75,7 +82,7 @@ export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
   }
   /** 节点点击事件 */
   onClick(event: Event) {
-    const { x, y, width, height, selectedNodeEl } = this.shape;
+    const { x, y, selectedNodeWidth, selectedNodeHeight, selectedNodeEl } = this.shape;
     const { marginX, marginY } = this.style;
     console.log(
       `${this.nodeData.text}:>>`,
@@ -83,10 +90,10 @@ export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
       x,
       " y :",
       y,
-      " width :",
-      width,
-      " height :",
-      height,
+      " selectedNodeWidth :",
+      selectedNodeWidth,
+      " selectedNodeHeight :",
+      selectedNodeHeight,
       " marginX :",
       marginX,
       " marginY :",

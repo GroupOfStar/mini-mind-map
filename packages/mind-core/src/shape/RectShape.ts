@@ -2,18 +2,15 @@ import type * as SVGType from "@svgdotjs/svg.js";
 import { Shape } from "./Shape";
 import { Style } from "./../style";
 import type { INodeData } from "./../graph/index.d";
-import type { ExpandNode } from "./../node/ExpandNode";
 
 interface IRectShapeProps {
   nodeData: INodeData;
   nodeStyle: Style;
   group: SVGType.G;
-  expandNode?: ExpandNode;
 }
 
 export class RectShape extends Shape {
   private nodeStyle: Style;
-  private expandNode?: ExpandNode;
 
   constructor(props: IRectShapeProps) {
     super(props.nodeData, props.group);
@@ -37,12 +34,6 @@ export class RectShape extends Shape {
   }
   get selectedNodeHeight(): number {
     return this.visibleNodeHeight + this.selectedBoxPadding * 2;
-  }
-  get width(): number {
-    return this.selectedNodeWidth + (this.expandNode?.nodeWidth || 0);
-  }
-  get height(): number {
-    return this.selectedNodeHeight + (this.expandNode?.nodeHeight || 0);
   }
   /** 设置样式 */
   setNodeStyle() {

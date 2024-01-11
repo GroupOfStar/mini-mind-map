@@ -1,27 +1,25 @@
-import { Node } from "./Node";
-import { ExpandNode } from "./ExpandNode";
-import { RectShape } from "./../shape";
-import { getTreeNodeTotal } from "./../utils";
+import { Node } from "../Node";
+import { ExpandNode } from "../contentNode/ExpandNode";
+import { getTreeNodeTotal } from "../../utils";
 import type { SecondNode } from "./SecondNode";
-import type { IDefaultNodeProps } from "./index.d";
+import type { IDefaultNodeProps } from "../index.d";
 
 export class DefaultNode extends Node<SecondNode | DefaultNode, DefaultNode> {
   public expandNode?: ExpandNode;
-  public shape: RectShape;
 
   constructor(props: IDefaultNodeProps<SecondNode | DefaultNode, DefaultNode>) {
     super({ ...props, nodeType: "node" });
-    /** 子节点总数 */
-    const childTotal = getTreeNodeTotal(this.nodeData);
-    if (childTotal > 0) {
-      this.expandNode = new ExpandNode(childTotal, this.group, this.style);
+  }
+  public get children(): Node<DefaultNode, DefaultNode>[] {
+    return this._children;
+  }
+  public set children(child: Node<DefaultNode, DefaultNode>[]) {
+    if (child.length > 0) {
+      /** 子节点总数 */
+      const childTotal = getTreeNodeTotal(this.nodeData);
+      this.expandNode = this.shape.expandNode = new ExpandNode(childTotal, this.group, this.style);
     }
-    this.shape = new RectShape({
-      nodeData: this.nodeData,
-      nodeStyle: this.style,
-      group: this.group,
-      expandNode: this.expandNode,
-    });
+    this._children = child;
   }
   public init(): void {
     if (this.nodesGroup) {

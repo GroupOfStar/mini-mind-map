@@ -1,18 +1,17 @@
 import { SVG, G } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import * as Structure from "./../layout";
-import { DefaultNode, Node, RootNode, SecondNode } from "./../node";
-import { ILayoutType, Theme } from "./../style";
+import { DefaultNode, RootNode, SecondNode } from "./../node";
+import { Theme } from "./../style";
 import { emitter } from "./../emitter";
 import type { Emitter } from "./../emitter/index.d";
 import { getEdgePoint, quadraticCurvePath, cubicBezierPath, drawEdge } from "./../dom";
-import { forScopeEachTree, mapTree } from "./../utils";
+import { forScopeEachTree } from "./../utils";
 import { GraphEvent } from "./GraphEvent";
 import { INodeData, IEvents } from "./index.d";
 
 export class Graph {
   theme: Theme;
-  layoutType: ILayoutType;
   el: HTMLElement = document.body;
   dataTree: INodeData[] = [];
   rootNode?: RootNode;
@@ -27,13 +26,12 @@ export class Graph {
 
   constructor() {
     this.theme = new Theme();
-    this.layoutType = this.theme.config.layout;
     this.svg = SVG().size("100%", "100%");
     const { backgroundColor = "#fff" } = this.theme.config;
     this.svg.node.style.backgroundColor = backgroundColor;
     this.graphGroup = new G({ class: "g-graph" }).addTo(this.svg);
-    this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
     this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
+    this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
     this.emitter = emitter();
     this.graphEvent = new GraphEvent(this);
   }
@@ -73,23 +71,28 @@ export class Graph {
    */
   onResize() {
     console.log("onResize");
-    const { x = 0, y = 0, width = 0, height = 0 } = this.rootNode?.shape || {};
+    const {
+      x = 0,
+      y = 0,
+      visibleNodeWidth = 0,
+      visibleNodeHeight = 0,
+    } = this.rootNode?.shape || {};
     let pointX = 0;
-    let pointY = window.innerHeight / 2 - y - height / 2;
-    switch (this.layoutType) {
+    let pointY = window.innerHeight / 2 - y - visibleNodeHeight / 2;
+    switch (this.theme.config.layout) {
       case "LeftLogical":
-        pointX = (window.innerWidth * 2) / 3 - x - width / 2;
+        pointX = (window.innerWidth * 2) / 3 - x - visibleNodeWidth / 2;
         break;
       case "Standard":
-        pointX = window.innerWidth / 2 - x - width / 2;
+        pointX = window.innerWidth / 2 - x - visibleNodeWidth / 2;
         break;
       case "DownwardOrganizational":
-        pointX = window.innerWidth / 2 - x - width / 2;
-        pointY = window.innerHeight / 3 - y - height / 2;
+        pointX = window.innerWidth / 2 - x - visibleNodeWidth / 2;
+        pointY = window.innerHeight / 3 - y - visibleNodeHeight / 2;
         break;
       case "UpwardOrganizational":
-        pointX = window.innerWidth / 2 - x - width / 2;
-        pointY = (window.innerHeight * 2) / 3 - y - height / 2;
+        pointX = window.innerWidth / 2 - x - visibleNodeWidth / 2;
+        pointY = (window.innerHeight * 2) / 3 - y - visibleNodeHeight / 2;
         break;
       case "RightLogical":
         pointX = window.innerWidth / 3 + x;
@@ -100,34 +103,40 @@ export class Graph {
   }
   /** 渲染 */
   render() {
-    const nodeTree = mapTree((nodeData, index, parentNode) => {
-      const depth = nodeData.depth || 0;
-      let node: RootNode | SecondNode | DefaultNode;
-      const nodePorps = {
-        nodeData,
-        nodesGroup: this.nodesGroup,
-        parentNode: parentNode as Node<RootNode, DefaultNode>,
-        emitter: this.emitter,
-      };
-      switch (depth) {
-        case 0:
-          node = new RootNode(nodePorps);
-          break;
-        case 1:
-          node = new SecondNode(nodePorps);
-          break;
-        case 2:
-        default:
-          node = new DefaultNode(nodePorps);
-          break;
-      }
-      node.depth = depth;
-      node.init();
-      node.bindEvent();
-      return node;
-    }, this.dataTree);
-    this.rootNode = nodeTree[0] as RootNode;
-
+    console.log("render");
+    const walk = <T extends INodeData>(
+      data: T[],
+      parentNode?: RootNode | SecondNode | DefaultNode
+    ) => {
+      return data.map((nodeData) => {
+        const depth = nodeData.depth || 0;
+        let node: RootNode | SecondNode | DefaultNode;
+        const nodePorps = {
+          nodeData,
+          nodesGroup: this.nodesGroup,
+          parentNode,
+          emitter: this.emitter,
+        };
+        switch (depth) {
+          case 0:
+            node = new RootNode(nodePorps);
+            break;
+          case 1:
+            node = new SecondNode(nodePorps);
+            break;
+          case 2:
+          default:
+            node = new DefaultNode(nodePorps);
+            break;
+        }
+        node.depth = depth;
+        node.children = walk(nodeData.children, node);
+        node.init();
+        node.bindEvent();
+        return node;
+      });
+    };
+    this.rootNode = walk(this.dataTree)[0];
     this.bindEvent();
     this.svg.addTo(this.el);
   }
@@ -136,16 +145,16 @@ export class Graph {
     console.log("layout");
     if (this.rootNode) {
       this.linesGroup.clear();
-      const { isHorizontal } = this.theme;
-      const MindmapLayout = Structure[this.layoutType];
+      const { isHorizontal, config } = this.theme;
+      const MindmapLayout = Structure[config.layout];
       const layoutOption: Structure.ILayoutOption<RootNode> = {
         getWidth: (node) => {
-          const { width, selectedNodeWidth } = node.shape;
-          return isHorizontal ? width : selectedNodeWidth;
+          const { selectedNodeWidth } = node.shape;
+          return selectedNodeWidth;
         },
         getHeight: (node) => {
-          const { height, selectedNodeHeight } = node.shape;
-          return isHorizontal ? selectedNodeHeight : height;
+          const { selectedNodeHeight } = node.shape;
+          return selectedNodeHeight;
         },
         getHGap: (node) => node.style.marginX,
         getVGap: (node) => node.style.marginY,
@@ -161,20 +170,15 @@ export class Graph {
       const layout = new MindmapLayout(this.rootNode, layoutOption);
       const rootNode = layout.doLayout();
       forScopeEachTree((node) => {
+        node.group.x(node.shape.x).y(node.shape.y);
         node.children.forEach((child) => {
           const edgePoint = getEdgePoint(child, node, isHorizontal, {
             ...layoutOption,
             getFrontSideOffset: (n) => n.shape.selectedBoxPadding,
-            getBtnSideOffset: (n) => {
-              const { selectedBoxPadding } = n.shape;
-              const { nodeWidth = 0 } = n.expandNode || {};
-              return selectedBoxPadding + nodeWidth;
-            },
           });
           const path = node?.isRoot ? quadraticCurvePath(edgePoint) : cubicBezierPath(edgePoint);
           drawEdge(this, path, edgePoint);
         });
-        node.group.cx(node.shape.x).cy(node.shape.y);
       }, rootNode);
     }
   }

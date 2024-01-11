@@ -1,5 +1,6 @@
 import { Rect, Text } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
+import type { ExpandNode } from "../node/contentNode/ExpandNode";
 import type { INodeData } from "./../graph/index.d";
 
 export abstract class Shape {
@@ -11,6 +12,8 @@ export abstract class Shape {
   protected visibleNodeEl = new Rect();
   /** 文本节点 */
   protected textNodeEl = new Text();
+  /** 展开收缩节点 */
+  public expandNode?: ExpandNode;
 
   public x: number = 0;
   public y: number = 0;
@@ -30,10 +33,6 @@ export abstract class Shape {
   abstract get selectedNodeWidth(): number;
   /** 选中后节点的高 */
   abstract get selectedNodeHeight(): number;
-  /** 整个节点的宽 */
-  abstract get width(): number;
-  /** 整个节点的高 */
-  abstract get height(): number;
   /** 创建节点 */
   createNode(node: INodeData) {
     const { text = "" } = node;

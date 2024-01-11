@@ -3,13 +3,14 @@ import type { TNodeTypeOfKey } from "./../../node/index.d";
 import type { ITheme, IConfig, INodeTheme } from "./index.d";
 
 export class Theme implements Record<TNodeTypeOfKey, INodeTheme> {
-  static instance?: Theme;
+  private static instance?: Theme;
 
-  root!: INodeTheme;
-  second!: INodeTheme;
-  node!: INodeTheme;
-  config!: IConfig;
-  generalization!: INodeTheme;
+  public config!: IConfig;
+
+  public root!: INodeTheme;
+  public second!: INodeTheme;
+  public node!: INodeTheme;
+  public generalization!: INodeTheme;
 
   constructor(theme: ITheme = defaultTheme) {
     // 单例模式
@@ -26,7 +27,7 @@ export class Theme implements Record<TNodeTypeOfKey, INodeTheme> {
    * @param {ITheme} defaultConfig 主题的通用配置
    * @returns {ITheme} 合并后的主题配置
    */
-  static mergeTheme(theme: Partial<ITheme>, defaultConfig: ITheme = defaultTheme): ITheme {
+  public static mergeTheme(theme: Partial<ITheme>, defaultConfig: ITheme = defaultTheme): ITheme {
     const { root, second, node, generalization, ...config } = theme;
     const {
       root: _root,
@@ -49,7 +50,7 @@ export class Theme implements Record<TNodeTypeOfKey, INodeTheme> {
    * 使用某一主题
    * @param theme 目前已有在主题有 蓝色系: blueGray, 商务: deepPurple
    */
-  useTheme(theme: ITheme) {
+  public useTheme(theme: ITheme) {
     const { root, second, node, generalization, ...config } = Theme.mergeTheme(theme);
     this.config = config;
     this.root = root;
@@ -59,7 +60,7 @@ export class Theme implements Record<TNodeTypeOfKey, INodeTheme> {
   }
 
   /** 是否为水平布局 */
-  get isHorizontal() {
+  public get isHorizontal() {
     return ["LeftLogical", "RightLogical", "Standard"].indexOf(this.config.layout) > -1;
   }
 }

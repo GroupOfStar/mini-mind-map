@@ -73,7 +73,7 @@ const onTestClick = (e: MouseEvent) => {
 
 const onLayout = (item: IStatusEnum<ILayoutType>) => {
   const mindMap = props.mindMap;
-  mindMap.layoutType = item.value;
+  mindMap.theme.config.layout = item.value;
   mindMap.layout();
   mindMap.onResize();
 };

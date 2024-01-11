@@ -1,28 +1,6 @@
 import type { IForEachNode, IWarpperNode } from "./index.d";
 
 /**
- * 深度先序遍历树得到新的数据
- * @param callback 遍历时执行的回调
- * @param dataTree 节点树
- * @returns 遍历后的节点树
- */
-export function mapTree<T extends ITreeNode>(
-  callback: (nodeData: T, index: number, parentNode?: T) => T,
-  dataTree: T[]
-): any[] {
-  function walk(data: T[], parentNode?: T) {
-    return data.map((item, index) => {
-      const node = callback(item, index, parentNode);
-      return {
-        ...node,
-        children: walk(item.children, node),
-      };
-    });
-  }
-  return walk(dataTree);
-}
-
-/**
  * 广度优先
  * 遍历节点及子节点 by while
  * @param callback 遍历时执行的回调

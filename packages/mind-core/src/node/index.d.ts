@@ -1,9 +1,9 @@
 import type * as SVGType from "@svgdotjs/svg.js";
 import type { Node } from "./Node";
-import type { RootNode } from "./RootNode";
-import { SecondNode } from "./SecondNode";
-import { DefaultNode } from "./DefaultNode";
-import { GeneralizationNode } from "./GeneralizationNode";
+import type { RootNode } from "./hierarchicalNode/RootNode";
+import { SecondNode } from "./hierarchicalNode/SecondNode";
+import { DefaultNode } from "./hierarchicalNode/DefaultNode";
+import { GeneralizationNode } from "./hierarchicalNode/GeneralizationNode";
 import type { INodeData, IEvents } from "./../graph/index.d";
 import type { Emitter } from "../emitter/index.d";
 
