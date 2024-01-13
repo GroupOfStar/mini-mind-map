@@ -5,10 +5,10 @@ import { Style } from "./../style";
 import { RectShape } from "./../shape";
 import { normalNodeId } from "./../utils";
 import type { INodeProps } from "./index.d";
-import { Emitter } from "./../emitter/index.d";
+import { Emitter } from "./../emitter";
 import type { ExpandNode } from "./contentNode/ExpandNode";
 
-export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
+export abstract class Node<P, C> extends Emitter<IEvents> implements ITreeNode<Node<C, C>> {
   /** 节点group挂载的group容器 */
   protected nodesGroup: SVGType.G | undefined;
   /** 节点group */
@@ -30,11 +30,10 @@ export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
   public abstract expandNode?: ExpandNode;
   /** 形状 */
   public shape: RectShape;
-  /** 事件广播 */
-  public emitter?: Emitter<IEvents>;
 
   constructor(props: INodeProps<P, C>) {
-    const { nodeData, nodesGroup, parentNode, nodeType, emitter } = props;
+    super();
+    const { nodeData, nodesGroup, parentNode, nodeType } = props;
     this.id = normalNodeId(nodeData.id);
     this.nodesGroup = nodesGroup;
     this.nodeData = nodeData;
@@ -45,7 +44,6 @@ export abstract class Node<P, C> implements ITreeNode<Node<C, C>> {
       nodeStyle: this.style,
       group: this.group,
     });
-    this.emitter = emitter;
   }
   /** 是否为根节点 */
   get isRoot() {

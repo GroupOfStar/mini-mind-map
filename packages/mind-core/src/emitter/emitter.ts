@@ -1,5 +1,5 @@
 import type {
-  Emitter,
+  IEmitter,
   EventHandlerList,
   EventHandlerMap,
   EventType,
@@ -11,7 +11,7 @@ import type {
 /**
  * Emitter: (~200b) 事件广播
  * @name emitter
- * @returns {Emitter}
+ * @returns {IEmitter}
  */
 export function emitter<Events extends Record<EventType, unknown>>(
   all?: EventHandlerMap<Events>
@@ -84,4 +84,36 @@ export function emitter<Events extends Record<EventType, unknown>>(
       }
     },
   };
+}
+
+/**
+ * 事件广播
+ * 单例模式，页面生命周期内共享的事件广播
+ */
+export class Emitter<T extends Record<EventType, unknown>> implements IEmitter<T> {
+  private static instance: Emitter<any>;
+  public all!: EventHandlerMap<T>;
+  public on!: {
+    <Key extends keyof T>(type: Key, handler: Handler<T[Key]>): void;
+    (type: "*", handler: WildcardHandler<T>): void;
+  };
+  public off!: {
+    <Key extends keyof T>(type: Key, handler?: Handler<T[Key]> | undefined): void;
+    (type: "*", handler: WildcardHandler<T>): void;
+  };
+  public emit!: {
+    <Key extends keyof T>(type: Key, event: T[Key]): void;
+    <Key extends keyof T>(type: undefined extends T[Key] ? Key : never): void;
+  };
+  constructor() {
+    // 单例模式
+    if (!Emitter.instance) {
+      const eimt = emitter<T>();
+      this.all = eimt.all;
+      this.on = eimt.on;
+      this.off = eimt.off;
+      this.emit = eimt.emit;
+      Emitter.instance = this;
+    }
+  }
 }

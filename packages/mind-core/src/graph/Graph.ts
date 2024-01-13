@@ -3,14 +3,13 @@ import type * as SVGType from "@svgdotjs/svg.js";
 import * as Structure from "./../layout";
 import { DefaultNode, RootNode, SecondNode } from "./../node";
 import { Theme } from "./../style";
-import { emitter } from "./../emitter";
-import type { Emitter } from "./../emitter/index.d";
+import { Emitter } from "./../emitter";
 import { getEdgePoint, quadraticCurvePath, cubicBezierPath, drawEdge } from "./../dom";
 import { forScopeEachTree } from "./../utils";
 import { GraphEvent } from "./GraphEvent";
 import { INodeData, IEvents } from "./index.d";
 
-export class Graph {
+export class Graph extends Emitter<IEvents> {
   theme: Theme;
   el: HTMLElement = document.body;
   dataTree: INodeData[] = [];
@@ -19,12 +18,11 @@ export class Graph {
   graphGroup: SVGType.G;
   nodesGroup: SVGType.G;
   linesGroup: SVGType.G;
-  /** 事件广播 */
-  emitter: Emitter<IEvents>;
   /** 事件 */
   graphEvent: GraphEvent;
 
   constructor() {
+    super();
     this.theme = new Theme();
     this.svg = SVG().size("100%", "100%");
     const { backgroundColor = "#fff" } = this.theme.config;
@@ -32,9 +30,9 @@ export class Graph {
     this.graphGroup = new G({ class: "g-graph" }).addTo(this.svg);
     this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
     this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
-    this.emitter = emitter();
     this.graphEvent = new GraphEvent(this);
   }
+
   /**
    * 设置SVG将要挂载的HTMLElement容器
    * @param el SVG挂载的HTMLElement容器
@@ -115,7 +113,6 @@ export class Graph {
           nodeData,
           nodesGroup: this.nodesGroup,
           parentNode,
-          emitter: this.emitter,
         };
         switch (depth) {
           case 0:

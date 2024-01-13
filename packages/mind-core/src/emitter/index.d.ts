@@ -21,7 +21,7 @@ export type EventHandlerMap<Events extends Record<EventType, unknown>> = Map<
   EventHandlerList<Events[keyof Events]> | WildCardEventHandlerList<Events>
 >;
 
-export interface Emitter<Events extends Record<EventType, unknown>> {
+export interface IEmitter<Events extends Record<EventType, unknown>> {
   all: EventHandlerMap<Events>;
 
   on<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void;

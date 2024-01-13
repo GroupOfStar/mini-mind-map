@@ -4,8 +4,7 @@ import type { RootNode } from "./hierarchicalNode/RootNode";
 import { SecondNode } from "./hierarchicalNode/SecondNode";
 import { DefaultNode } from "./hierarchicalNode/DefaultNode";
 import { GeneralizationNode } from "./hierarchicalNode/GeneralizationNode";
-import type { INodeData, IEvents } from "./../graph/index.d";
-import type { Emitter } from "../emitter/index.d";
+import type { INodeData } from "./../graph/index.d";
 
 /** 节点类型 */
 export interface INodeType {
@@ -26,22 +25,21 @@ export interface INodeProps<P, C> {
   nodeType: TNodeTypeOfKey;
   nodesGroup?: SVGType.G;
   parentNode?: Node<P, C>;
-  emitter?: Emitter<IEvents>;
 }
 
-export type IRootNodeProps<P, C> = Pick<INodeProps<P, C>, "nodeData" | "nodesGroup" | "emitter">;
+export type IRootNodeProps<P, C> = Pick<INodeProps<P, C>, "nodeData" | "nodesGroup">;
 
 export type ISecondNodeProps<P, C> = Pick<
   INodeProps<P, C>,
-  "nodeData" | "nodesGroup" | "parentNode" | "emitter"
+  "nodeData" | "nodesGroup" | "parentNode"
 >;
 
 export type IDefaultNodeProps<P, C> = Pick<
   INodeProps<P, C>,
-  "nodeData" | "nodesGroup" | "parentNode" | "emitter"
+  "nodeData" | "nodesGroup" | "parentNode"
 >;
 
 export type IGeneralizationNodeProps<P, C> = Pick<
   INodeProps<P, C>,
-  "nodeData" | "nodesGroup" | "parentNode" | "emitter"
+  "nodeData" | "nodesGroup" | "parentNode"
 >;
