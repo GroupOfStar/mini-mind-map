@@ -86,7 +86,7 @@ export class Style implements INodeTheme {
   setNodeStyleByType(node: G) {
     const textNode = node.findOne(".text") as Text;
     const thisNode = node.findOne(".node") as Rect;
-    const borderNode = node.findOne(".node-border") as Rect;
+    const borderNode = node.findOne(".selected-node") as Rect;
     const { color, paddingX = 0, paddingY = 0, borderColor, borderRadius = 0, fillColor } = this;
 
     let width = 0;

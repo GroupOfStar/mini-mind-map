@@ -1,31 +1,24 @@
-import type * as SVGType from "@svgdotjs/svg.js";
 import { Shape } from "./Shape";
-import { Style } from "./../style";
-import type { INodeData } from "./../graph/index.d";
+import type { Style } from "./../style";
+import { Node } from "src/node";
 
-interface IRectShapeProps {
-  nodeData: INodeData;
-  nodeStyle: Style;
-  group: SVGType.G;
-}
+export class RectShape<P, C> extends Shape<P, C> {
+  private style: Style;
 
-export class RectShape extends Shape {
-  private nodeStyle: Style;
-
-  constructor(props: IRectShapeProps) {
-    super(props.nodeData, props.group);
-    this.nodeStyle = props.nodeStyle;
+  constructor(node: Node<P, C>) {
+    super(node);
+    this.style = node.style;
   }
   get visibleNodeWidth(): number {
     const { width } = this.textNodeEl.bbox();
-    return width + (this.nodeStyle.paddingX || 0) * 2;
+    return width + (this.style.paddingX || 0) * 2;
   }
   get visibleNodeHeight(): number {
     const { height } = this.textNodeEl.bbox();
-    return height + (this.nodeStyle.paddingY || 0) * 2;
+    return height + (this.style.paddingY || 0) * 2;
   }
   get selectedBoxPadding(): number {
-    const { borderWidth = 0, theme } = this.nodeStyle;
+    const { borderWidth = 0, theme } = this.style;
     const { selectedBorderPadding = 0 } = theme.config;
     return selectedBorderPadding + borderWidth;
   }
@@ -37,20 +30,23 @@ export class RectShape extends Shape {
   }
   /** 设置样式 */
   setNodeStyle() {
-    const { color, borderRadius = 0, fillColor, borderColor } = this.nodeStyle;
+    const { color, borderRadius = 0, fillColor, borderColor } = this.style;
     // 文本节点
-    this.textNodeEl.fill({ color }).css({ cursor: "pointer" });
+    this.textNodeEl.fill({ color }).attr({ "pointer-events": "none" });
+    // @ts-ignore
+    this.textNodeEl.css({ "user-select": "none" });
 
     // 中间节点
+    this.visibleNodeEl.attr("pointer-events", "none");
     this.visibleNodeEl.size(this.visibleNodeWidth, this.visibleNodeHeight);
-    this.visibleNodeEl.css("cursor", "pointer").radius(borderRadius);
+    this.visibleNodeEl.radius(borderRadius);
     this.visibleNodeEl.fill({ color: fillColor });
 
     // 整个节点
     this.selectedNodeEl.size(this.selectedNodeWidth, this.selectedNodeHeight);
-    this.selectedNodeEl.stroke({ color: borderColor });
+    this.selectedNodeEl.stroke({ width: 1, color: borderColor });
     // 默认填充的是黑色,所以要设置成完全透明
-    this.selectedNodeEl.css("cursor", "pointer").fill({ opacity: 0 });
+    this.selectedNodeEl.fill({ opacity: 0 });
     this.selectedNodeEl.radius(borderRadius);
   }
   /** 节点布局 */

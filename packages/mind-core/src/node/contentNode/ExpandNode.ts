@@ -1,17 +1,21 @@
 import { G, Rect, Text } from "@svgdotjs/svg.js";
+import { ExpandNodeEvent } from "./ExpandNodeEvent";
 import type * as SVGType from "@svgdotjs/svg.js";
 import type { Style } from "../../style";
 
 /** 展开节点 */
 export class ExpandNode {
   /** group */
-  protected nodeGroup = new G({ class: "expand-group" });
+  public nodeGroup = new G({ class: "expand-group" });
   /** 节点框 */
   protected boxNodeEl = new Rect();
   /** 节点数文本 */
   protected textNodeEl = new Text();
   /** 样式主题 */
   private nodeStyle: Style;
+
+  /** 节点事件 */
+  public event = new ExpandNodeEvent(this);
 
   constructor(total: number, group: SVGType.G, nodeStyle: Style) {
     this.nodeStyle = nodeStyle;
@@ -48,7 +52,10 @@ export class ExpandNode {
         expandRadius = 0,
       } = this.nodeStyle.theme.config;
       this.textNodeEl.font({ size: expandFontSize, family: "Arial" });
-      this.textNodeEl.css({ cursor: "pointer", fill: "#257BF1" });
+      this.textNodeEl.attr({ "pointer-events": "none" });
+      this.textNodeEl.css({ fill: "#257BF1", cursor: "pointer" });
+      // @ts-ignore
+      this.textNodeEl.css({ "user-select": "none" });
       if (this.boxNodeEl) {
         this.boxNodeEl.css({ cursor: "pointer", fill: backgroundColor });
         this.boxNodeEl.stroke({ color: "#257BF1", width: expandborderWidth });

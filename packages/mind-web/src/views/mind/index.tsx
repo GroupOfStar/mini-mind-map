@@ -1,12 +1,14 @@
-import { onMounted, onBeforeUnmount, ref, defineComponent } from "vue";
+import { onMounted, onBeforeUnmount, ref, defineComponent, reactive } from "vue";
 import Sidebar from "./../../components/Sidebar/index.vue";
-import ContextMenu from "./components/Plugin/ContextMenu";
+import { ContextMenu, NodeNote } from "./components/Plugin";
 import { Graph, debounce } from "@mini-mind-map/mind-core";
 import { config, nodeList } from "../../data";
 
 export default defineComponent(function Node() {
   const mindMapRef = ref<HTMLDivElement | null>();
-  const isShow = ref(false);
+  const contextMenuVisible = ref(false);
+  const nodeNoteVisible = ref(false);
+  const position = reactive({ x: 0, y: 0 });
   const mindMap = new Graph();
 
   const onResize = debounce(mindMap.onResize.bind(mindMap));
@@ -23,6 +25,26 @@ export default defineComponent(function Node() {
       mindMap.onResize();
     }
 
+    mindMap.on("graph_contextmenu", (e) => {
+      e.stopPropagation();
+      contextMenuVisible.value = false;
+      nodeNoteVisible.value = false;
+    });
+
+    mindMap.on("graph_click", () => {
+      contextMenuVisible.value = false;
+      nodeNoteVisible.value = false;
+    });
+
+    mindMap.on("node_contextmenu", (node) => {
+      const graphPosition = mindMap.position;
+      const { translateX = 0, translateY = 0 } = mindMap.graphGroup.transform();
+      position.x = node.shape.x + graphPosition.x + translateX;
+      position.y = node.shape.y + node.shape.selectedNodeHeight + graphPosition.y + translateY;
+      contextMenuVisible.value = true;
+      nodeNoteVisible.value = false;
+    });
+
     window.addEventListener("resize", onResize);
   });
 
@@ -33,10 +55,19 @@ export default defineComponent(function Node() {
     window.removeEventListener("resize", onResize);
   });
 
-  return () => (
-    <div class="mindMapContainer" ref={mindMapRef}>
-      <Sidebar mindMap={mindMap} />
-      {isShow.value && <ContextMenu />}
-    </div>
-  );
+  return () => {
+    const nodeNoteProps = {
+      mindMap,
+      nodeNoteVisible,
+      ...position,
+    };
+    const contextMenuProps = { ...nodeNoteProps, contextMenuVisible };
+    return (
+      <div class="mindMapContainer" ref={mindMapRef}>
+        <Sidebar mindMap={mindMap} />
+        <ContextMenu {...contextMenuProps} />
+        <NodeNote {...nodeNoteProps} />
+      </div>
+    );
+  };
 });

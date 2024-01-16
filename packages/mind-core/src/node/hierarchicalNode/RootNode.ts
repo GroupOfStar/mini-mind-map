@@ -1,6 +1,5 @@
 import { Node } from "../Node";
 import { ExpandNode } from "../contentNode/ExpandNode";
-import { RectShape } from "../../shape";
 import type { IRootNodeProps } from "../index.d";
 import type { SecondNode } from "../index";
 

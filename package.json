@@ -1,10 +1,12 @@
 {
   "name": "mini-mind-map",
+  "private": true,
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "pnpm run test --filter ./packages/*",
+    "echo": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -13,5 +15,9 @@
     "@types/node": "^20.9.0",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
+  },
+  "engines": {
+    "node": ">=16",
+    "pnpm": ">=7"
   }
 }

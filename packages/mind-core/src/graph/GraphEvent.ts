@@ -147,7 +147,7 @@ export class GraphEvent {
   // 鼠标右键菜单事件
   private onSvgContextmenu(e: Event) {
     e.preventDefault();
-    // this.emit("contextmenu", e);
+    this.graph.emit("graph_contextmenu", e);
   }
   // 鼠标滚动
   private onSvgMousewheel(event: Event) {

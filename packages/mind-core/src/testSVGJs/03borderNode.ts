@@ -28,7 +28,7 @@ function createNode(nodesGroup: G, nodeType: TNodeTypeOfKey = "node") {
   // 文本节点
   const textNode = new Text().addClass("text").text("测试节点");
   // 节点边框
-  new Rect().addTo(group).addClass("node-border");
+  new Rect().addTo(group).addClass("selected-node");
   // 节点本身
   new Rect().addTo(group).addClass("node");
 
@@ -49,7 +49,7 @@ function createNode(nodesGroup: G, nodeType: TNodeTypeOfKey = "node") {
  */
 const addEventListener = (nodesGroup: G) => {
   nodesGroup.children().forEach((group) => {
-    const borderNode = group.findOne("rect.node-border") as Rect | null;
+    const borderNode = group.findOne("rect.selected-node") as Rect | null;
     if (borderNode) {
       group.on("mouseover", (event) => {
         event.stopPropagation();

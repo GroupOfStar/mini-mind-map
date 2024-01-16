@@ -12,6 +12,12 @@ mini版思维导图
 
 ```bash
 pnpm i
+
+# 装到某个包的运行依赖中
+pnpm --filter mind-web add  quill@^1.3.7
+
+# 装到某个包的开发依赖中
+pnpm --filter mind-web add -D  @types/quill
 ```
 
 运行

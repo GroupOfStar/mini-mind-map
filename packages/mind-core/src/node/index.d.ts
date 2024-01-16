@@ -5,6 +5,7 @@ import { SecondNode } from "./hierarchicalNode/SecondNode";
 import { DefaultNode } from "./hierarchicalNode/DefaultNode";
 import { GeneralizationNode } from "./hierarchicalNode/GeneralizationNode";
 import type { INodeData } from "./../graph/index.d";
+import { EventType } from "src/emitter";
 
 /** 节点类型 */
 export interface INodeType {
@@ -18,7 +19,7 @@ export interface INodeType {
 export type TNodeTypeOfKey = keyof INodeType;
 
 /** 节点类型的value */
-export type TNodeTypeOfValue = INodeType[TNodeTypeOfKey];
+export type TNodeTypeOfValue = INodeType[TNodeTypeOfKey] | unknown;
 
 export interface INodeProps<P, C> {
   nodeData: INodeData;

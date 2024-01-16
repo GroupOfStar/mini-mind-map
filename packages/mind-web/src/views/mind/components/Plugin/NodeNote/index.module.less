@@ -1,0 +1,74 @@
+.editor_container {
+  position: fixed;
+  width: 300px;
+  background-color: #fff;
+  box-shadow: 0 4px 16px 0 #0000000f;
+  border-radius: 10px;
+  z-index: 99;
+  .editor_content {
+    height: 206px;
+    :global(.ql-toolbar.ql-snow) {
+      border: none;
+      text-align: center;
+      background-color: #f7f7f7;
+      :global(.ql-formats > button[type="button"]:hover),
+      :global(.ql-formats > button[type="button"].ql-active) {
+        background-color: #e9e9eb;
+        border-radius: 5px;
+        :global(path),
+        :global(line) {
+          color: #000000;
+          stroke: #000000;
+        }
+      }
+    }
+    :global(.ql-container.ql-snow) {
+      border: none;
+      height: 166px;
+
+      :global(.ql-editor) {
+        line-height: 1.8;
+        :global(ol),
+        :global(ul) {
+          padding-left: 4px;
+        }
+        :global(ol li:before) {
+          text-align: right;
+        }
+        :global(ul li:before) {
+          text-align: right;
+          transform: translateX(-4px);
+        }
+      }
+      :global(.ql-editor::-webkit-scrollbar) {
+        width: 8px;
+      }
+      :global(.ql-editor::-webkit-scrollbar-thumb) {
+        background-color: #b7b7b7; /* 设置滚动条滑块的颜色 */
+        border-radius: 4px; /* 设置滚动条滑块的圆角 */
+      }
+      :global(.ql-editor::-webkit-scrollbar-thumb:hover) {
+        background-color: #a1a1a1; /* 设置滚动条滑块在悬停时的颜色 */
+      }
+      :global(.ql-editor::-webkit-scrollbar-track) {
+        background-color: #e5e5e5; /* 设置滚动条背景的颜色 */
+      }
+    }
+  }
+  .btn_group {
+    height: 44px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    .delete_btn {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      span {
+        font-size: 12px;
+        color: #595959;
+      }
+    }
+  }
+}

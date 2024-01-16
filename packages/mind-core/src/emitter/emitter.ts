@@ -15,7 +15,7 @@ import type {
  */
 export function emitter<Events extends Record<EventType, unknown>>(
   all?: EventHandlerMap<Events>
-): Emitter<Events> {
+): IEmitter<Events> {
   type GenericEventHandler = Handler<Events[keyof Events]> | WildcardHandler<Events>;
   all = all || new Map();
 
@@ -90,8 +90,8 @@ export function emitter<Events extends Record<EventType, unknown>>(
  * 事件广播
  * 单例模式，页面生命周期内共享的事件广播
  */
-export class Emitter<T extends Record<EventType, unknown>> implements IEmitter<T> {
-  private static instance: Emitter<any>;
+export abstract class Emitter<T extends Record<EventType, unknown>> implements IEmitter<T> {
+  private static instance: any;
   public all!: EventHandlerMap<T>;
   public on!: {
     <Key extends keyof T>(type: Key, handler: Handler<T[Key]>): void;
@@ -107,13 +107,22 @@ export class Emitter<T extends Record<EventType, unknown>> implements IEmitter<T
   };
   constructor() {
     // 单例模式
-    if (!Emitter.instance) {
-      const eimt = emitter<T>();
-      this.all = eimt.all;
-      this.on = eimt.on;
-      this.off = eimt.off;
-      this.emit = eimt.emit;
+    if (Emitter.instance) {
+      this.all = Emitter.instance.all;
+      this.on = Emitter.instance.on;
+      this.off = Emitter.instance.off;
+      this.emit = Emitter.instance.emit;
+    } else {
+      const eventEmitter = emitter<T>();
+      this.all = eventEmitter.all;
+      this.on = eventEmitter.on;
+      this.off = eventEmitter.off;
+      this.emit = eventEmitter.emit;
       Emitter.instance = this;
     }
   }
+  /** 注册事件 */
+  public abstract bindEvent(): void;
+  /** 解除事件 */
+  public abstract unbindEvent(): void;
 }

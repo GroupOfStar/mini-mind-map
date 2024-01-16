@@ -5,7 +5,7 @@ import { DefaultNode, RootNode, SecondNode } from "./../node";
 import { Theme } from "./../style";
 import { Emitter } from "./../emitter";
 import { getEdgePoint, quadraticCurvePath, cubicBezierPath, drawEdge } from "./../dom";
-import { forScopeEachTree } from "./../utils";
+import { forDeepEachTree, forScopeEachTree } from "./../utils";
 import { GraphEvent } from "./GraphEvent";
 import { INodeData, IEvents } from "./index.d";
 
@@ -28,11 +28,41 @@ export class Graph extends Emitter<IEvents> {
     const { backgroundColor = "#fff" } = this.theme.config;
     this.svg.node.style.backgroundColor = backgroundColor;
     this.graphGroup = new G({ class: "g-graph" }).addTo(this.svg);
-    this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
     this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
+    this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
     this.graphEvent = new GraphEvent(this);
   }
-
+  // 获取画布定位
+  get position() {
+    const {
+      x = 0,
+      y = 0,
+      visibleNodeWidth = 0,
+      visibleNodeHeight = 0,
+    } = this.rootNode?.shape || {};
+    let pointX = 0;
+    let pointY = window.innerHeight / 2 - y - visibleNodeHeight / 2;
+    switch (this.theme.config.layout) {
+      case "LeftLogical":
+        pointX = (window.innerWidth * 2) / 3 - x - visibleNodeWidth / 2;
+        break;
+      case "Standard":
+        pointX = window.innerWidth / 2 - x - visibleNodeWidth / 2;
+        break;
+      case "DownwardOrganizational":
+        pointX = window.innerWidth / 2 - x - visibleNodeWidth / 2;
+        pointY = window.innerHeight / 3 - y - visibleNodeHeight / 2;
+        break;
+      case "UpwardOrganizational":
+        pointX = window.innerWidth / 2 - x - visibleNodeWidth / 2;
+        pointY = (window.innerHeight * 2) / 3 - y - visibleNodeHeight / 2;
+        break;
+      case "RightLogical":
+        pointX = window.innerWidth / 3 + x;
+        break;
+    }
+    return { x: pointX, y: pointY };
+  }
   /**
    * 设置SVG将要挂载的HTMLElement容器
    * @param el SVG挂载的HTMLElement容器
@@ -69,35 +99,8 @@ export class Graph extends Emitter<IEvents> {
    */
   onResize() {
     console.log("onResize");
-    const {
-      x = 0,
-      y = 0,
-      visibleNodeWidth = 0,
-      visibleNodeHeight = 0,
-    } = this.rootNode?.shape || {};
-    let pointX = 0;
-    let pointY = window.innerHeight / 2 - y - visibleNodeHeight / 2;
-    switch (this.theme.config.layout) {
-      case "LeftLogical":
-        pointX = (window.innerWidth * 2) / 3 - x - visibleNodeWidth / 2;
-        break;
-      case "Standard":
-        pointX = window.innerWidth / 2 - x - visibleNodeWidth / 2;
-        break;
-      case "DownwardOrganizational":
-        pointX = window.innerWidth / 2 - x - visibleNodeWidth / 2;
-        pointY = window.innerHeight / 3 - y - visibleNodeHeight / 2;
-        break;
-      case "UpwardOrganizational":
-        pointX = window.innerWidth / 2 - x - visibleNodeWidth / 2;
-        pointY = (window.innerHeight * 2) / 3 - y - visibleNodeHeight / 2;
-        break;
-      case "RightLogical":
-        pointX = window.innerWidth / 3 + x;
-        break;
-    }
-    this.graphGroup.transform({ translateX: 0, translateY: 0 });
-    this.graphGroup.x(pointX).y(pointY);
+    const position = this.position;
+    this.graphGroup.x(position.x).y(position.y);
   }
   /** 渲染 */
   render() {
@@ -129,7 +132,7 @@ export class Graph extends Emitter<IEvents> {
         node.depth = depth;
         node.children = walk(nodeData.children, node);
         node.init();
-        node.bindEvent();
+        node.event.bindEvent();
         return node;
       });
     };
@@ -182,32 +185,29 @@ export class Graph extends Emitter<IEvents> {
   /** 画布点击事件 */
   onSvgClick(event: Event) {
     event.stopPropagation();
+    this.emit("graph_click", event);
     this.nodesGroup.find("rect.active").forEach((item) => {
       item.stroke({ width: 1, color: "transparent" });
       item.removeClass("active");
     });
   }
-  // /** 画布按下事件 */
-  // onSvgMousedown(event: Event) {
-  //   console.log("onSvgMousedown event :>> ", event);
-  //   event.preventDefault();
-  //   event.stopPropagation();
-  // }
   /** 注册事件 */
   bindEvent() {
     this.onSvgClick = this.onSvgClick.bind(this);
-    // this.onSvgMousedown = this.onSvgMousedown.bind(this);
-
     /** 画布点击事件 */
     this.svg.on("click", this.onSvgClick);
-    // this.emitter.on("graph_click", this.onSvgClick);
 
-    // this.svg.on("mousedown", this.onSvgMousedown);
-    // window.addEventListener("mousemove", this.onMousemove);
-    // window.addEventListener("mouseup", this.onMouseup);
+    this.on("node_click", () => {
+      if (this.rootNode) {
+        forDeepEachTree((node) => {
+          node.shape.setDeActivation();
+        }, this.rootNode);
+      }
+    });
   }
   /** 解除事件 */
   unbindEvent() {
     this.svg.off();
+    this.off("*", () => {});
   }
 }

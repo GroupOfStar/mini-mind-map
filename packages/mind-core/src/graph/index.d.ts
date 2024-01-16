@@ -1,3 +1,6 @@
+import { EventType } from "src/emitter";
+import { Node } from "./../node";
+import type { TNodeTypeOfValue } from "./../node/index.d";
 import { INodeTheme } from "./../style";
 
 export type INodeData = ITreeNode<{
@@ -9,7 +12,11 @@ export type INodeData = ITreeNode<{
 }>;
 
 // 所有事件类型
-export type IEvents = {
+export interface IEvents extends Record<EventType, unknown> {
   graph_click: Event;
-  node_Click: string;
-};
+  graph_contextmenu: Event;
+  node_click: Node<TNodeTypeOfValue, TNodeTypeOfValue>;
+  node_dblclick: Node<TNodeTypeOfValue, TNodeTypeOfValue>;
+  node_contextmenu: Node<TNodeTypeOfValue, TNodeTypeOfValue>;
+  expandNode_click: Event;
+}

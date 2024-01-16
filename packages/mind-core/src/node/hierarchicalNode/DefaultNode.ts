@@ -17,7 +17,7 @@ export class DefaultNode extends Node<SecondNode | DefaultNode, DefaultNode> {
     if (child.length > 0) {
       /** 子节点总数 */
       const childTotal = getTreeNodeTotal(this.nodeData);
-      this.expandNode = this.shape.expandNode = new ExpandNode(childTotal, this.group, this.style);
+      this.expandNode = new ExpandNode(childTotal, this.group, this.style);
     }
     this._children = child;
   }
