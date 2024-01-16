@@ -1,31 +1,9 @@
-import { defineComponent, ref, PropType, onMounted, Ref, onBeforeUnmount } from "vue";
-import type { Graph } from "@mini-mind-map/mind-core";
+import { defineComponent, ref, onMounted, onBeforeUnmount } from "vue";
+import { NodeNotePropsDefine } from "./interface.d";
 import Quill, { DeltaStatic } from "quill";
 import Delta from "quill-delta";
 import "quill/dist/quill.snow.css";
 import styles from "./index.module.less";
-
-/** Contextmenu组件propsType */
-const NodeNotePropsDefine = {
-  /** 数据集 */
-  mindMap: {
-    type: Object as PropType<Graph>,
-    required: true,
-  },
-  /** 备注弹出visible */
-  nodeNoteVisible: {
-    type: Object as PropType<Ref<boolean>>,
-    required: true,
-  },
-  x: {
-    type: Number,
-    required: true,
-  },
-  y: {
-    type: Number,
-    required: true,
-  },
-} as const;
 
 let quill: Quill | null = null;
 let change = new Delta();
@@ -34,9 +12,14 @@ let change = new Delta();
 export const NodeNote = defineComponent({
   name: "NodeNote",
   props: NodeNotePropsDefine,
-  setup(props) {
+  setup(props, context) {
+    const { nodeNoteVisible, position } = props;
+
     const noteModalRef = ref<HTMLElement>();
     const editorRef = ref<HTMLElement>();
+
+    // 使用 expose 暴露组件内部的方法
+    context.expose({ ref: noteModalRef });
 
     const onDeleteText = () => {
       console.log("onDeleteText");
@@ -49,7 +32,7 @@ export const NodeNote = defineComponent({
       onCancel();
     };
     const onCancel = () => {
-      props.nodeNoteVisible.value = false;
+      nodeNoteVisible.value = false;
       if (quill) {
         quill.setContents(new Delta().ops as unknown as DeltaStatic);
       }
@@ -123,10 +106,10 @@ export const NodeNote = defineComponent({
       <div
         class={styles.editor_container}
         ref={noteModalRef}
-        v-show={props.nodeNoteVisible.value}
+        v-show={nodeNoteVisible.value}
         style={{
-          left: props.x + "px",
-          top: props.y + "px",
+          left: position.x + "px",
+          top: position.y + "px",
         }}
       >
         <div class={styles.editor_content}>

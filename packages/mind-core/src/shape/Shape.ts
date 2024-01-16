@@ -19,6 +19,7 @@ export abstract class Shape<P, C> {
   constructor(node: Node<P, C>) {
     this.group = node.group;
     this.selectedNodeEl = node.selectedNodeEl;
+
     // 创建节点
     this.createNode(node.nodeData);
   }
@@ -34,6 +35,8 @@ export abstract class Shape<P, C> {
   abstract get selectedNodeHeight(): number;
   /** 创建节点 */
   createNode(node: INodeData) {
+    // 节点边框
+    this.selectedNodeEl.addTo(this.group).addClass("selected-node");
     const { text = "" } = node;
     // 文本节点
     this.textNodeEl.addClass("text").text(text);

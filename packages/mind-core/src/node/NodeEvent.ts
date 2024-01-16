@@ -49,7 +49,7 @@ export class NodeEvent<P, C> extends Emitter<IEvents> {
   private onContextmenu(event: Event) {
     event.preventDefault();
     event.stopPropagation();
-    this.emit("node_contextmenu", this.node);
+    this.emit("node_contextmenu", { event, node: this.node });
   }
   /** 节点双击事件 */
   private onDblclick(event: Event) {

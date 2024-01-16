@@ -43,8 +43,6 @@ export abstract class Node<P, C> implements ITreeNode<Node<P, C>> {
     this.parentNode = parentNode;
     this.style = new Style(nodeType);
     this.shape = new RectShape(this);
-    // 节点边框
-    this.selectedNodeEl.addTo(this.group).addClass("selected-node");
   }
   /** 是否为根节点 */
   get isRoot() {

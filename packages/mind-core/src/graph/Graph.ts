@@ -132,7 +132,6 @@ export class Graph extends Emitter<IEvents> {
         node.depth = depth;
         node.children = walk(nodeData.children, node);
         node.init();
-        node.event.bindEvent();
         return node;
       });
     };

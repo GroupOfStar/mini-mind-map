@@ -31,6 +31,8 @@ export class RectShape<P, C> extends Shape<P, C> {
   /** 设置样式 */
   setNodeStyle() {
     const { color, borderRadius = 0, fillColor, borderColor } = this.style;
+    // const { text = "" } = this.node;
+    // this.textNodeEl.addClass("text").text("第三层节点02-01");
     // 文本节点
     this.textNodeEl.fill({ color }).attr({ "pointer-events": "none" });
     // @ts-ignore
