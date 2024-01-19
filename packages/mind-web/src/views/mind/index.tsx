@@ -5,6 +5,7 @@ import type { IMenuType, IContextMenuExpose, INodeNoteExpose } from "./component
 import { Graph, debounce } from "@mini-mind-map/mind-core";
 import { config, nodeList } from "../../data";
 import { showModalByPosition } from "../../utils";
+import styles from "./index.module.less";
 
 export default defineComponent(function Node() {
   const mindMapRef = ref<HTMLDivElement | null>();
@@ -86,7 +87,7 @@ export default defineComponent(function Node() {
     const contextMenuProps = { mindMap, contextMenuVisible, position };
     const nodeNoteProps = { mindMap, nodeNoteVisible, position };
     return (
-      <div class="mindMapContainer" ref={mindMapRef}>
+      <div class={styles.mind_map_container} ref={mindMapRef}>
         <Sidebar mindMap={mindMap} />
         <ContextMenu
           ref={contextMenuRef}

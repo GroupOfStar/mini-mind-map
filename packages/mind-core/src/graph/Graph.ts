@@ -19,49 +19,44 @@ export class Graph extends Emitter<IEvents> {
   nodesGroup: SVGType.G;
   linesGroup: SVGType.G;
   /** 事件 */
-  graphEvent: GraphEvent;
+  graphEvent?: GraphEvent;
 
   constructor() {
     super();
     this.theme = new Theme();
-    this.svg = SVG().size("100%", "100%");
+    this.svg = SVG();
+    // svg为内联块元素，其位于文本基线上，在底部会留下容纳字符下行符（'y'，'g'等的尾部）的空间，所以要设置display:block去掉该空间。
+    this.svg.css({ display: "block" });
     const { backgroundColor = "#fff" } = this.theme.config;
     this.svg.node.style.backgroundColor = backgroundColor;
     this.graphGroup = new G({ class: "g-graph" }).addTo(this.svg);
     this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
     this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
-    this.graphEvent = new GraphEvent(this);
   }
-  // 获取画布定位
-  get position() {
-    const {
-      x = 0,
-      y = 0,
-      visibleNodeWidth = 0,
-      visibleNodeHeight = 0,
-    } = this.rootNode?.shape || {};
-    let pointX = 0;
-    let pointY = window.innerHeight / 2 - y - visibleNodeHeight / 2;
+  // 获取各种类型布局下画布的偏移量
+  get graphOffset() {
+    let offsetX = 0;
+    let offsetY = window.innerHeight / 2;
     switch (this.theme.config.layout) {
       case "LeftLogical":
-        pointX = (window.innerWidth * 2) / 3 - x - visibleNodeWidth / 2;
+        offsetX = (window.innerWidth * 2) / 3;
         break;
       case "Standard":
-        pointX = window.innerWidth / 2 - x - visibleNodeWidth / 2;
+        offsetX = window.innerWidth / 2;
         break;
       case "DownwardOrganizational":
-        pointX = window.innerWidth / 2 - x - visibleNodeWidth / 2;
-        pointY = window.innerHeight / 3 - y - visibleNodeHeight / 2;
+        offsetX = window.innerWidth / 2;
+        offsetY = window.innerHeight / 3;
         break;
       case "UpwardOrganizational":
-        pointX = window.innerWidth / 2 - x - visibleNodeWidth / 2;
-        pointY = (window.innerHeight * 2) / 3 - y - visibleNodeHeight / 2;
+        offsetX = window.innerWidth / 2;
+        offsetY = (window.innerHeight * 2) / 3;
         break;
       case "RightLogical":
-        pointX = window.innerWidth / 3 + x;
+        offsetX = window.innerWidth / 3;
         break;
     }
-    return { x: pointX, y: pointY };
+    return { offsetX, offsetY };
   }
   /**
    * 设置SVG将要挂载的HTMLElement容器
@@ -69,6 +64,7 @@ export class Graph extends Emitter<IEvents> {
    */
   setContainer(el: HTMLElement) {
     this.el = el;
+    this.graphEvent = new GraphEvent(this);
   }
   /**
    * 通过一维的节点数组设置成节点树数据
@@ -99,8 +95,18 @@ export class Graph extends Emitter<IEvents> {
    */
   onResize() {
     console.log("onResize");
-    const position = this.position;
-    this.graphGroup.x(position.x).y(position.y);
+    const { offsetX, offsetY } = this.graphOffset;
+    const { width, height } = this.graphGroup.rbox();
+    const {
+      x = 0,
+      y = 0,
+      selectedNodeWidth = 0,
+      selectedNodeHeight = 0,
+    } = this.rootNode?.shape || {};
+    this.el.scroll(
+      x + width / 2 + selectedNodeWidth / 2 - offsetX,
+      y + height / 2 + selectedNodeHeight / 2 - offsetY
+    );
   }
   /** 渲染 */
   render() {
@@ -159,7 +165,10 @@ export class Graph extends Emitter<IEvents> {
         getVGap: (node) => node.style.marginY,
         getX: (node) => node.shape.x,
         setX: (node, val) => {
-          node.shape.x = val;
+          const { selectedNodeWidth } = node.shape;
+          // 不以中心而以左上角顶点进行定位，解决g-graph在svg中偏移的问题
+          // node.shape.x = val;
+          node.shape.x = val - selectedNodeWidth / 2;
         },
         getY: (node) => node.shape.y,
         setY: (node, val) => {
@@ -179,6 +188,11 @@ export class Graph extends Emitter<IEvents> {
           drawEdge(this, path, edgePoint);
         });
       }, rootNode);
+
+      const { width, height } = this.graphGroup.rbox();
+      this.svg.size(width * 2, height * 2);
+      // this.svg.size(width, height);
+      this.graphGroup.x(width / 2).y(height / 2);
     }
   }
   /** 画布点击事件 */

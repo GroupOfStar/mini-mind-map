@@ -58,17 +58,19 @@ const close = () => {
 // 测试按钮
 const onTestClick = (e: MouseEvent) => {
   e.preventDefault();
-  const mindMap = props.mindMap;
-  const transform = mindMap.graphGroup.transform();
-  const width = mindMap.graphGroup.width();
-  const height = mindMap.graphGroup.height();
-  const x = mindMap.graphGroup.x();
-  const y = mindMap.graphGroup.y();
-  console.log("x :>> ", x);
-  console.log("y :>> ", y);
-  console.log("transform :>> ", transform);
-  console.log("width :>> ", width);
-  console.log("height :>> ", height);
+  // const mindMap = props.mindMap;
+  // const transform = mindMap.graphGroup.transform();
+  // const width = mindMap.graphGroup.width();
+  // const height = mindMap.graphGroup.height();
+  // const x = mindMap.graphGroup.x();
+  // const y = mindMap.graphGroup.y();
+  // console.log("x :>> ", x);
+  // console.log("y :>> ", y);
+  // console.log("transform :>> ", transform);
+  // console.log("width :>> ", width);
+  // console.log("height :>> ", height);
+  const userInput = prompt("请输入内容"); // 显示提示信息并等待用户输入
+  console.log(userInput); // 将用户输入的值打印到控制台上
 };
 
 const onLayout = (item: IStatusEnum<ILayoutType>) => {

@@ -22,6 +22,7 @@ export class NodeEvent<P, C> extends Emitter<IEvents> {
   }
   /** 节点点击事件 */
   private onClick(event: Event) {
+    event.stopPropagation();
     const { shape, style, nodeData } = this.node;
     const { x, y, selectedNodeWidth, selectedNodeHeight } = shape;
     const { marginX, marginY } = style;
@@ -40,7 +41,6 @@ export class NodeEvent<P, C> extends Emitter<IEvents> {
       " marginY :",
       marginY
     );
-    event.stopPropagation();
     // 将在Graph中先取消容器组下所有的active样式
     this.emit("node_click", this.node);
     shape.setActivation();
@@ -56,6 +56,11 @@ export class NodeEvent<P, C> extends Emitter<IEvents> {
     event.preventDefault();
     this.emit("node_dblclick", this.node);
   }
+  /** 节点鼠标按下事件 */
+  private onMousedown(event: Event) {
+    event.preventDefault();
+    // event.stopPropagation();
+  }
   /** 注册事件 */
   public bindEvent() {
     this.onClick = this.onClick.bind(this);
@@ -66,6 +71,7 @@ export class NodeEvent<P, C> extends Emitter<IEvents> {
 
     this.node.selectedNodeEl.on("click", this.onClick);
     this.node.selectedNodeEl.on("dblclick", this.onDblclick);
+    this.node.selectedNodeEl.on("mousedown", this.onMousedown);
     this.node.selectedNodeEl.on("mouseover", this.onMouseover);
     this.node.selectedNodeEl.on("mouseout", this.onMouseout);
     this.node.selectedNodeEl.on("contextmenu", this.onContextmenu);

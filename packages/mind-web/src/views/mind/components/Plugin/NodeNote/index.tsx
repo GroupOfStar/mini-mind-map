@@ -6,7 +6,7 @@ import "quill/dist/quill.snow.css";
 import styles from "./index.module.less";
 
 let quill: Quill | null = null;
-let change = new Delta();
+let delta = new Delta();
 
 /** 备注弹窗 */
 export const NodeNote = defineComponent({
@@ -53,6 +53,7 @@ export const NodeNote = defineComponent({
           placeholder: "添加备注",
           theme: "snow",
         });
+        // delta.quill.setSelection();
         // quill.on("text-change", (delta, oldDelta, source) => {
         //   console.log("text-change object");
         //   let contents = this.quill.getContents();
@@ -82,18 +83,13 @@ export const NodeNote = defineComponent({
         //   // return new Delta().insert(node.data, style);
         //   return change.insert(node) as unknown as DeltaStatic;
         // });
+        // 拦截粘贴，只允许粘贴纯文本
         quill.clipboard.addMatcher(Node.ELEMENT_NODE, (_node, delta) => {
-          console.log("delta :>> ", delta);
-          delta.ops = (delta.ops || []).map((op) => {
-            // 过滤出文本内容，过滤掉换行
-            if (op.insert && typeof op.insert === "string" && op.insert !== "\n") {
-              return {
-                attributes: { ...change },
-                insert: op.insert,
-              };
-            }
-            return op;
-          });
+          delta.ops = (delta.ops || [])
+            .filter(({ insert }) => {
+              return insert && typeof insert === "string" && insert !== "\n";
+            })
+            .map((op) => ({ insert: op.insert }));
           return delta;
         });
       }
