@@ -58,6 +58,7 @@ export class GraphEvent extends Emitter<IEvents> {
   }
   /** 画布点击事件 */
   private onSvgClick(e: Event) {
+    console.log("svg click");
     const event = e as MouseEvent;
     event.stopPropagation();
     this.emit("graph_click", event);

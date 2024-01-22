@@ -1,7 +1,7 @@
 import { SVG, G } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import * as Structure from "./../layout";
-import { DefaultNode, RootNode, SecondNode } from "./../node";
+import { DefaultNode, RootNode, SecondNode, AddIconNode } from "./../node";
 import type { ITypeOfNodeType } from "./../node/index.d";
 import { Theme } from "./../style";
 import { getEdgePoint, quadraticCurvePath, cubicBezierPath, drawEdge } from "./../dom";
@@ -23,10 +23,12 @@ export class Graph {
   public nodesGroup: SVGType.G;
   /** 线组 */
   public linesGroup: SVGType.G;
-  /** 事件 */
-  public event: GraphEvent;
   /** 激活的节点 */
   public activatedNodes: Set<ITypeOfNodeType> = new Set();
+  /** 新增功能icon */
+  public addIconNode: AddIconNode;
+  /** 事件 */
+  public event: GraphEvent;
 
   constructor() {
     this.theme = new Theme();
@@ -34,10 +36,13 @@ export class Graph {
     // svg为内联块元素，其位于文本基线上，在底部会留下容纳字符下行符（'y'，'g'等的尾部）的空间，所以要设置display:block去掉该空间。
     this.svg.css({ display: "block" });
     const { backgroundColor = "#fff" } = this.theme.config;
-    this.svg.node.style.backgroundColor = backgroundColor;
+    // @ts-ignore
+    this.svg.css({ "background-color": backgroundColor });
     this.graphGroup = new G({ class: "g-graph" }).addTo(this.svg);
     this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
     this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
+    this.addIconNode = new AddIconNode();
+    this.addIconNode.group.addTo(this.svg);
     this.event = new GraphEvent(this);
   }
   // 获取各种类型布局下画布的偏移量
