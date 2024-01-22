@@ -6,7 +6,6 @@ import "quill/dist/quill.snow.css";
 import styles from "./index.module.less";
 
 let quill: Quill | null = null;
-let delta = new Delta();
 
 /** 备注弹窗 */
 export const NodeNote = defineComponent({

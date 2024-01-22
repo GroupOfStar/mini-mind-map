@@ -2,6 +2,8 @@ import { Polygon } from "@svgdotjs/svg.js";
 import { Emitter } from "./../emitter";
 import type { IEvents } from "./../graph/index.d";
 import type { Graph } from "./Graph";
+import type { ITypeOfNodeType } from "./../node/index.d";
+import { forDeepEachTree } from "./../utils";
 
 export class GraphEvent extends Emitter<IEvents> {
   private graph: Graph;
@@ -24,13 +26,17 @@ export class GraphEvent extends Emitter<IEvents> {
   }
   // 绑定事件
   public bindEvent() {
+    this.onSvgClick = this.onSvgClick.bind(this);
     this.onSvgMousedown = this.onSvgMousedown.bind(this);
     this.onSvgMousewheel = this.onSvgMousewheel.bind(this);
     this.onSvgContextmenu = this.onSvgContextmenu.bind(this);
     this.onSvgMousemove = this.onSvgMousemove.bind(this);
     this.onSvgMouseup = this.onSvgMouseup.bind(this);
     this.onSvgKeyup = this.onSvgKeyup.bind(this);
+    this.onNodeClick = this.onNodeClick.bind(this);
+    this.onCtrlNodeClick = this.onCtrlNodeClick.bind(this);
 
+    this.graph.svg.on("click", this.onSvgClick);
     this.graph.svg.on("mousedown", this.onSvgMousedown);
     this.graph.svg.on("mousemove", this.onSvgMousemove);
     this.graph.svg.on("mouseup", this.onSvgMouseup);
@@ -38,10 +44,27 @@ export class GraphEvent extends Emitter<IEvents> {
     // this.graph.svg.on("wheel", this.onSvgMousewheel);
     this.graph.svg.on("contextmenu", this.onSvgContextmenu);
     this.graph.svg.on("keyup", this.onSvgKeyup);
+
+    // 节点点击事件
+    this.on("node_click", this.onNodeClick);
+
+    // 组合键事件
+    this.on("ctrl_node_click", this.onCtrlNodeClick);
   }
   // 解绑事件
   public unbindEvent() {
     this.graph.svg.off();
+    this.off("*");
+  }
+  /** 画布点击事件 */
+  private onSvgClick(e: Event) {
+    const event = e as MouseEvent;
+    event.stopPropagation();
+    this.emit("graph_click", event);
+    this.graph.nodesGroup.find("rect.active").forEach((item) => {
+      item.stroke({ width: 1, color: "transparent" });
+      item.removeClass("active");
+    });
   }
   // svg画布的鼠标按下事件
   private onSvgMousedown(e: Event) {
@@ -101,20 +124,45 @@ export class GraphEvent extends Emitter<IEvents> {
   private onSvgContextmenu(e: Event) {
     e.preventDefault();
     e.stopPropagation();
-    this.graph.emit("graph_contextmenu", e);
+    this.emit("graph_contextmenu", e);
   }
   // 鼠标滚动
   private onSvgMousewheel(event: Event) {
     const e = event as WheelEvent;
-    e.stopPropagation();
     e.preventDefault();
+    e.stopPropagation();
     // this.emit("mousewheel", e, dir, this);
   }
   // 按键松开事件
   private onSvgKeyup(e: Event) {
     const { key } = e as KeyboardEvent;
-    // console.log("e.key :>> ", e.key);
-    // console.log("KeyboardEvent e :>> ", e);
-    // this.emit("keyup", e);
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  // 节点点击事件
+  private onNodeClick(node: ITypeOfNodeType) {
+    const { activatedNodes } = this.graph;
+    activatedNodes.forEach((item) => {
+      item.shape.setDeActivation();
+    });
+    activatedNodes.clear();
+    activatedNodes.add(node);
+    node.shape.setActivation();
+  }
+  /**
+   * 组合键：ctrl + 鼠标点击节点事件
+   * @param node
+   */
+  private onCtrlNodeClick(node: ITypeOfNodeType) {
+    console.log("1111node :>> ", node);
+    const { activatedNodes } = this.graph;
+    if (activatedNodes.has(node)) {
+      this.graph.activatedNodes.delete(node);
+      node.shape.setDeActivation();
+    } else {
+      activatedNodes.add(node);
+      node.shape.setActivation();
+    }
+    console.log("activatedNodes :>> ", activatedNodes);
   }
 }

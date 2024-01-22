@@ -31,7 +31,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   if (mindMapRef.value) {
-    mindMap.unbindEvent();
+    mindMap.event.unbindEvent();
   }
   window.removeEventListener("resize", onResize);
 });

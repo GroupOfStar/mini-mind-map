@@ -56,11 +56,11 @@ export default defineComponent(function Node() {
       mindMap.onResize();
     }
 
-    mindMap.on("graph_contextmenu", hideModal);
-    mindMap.on("graph_click", hideModal);
-    mindMap.on("node_click", hideModal);
+    mindMap.event.on("graph_contextmenu", hideModal);
+    mindMap.event.on("graph_click", hideModal);
+    mindMap.event.on("node_click", hideModal);
 
-    mindMap.on("node_contextmenu", ({ event }) => {
+    mindMap.event.on("node_contextmenu", ({ event }) => {
       const menuRef = contextMenuRef.value;
       if (menuRef) {
         contextMenuVisible.value = true;
@@ -78,7 +78,7 @@ export default defineComponent(function Node() {
 
   onBeforeUnmount(() => {
     if (mindMapRef.value) {
-      mindMap.unbindEvent();
+      mindMap.event.unbindEvent();
     }
     window.removeEventListener("resize", onResize);
   });

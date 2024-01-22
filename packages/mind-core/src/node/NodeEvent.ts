@@ -21,7 +21,8 @@ export class NodeEvent<P, C> extends Emitter<IEvents> {
     this.node.shape.setMouseoutStyle();
   }
   /** 节点点击事件 */
-  private onClick(event: Event) {
+  private onClick(e: Event) {
+    const event = e as MouseEvent;
     event.stopPropagation();
     const { shape, style, nodeData } = this.node;
     const { x, y, selectedNodeWidth, selectedNodeHeight } = shape;
@@ -41,9 +42,13 @@ export class NodeEvent<P, C> extends Emitter<IEvents> {
       " marginY :",
       marginY
     );
-    // 将在Graph中先取消容器组下所有的active样式
-    this.emit("node_click", this.node);
-    shape.setActivation();
+    // 如果是ctrl键按下，则不执行默认的点击事件，而是执行ctrl_node_click事件
+    if (event.ctrlKey) {
+      this.emit("ctrl_node_click", this.node);
+    } else {
+      // 将在Graph中先取消容器组下所有的active样式
+      this.emit("node_click", this.node);
+    }
   }
   /** 节点右键事件 */
   private onContextmenu(event: Event) {
@@ -59,7 +64,7 @@ export class NodeEvent<P, C> extends Emitter<IEvents> {
   /** 节点鼠标按下事件 */
   private onMousedown(event: Event) {
     event.preventDefault();
-    // event.stopPropagation();
+    event.stopPropagation();
   }
   /** 注册事件 */
   public bindEvent() {

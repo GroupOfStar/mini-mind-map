@@ -42,13 +42,15 @@ export abstract class Layout<T extends ITreeNode<{}>> {
       const { getX, getY, getWidth, getHeight, getVGap, getHGap, setX, setY } = this.option;
       const x = getX(node);
       const y = getY(node);
-      const width = getWidth(node);
-      const height = getHeight(node);
+      // const width = getWidth(node);
+      // const height = getHeight(node);
 
       bb.left = Math.min(bb.left, x);
       bb.top = Math.min(bb.top, y);
-      bb.width = Math.max(bb.width, x + width / 2);
-      bb.height = Math.max(bb.height, y + height / 2);
+      // bb.width = Math.max(bb.width, x + width / 2);
+      // bb.height = Math.max(bb.height, y + height / 2);
+      bb.width = Math.max(bb.width, x);
+      bb.height = Math.max(bb.height, y);
     }, rootNode);
     return bb;
   }

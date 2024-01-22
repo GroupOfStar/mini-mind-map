@@ -60,5 +60,5 @@ export const drawEdge = function (
   });
   line.fill("none");
   const { lineColor, lineWidth } = mindMap.theme.config;
-  line.stroke({ color: lineColor, width: lineWidth });
+  line.stroke({ color: "#ff0000", width: lineWidth });
 };

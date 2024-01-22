@@ -2,27 +2,33 @@ import { SVG, G } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import * as Structure from "./../layout";
 import { DefaultNode, RootNode, SecondNode } from "./../node";
+import type { ITypeOfNodeType } from "./../node/index.d";
 import { Theme } from "./../style";
-import { Emitter } from "./../emitter";
 import { getEdgePoint, quadraticCurvePath, cubicBezierPath, drawEdge } from "./../dom";
-import { forDeepEachTree, forScopeEachTree } from "./../utils";
+import { forScopeEachTree } from "./../utils";
 import { GraphEvent } from "./GraphEvent";
-import { INodeData, IEvents } from "./index.d";
+import { INodeData } from "./index.d";
 
-export class Graph extends Emitter<IEvents> {
-  theme: Theme;
-  el: HTMLElement = document.body;
-  dataTree: INodeData[] = [];
-  rootNode?: RootNode;
-  svg: SVGType.Svg;
-  graphGroup: SVGType.G;
-  nodesGroup: SVGType.G;
-  linesGroup: SVGType.G;
+export class Graph {
+  public theme: Theme;
+  public el: HTMLElement = document.body;
+  public dataTree: INodeData[] = [];
+  /** 画布 */
+  public rootNode?: RootNode;
+  /** 画布 */
+  public svg: SVGType.Svg;
+  /** 画布内容 */
+  private graphGroup: SVGType.G;
+  /** 节点组 */
+  public nodesGroup: SVGType.G;
+  /** 线组 */
+  public linesGroup: SVGType.G;
   /** 事件 */
-  graphEvent?: GraphEvent;
+  public event: GraphEvent;
+  /** 激活的节点 */
+  public activatedNodes: Set<ITypeOfNodeType> = new Set();
 
   constructor() {
-    super();
     this.theme = new Theme();
     this.svg = SVG();
     // svg为内联块元素，其位于文本基线上，在底部会留下容纳字符下行符（'y'，'g'等的尾部）的空间，所以要设置display:block去掉该空间。
@@ -32,6 +38,7 @@ export class Graph extends Emitter<IEvents> {
     this.graphGroup = new G({ class: "g-graph" }).addTo(this.svg);
     this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
     this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
+    this.event = new GraphEvent(this);
   }
   // 获取各种类型布局下画布的偏移量
   get graphOffset() {
@@ -64,7 +71,6 @@ export class Graph extends Emitter<IEvents> {
    */
   setContainer(el: HTMLElement) {
     this.el = el;
-    this.graphEvent = new GraphEvent(this);
   }
   /**
    * 通过一维的节点数组设置成节点树数据
@@ -142,7 +148,6 @@ export class Graph extends Emitter<IEvents> {
       });
     };
     this.rootNode = walk(this.dataTree)[0];
-    this.bindEvent();
     this.svg.addTo(this.el);
   }
   /** 布局 */
@@ -165,10 +170,7 @@ export class Graph extends Emitter<IEvents> {
         getVGap: (node) => node.style.marginY,
         getX: (node) => node.shape.x,
         setX: (node, val) => {
-          const { selectedNodeWidth } = node.shape;
-          // 不以中心而以左上角顶点进行定位，解决g-graph在svg中偏移的问题
-          // node.shape.x = val;
-          node.shape.x = val - selectedNodeWidth / 2;
+          node.shape.x = val;
         },
         getY: (node) => node.shape.y,
         setY: (node, val) => {
@@ -190,37 +192,10 @@ export class Graph extends Emitter<IEvents> {
       }, rootNode);
 
       const { width, height } = this.graphGroup.rbox();
-      this.svg.size(width * 2, height * 2);
       // this.svg.size(width, height);
+
+      this.svg.size(width * 2, height * 2);
       this.graphGroup.x(width / 2).y(height / 2);
     }
-  }
-  /** 画布点击事件 */
-  onSvgClick(event: Event) {
-    event.stopPropagation();
-    this.emit("graph_click", event);
-    this.nodesGroup.find("rect.active").forEach((item) => {
-      item.stroke({ width: 1, color: "transparent" });
-      item.removeClass("active");
-    });
-  }
-  /** 注册事件 */
-  bindEvent() {
-    this.onSvgClick = this.onSvgClick.bind(this);
-    /** 画布点击事件 */
-    this.svg.on("click", this.onSvgClick);
-
-    this.on("node_click", () => {
-      if (this.rootNode) {
-        forDeepEachTree((node) => {
-          node.shape.setDeActivation();
-        }, this.rootNode);
-      }
-    });
-  }
-  /** 解除事件 */
-  unbindEvent() {
-    this.svg.off();
-    this.off("*", () => {});
   }
 }

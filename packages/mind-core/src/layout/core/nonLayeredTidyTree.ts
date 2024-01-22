@@ -21,9 +21,9 @@ export const nonLayeredTidyTree = <T extends ITreeNode<{}>>(
   function walk(currentWt: WrapperdTree<T>, prevWt?: WrapperdTree<T>, parentWt?: WrapperdTree<T>) {
     // 水平方向
     const { x = 0, width = 0 } = parentWt || {};
-    const { width: curWidth, height: curHeight, hGap, vGap, childCount: curChildCount } = currentWt;
+    const { height: curHeight, hGap, vGap, childCount: curChildCount } = currentWt;
     const gap = WrapperdTree.isHorizontal ? hGap : vGap;
-    currentWt.x = x + width / 2 + gap + curWidth / 2;
+    currentWt.x = x + width + gap;
     const prevContour = currentWt.prevContour;
     if (prevContour) {
       currentWt.y = prevContour.contourBottom + vGap;

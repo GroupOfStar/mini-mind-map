@@ -16,8 +16,14 @@ interface IEventArgs {
   node: Node<TNodeTypeOfValue, TNodeTypeOfValue>;
 }
 
+// 组合键事件类型
+interface ICompositeEvent extends Record<EventType, unknown> {
+  /** 按住Ctrl键点击节点 */
+  ctrl_node_click: Node<TNodeTypeOfValue, TNodeTypeOfValue>;
+}
+
 // 所有事件类型
-export interface IEvents extends Record<EventType, unknown> {
+export interface IEvents extends ICompositeEvent {
   graph_click: Event;
   graph_contextmenu: Event;
   node_click: Node<TNodeTypeOfValue, TNodeTypeOfValue>;

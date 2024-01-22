@@ -21,6 +21,9 @@ export type TNodeTypeOfKey = keyof INodeType;
 /** 节点类型的value */
 export type TNodeTypeOfValue = INodeType[TNodeTypeOfKey] | unknown;
 
+/** 节点树中的节点类型 */
+export type ITypeOfNodeType = RootNode | SecondNode | DefaultNode;
+
 export interface INodeProps<P, C> {
   nodeData: INodeData;
   nodeType: TNodeTypeOfKey;
