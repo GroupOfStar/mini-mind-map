@@ -30,5 +30,5 @@ export interface IEvents extends ICompositeEvent {
   node_dblclick: Node<TNodeTypeOfValue, TNodeTypeOfValue>;
   node_contextmenu: IEventArgs;
   expandNode_click: Event;
-  addIcon_click: Event;
+  addIcon_click: Node<TNodeTypeOfValue, TNodeTypeOfValue>;
 }

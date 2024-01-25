@@ -61,10 +61,13 @@ export class GraphEvent extends Emitter<IEvents> {
     const event = e as MouseEvent;
     event.stopPropagation();
     this.emit("graph_click", event);
+    // 取消节点的激活效果
     this.graph.nodesGroup.find("rect.active").forEach((item) => {
       item.stroke({ width: 1, color: "transparent" });
       item.removeClass("active");
     });
+    // 隐藏新增按钮
+    this.graph.addIconNode.onHide();
   }
   // svg画布的鼠标按下事件
   private onSvgMousedown(e: Event) {
@@ -141,20 +144,21 @@ export class GraphEvent extends Emitter<IEvents> {
   }
   // 节点点击事件
   private onNodeClick(node: ITypeOfNodeType) {
-    const { activatedNodes } = this.graph;
+    const { activatedNodes, addIconNode } = this.graph;
     activatedNodes.forEach((item) => {
       item.shape.setDeActivation();
     });
     activatedNodes.clear();
     activatedNodes.add(node);
     node.shape.setActivation();
+    // 显示新增按钮
+    addIconNode.onShowByNode(node);
   }
   /**
    * 组合键：ctrl + 鼠标点击节点事件
    * @param node
    */
   private onCtrlNodeClick(node: ITypeOfNodeType) {
-    console.log("1111node :>> ", node);
     const { activatedNodes } = this.graph;
     if (activatedNodes.has(node)) {
       this.graph.activatedNodes.delete(node);

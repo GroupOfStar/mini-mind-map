@@ -41,7 +41,7 @@ export class Graph {
     this.graphGroup = new G({ class: "g-graph" }).addTo(this.svg);
     this.linesGroup = new G({ class: "g-lines" }).addTo(this.graphGroup);
     this.nodesGroup = new G({ class: "g-nodes" }).addTo(this.graphGroup);
-    this.addIconNode = new AddIconNode();
+    this.addIconNode = new AddIconNode(this);
     this.addIconNode.group.addTo(this.svg);
     this.event = new GraphEvent(this);
   }
@@ -69,6 +69,10 @@ export class Graph {
         break;
     }
     return { offsetX, offsetY };
+  }
+  // 获取graphGroup的边界信息
+  get graphBoundingBox() {
+    return this.graphGroup.rbox();
   }
   /**
    * 设置SVG将要挂载的HTMLElement容器
@@ -196,7 +200,7 @@ export class Graph {
         });
       }, rootNode);
 
-      const { width, height } = this.graphGroup.rbox();
+      const { width, height } = this.graphBoundingBox;
       // this.svg.size(width, height);
 
       this.svg.size(width * 2, height * 2);

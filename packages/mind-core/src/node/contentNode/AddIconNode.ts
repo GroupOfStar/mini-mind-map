@@ -1,6 +1,8 @@
 import { SVG, G, Line } from "@svgdotjs/svg.js";
 import { AddIcon } from "./../../svg";
 import { AddIconNodeEvent } from "./AddIconNodeEvent";
+import type { Graph } from "./../../graph";
+import type { ITypeOfNodeType } from "../index.d";
 
 /** 展开节点 */
 export class AddIconNode {
@@ -13,6 +15,8 @@ export class AddIconNode {
   /** 图标大小 */
   static iconSize = 22;
 
+  /** Graph */
+  private graph: Graph;
   /** group */
   public group = new G({ class: "add-group" });
   /** 线 */
@@ -20,9 +24,10 @@ export class AddIconNode {
   /** 图标 */
   protected iconEl = SVG(AddIcon);
   /** 节点事件 */
-  public event = new AddIconNodeEvent(this);
+  public event = new AddIconNodeEvent(this.group);
 
-  constructor() {
+  constructor(graph: Graph) {
+    this.graph = graph;
     this.lineEl.addTo(this.group);
     this.iconEl.addTo(this.group);
     this.setNodeStyle();
@@ -31,27 +36,41 @@ export class AddIconNode {
   }
   /** 节点所占宽度 */
   public get nodeWidth(): number {
-    const { lineLength, gap, iconSize } = AddIconNode;
-    return lineLength + gap + iconSize;
+    const { lineLength, gap, lineWidth, iconSize } = AddIconNode;
+    return lineLength + gap + lineWidth + iconSize;
   }
   /** 节点所占高度 */
-  public get nodeHeight(): number {
+  private get nodeHeight(): number {
     const { lineWidth, iconSize } = AddIconNode;
     return lineWidth * 2 + iconSize;
   }
   /** 设置节点样式 */
-  public setNodeStyle() {
+  private setNodeStyle() {
     const { iconSize } = AddIconNode;
+    this.onHide();
     this.lineEl.stroke({ color: "#257BF1", width: 2, linecap: "round" });
     this.iconEl.size(iconSize, iconSize);
   }
   /** 设置布局 */
-  public doNodeLayout(offset: number = 0) {
+  private doNodeLayout(offset: number = 0) {
     const { lineWidth, iconSize } = AddIconNode;
-    this.iconEl.center(this.nodeWidth - iconSize / 2 - lineWidth, 0);
-    this.group.transform({
-      translateX: 50,
-      translateY: 60,
-    });
+    this.iconEl.center(this.nodeWidth - iconSize / 2, 0);
+  }
+  /** 显示新增功能 */
+  public onShowByNode(node: ITypeOfNodeType) {
+    const { x, y, selectedNodeWidth, selectedNodeHeight } = node.shape;
+    const {
+      graphBoundingBox: { width, height },
+    } = this.graph;
+    this.event.node = node;
+    this.group.move(
+      width / 2 + x + selectedNodeWidth,
+      height / 2 + y + selectedNodeHeight / 2 - this.nodeHeight / 2
+    );
+    this.group.css({ display: "block" });
+  }
+  /** 隐藏新增功能 */
+  public onHide() {
+    this.group.css({ display: "none" });
   }
 }
