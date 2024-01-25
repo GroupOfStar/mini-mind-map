@@ -13,6 +13,9 @@ mini版思维导图
 ```bash
 pnpm i
 
+# 装到根目录的运行依赖中
+pnpm add uuid -w
+
 # 装到某个包的运行依赖中
 pnpm --filter mind-web add  quill@^1.3.7
 

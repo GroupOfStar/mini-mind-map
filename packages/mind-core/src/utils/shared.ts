@@ -1,5 +1,5 @@
-import type { IFontOption } from "./index.d";
 import { isNumber } from "./lodash";
+import type { IFontOption } from "./index.d";
 
 /**
  * 转换规范化可以使用在svgjs节点上的id

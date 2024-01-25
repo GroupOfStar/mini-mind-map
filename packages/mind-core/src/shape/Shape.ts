@@ -1,9 +1,14 @@
 import { Rect, Text } from "@svgdotjs/svg.js";
 import type * as SVGType from "@svgdotjs/svg.js";
 import type { INodeData } from "./../graph/index.d";
-import { Node } from "src/node";
+import type { Node, SecondNode, DefaultNode } from "./../node";
+import type { ITypeOfNodeType } from "./../node/index.d";
 
-export abstract class Shape<P, C> {
+export abstract class Shape<
+  P extends ITypeOfNodeType | never,
+  C extends ITypeOfNodeType,
+  D extends SecondNode | DefaultNode
+> {
   /** 节点group */
   private group: SVGType.G;
   /** 边框节点 */
@@ -16,7 +21,7 @@ export abstract class Shape<P, C> {
   public x: number = 0;
   public y: number = 0;
 
-  constructor(node: Node<P, C>) {
+  constructor(node: Node<P, C, D>) {
     this.group = node.group;
     this.selectedNodeEl = node.selectedNodeEl;
     // 创建节点

@@ -9,6 +9,53 @@ import { forScopeEachTree } from "./../utils";
 import { GraphEvent } from "./GraphEvent";
 import { INodeData } from "./index.d";
 
+class ActivatedNode {
+  private readonly nodes: Set<ITypeOfNodeType>;
+  constructor(nodes: Set<ITypeOfNodeType> = new Set()) {
+    this.nodes = nodes;
+  }
+  /** 获取第一个节点 */
+  public get firstNode(): ITypeOfNodeType | undefined {
+    return this.nodes.values().next().value;
+  }
+  public has(node: ITypeOfNodeType) {
+    return this.nodes.has(node);
+  }
+  public add(node: ITypeOfNodeType) {
+    if (!this.has(node)) {
+      node.shape.setActivation();
+      this.nodes.add(node);
+    }
+    return this;
+  }
+  public delete(node: ITypeOfNodeType) {
+    if (this.has(node)) {
+      node.shape.setDeActivation();
+      this.nodes.delete(node);
+    }
+    return this;
+  }
+  public clear() {
+    this.nodes.forEach((item) => {
+      this.delete(item);
+    });
+  }
+  /**保留一个 */
+  public keepOne(node: ITypeOfNodeType): void {
+    if (this.has(node)) {
+      this.nodes.forEach((item) => {
+        if (item !== node) {
+          console.log("object");
+          this.delete(item);
+        }
+      });
+    } else {
+      this.clear();
+      this.add(node);
+    }
+  }
+}
+
 export class Graph {
   public theme: Theme;
   public el: HTMLElement = document.body;
@@ -24,7 +71,7 @@ export class Graph {
   /** 线组 */
   public linesGroup: SVGType.G;
   /** 激活的节点 */
-  public activatedNodes: Set<ITypeOfNodeType> = new Set();
+  public readonly activatedNodes: ActivatedNode = new ActivatedNode();
   /** 新增功能icon */
   public addIconNode: AddIconNode;
   /** 事件 */
@@ -46,7 +93,7 @@ export class Graph {
     this.event = new GraphEvent(this);
   }
   // 获取各种类型布局下画布的偏移量
-  get graphOffset() {
+  public get graphOffset() {
     let offsetX = 0;
     let offsetY = window.innerHeight / 2;
     switch (this.theme.config.layout) {
@@ -71,14 +118,14 @@ export class Graph {
     return { offsetX, offsetY };
   }
   // 获取graphGroup的边界信息
-  get graphBoundingBox() {
+  public get graphBoundingBox() {
     return this.graphGroup.rbox();
   }
   /**
    * 设置SVG将要挂载的HTMLElement容器
    * @param el SVG挂载的HTMLElement容器
    */
-  setContainer(el: HTMLElement) {
+  public setContainer(el: HTMLElement) {
     this.el = el;
   }
   /**
@@ -86,7 +133,7 @@ export class Graph {
    * @param {INodeData[]} list 一维节点数组
    * @param {INodeData['pid']} rootPid 根节点的pid
    */
-  setDataByList(list: INodeData[], rootPid: INodeData["pid"]) {
+  public setDataByList(list: INodeData[], rootPid: INodeData["pid"]) {
     function treeLoop(listData: INodeData[], parentId: string, pDeep: number) {
       const children = listData.filter((item) => item.pid === parentId);
       if (children.length === 0) {
@@ -108,7 +155,7 @@ export class Graph {
    * window 的resize事件
    * 始终保持根节点的y在窗口中间，x根据布局类型来设置在窗口1/3处
    */
-  onResize() {
+  public onResize() {
     console.log("onResize");
     const { offsetX, offsetY } = this.graphOffset;
     const { width, height } = this.graphGroup.rbox();
@@ -124,7 +171,7 @@ export class Graph {
     );
   }
   /** 渲染 */
-  render() {
+  public render() {
     console.log("render");
     this.svg.addTo(this.el);
     const walk = <T extends INodeData>(
@@ -134,33 +181,36 @@ export class Graph {
       return data.map((nodeData) => {
         const depth = nodeData.depth || 0;
         let node: RootNode | SecondNode | DefaultNode;
-        const nodePorps = {
-          nodeData,
-          nodesGroup: this.nodesGroup,
-          parentNode,
-        };
         switch (depth) {
           case 0:
-            node = new RootNode(nodePorps);
+            node = new RootNode({ nodeData, nodesGroup: this.nodesGroup });
             break;
           case 1:
-            node = new SecondNode(nodePorps);
+            node = new SecondNode({
+              nodeData,
+              nodesGroup: this.nodesGroup,
+              parentNode: parentNode as RootNode,
+            });
             break;
           case 2:
           default:
-            node = new DefaultNode(nodePorps);
+            node = new DefaultNode({
+              nodeData,
+              nodesGroup: this.nodesGroup,
+              parentNode: parentNode as SecondNode,
+            });
             break;
         }
         node.depth = depth;
-        node.children = walk(nodeData.children, node);
+        node.children = walk(nodeData.children, node) as any[];
         node.init();
-        return node;
+        return node as RootNode;
       });
     };
     this.rootNode = walk(this.dataTree)[0];
   }
   /** 布局 */
-  layout() {
+  public layout() {
     console.log("layout");
     if (this.rootNode) {
       this.linesGroup.clear();
@@ -191,7 +241,7 @@ export class Graph {
       forScopeEachTree((node) => {
         node.group.x(node.shape.x).y(node.shape.y);
         node.children.forEach((child) => {
-          const edgePoint = getEdgePoint(child, node, isHorizontal, {
+          const edgePoint = getEdgePoint(child, node as any, isHorizontal, {
             ...layoutOption,
             getFrontSideOffset: (n) => n.shape.selectedBoxPadding,
           });

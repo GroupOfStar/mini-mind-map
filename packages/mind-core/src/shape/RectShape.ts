@@ -1,13 +1,18 @@
 import { Shape } from "./Shape";
 import type { Style } from "./../style";
-import type { Node } from "./../node";
+import type { Node, SecondNode, DefaultNode } from "./../node";
+import type { ITypeOfNodeType } from "./../node/index.d";
 import type { INodeData } from "./../graph/index.d";
-import { getWrapString, measureText } from "src/utils";
+import { getWrapString } from "src/utils";
 
-export class RectShape<P, C> extends Shape<P, C> {
+export class RectShape<
+  P extends ITypeOfNodeType | never,
+  C extends ITypeOfNodeType,
+  D extends SecondNode | DefaultNode
+> extends Shape<P, C, D> {
   private style: Style;
 
-  constructor(node: Node<P, C>) {
+  constructor(node: Node<P, C, D>) {
     super(node);
     this.style = node.style;
   }

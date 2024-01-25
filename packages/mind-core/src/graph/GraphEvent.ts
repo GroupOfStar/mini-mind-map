@@ -3,7 +3,6 @@ import { Emitter } from "./../emitter";
 import type { IEvents } from "./../graph/index.d";
 import type { Graph } from "./Graph";
 import type { ITypeOfNodeType } from "./../node/index.d";
-import { forDeepEachTree } from "./../utils";
 
 export class GraphEvent extends Emitter<IEvents> {
   private graph: Graph;
@@ -32,9 +31,9 @@ export class GraphEvent extends Emitter<IEvents> {
     this.onSvgContextmenu = this.onSvgContextmenu.bind(this);
     this.onSvgMousemove = this.onSvgMousemove.bind(this);
     this.onSvgMouseup = this.onSvgMouseup.bind(this);
-    this.onSvgKeyup = this.onSvgKeyup.bind(this);
     this.onNodeClick = this.onNodeClick.bind(this);
     this.onCtrlNodeClick = this.onCtrlNodeClick.bind(this);
+    this.onWindowKeydown = this.onWindowKeydown.bind(this);
 
     this.graph.svg.on("click", this.onSvgClick);
     this.graph.svg.on("mousedown", this.onSvgMousedown);
@@ -43,7 +42,6 @@ export class GraphEvent extends Emitter<IEvents> {
 
     // this.graph.svg.on("wheel", this.onSvgMousewheel);
     this.graph.svg.on("contextmenu", this.onSvgContextmenu);
-    this.graph.svg.on("keyup", this.onSvgKeyup);
 
     // 节点点击事件
     this.on("node_click", this.onNodeClick);
@@ -61,13 +59,12 @@ export class GraphEvent extends Emitter<IEvents> {
     const event = e as MouseEvent;
     event.stopPropagation();
     this.emit("graph_click", event);
+    const { activatedNodes, addIconNode } = this.graph;
     // 取消节点的激活效果
-    this.graph.nodesGroup.find("rect.active").forEach((item) => {
-      item.stroke({ width: 1, color: "transparent" });
-      item.removeClass("active");
-    });
+    activatedNodes.clear();
     // 隐藏新增按钮
-    this.graph.addIconNode.onHide();
+    addIconNode.onHide();
+    document.removeEventListener("keydown", this.onWindowKeydown);
   }
   // svg画布的鼠标按下事件
   private onSvgMousedown(e: Event) {
@@ -77,8 +74,6 @@ export class GraphEvent extends Emitter<IEvents> {
     // 0表示左键, 1表示中键, 2表示右键
     switch (event.button) {
       case 0:
-        // console.log("event.offsetX, event.offsetY :>> ", event.offsetX, event.offsetY);
-        // console.log("this.graph.graphGroup.rbox() :>> ", this.graph.graphGroup.rbox());
         this.isLeftMousedown = true;
         break;
       case 1:
@@ -136,37 +131,45 @@ export class GraphEvent extends Emitter<IEvents> {
     e.stopPropagation();
     // this.emit("mousewheel", e, dir, this);
   }
-  // 按键松开事件
-  private onSvgKeyup(e: Event) {
-    const { key } = e as KeyboardEvent;
-    e.preventDefault();
-    e.stopPropagation();
+  // 键盘按下事件
+  private onWindowKeydown(e: KeyboardEvent) {
+    const { key } = e;
+    console.log("onWindowKeydown e :>> ", e);
+    if (key === "Tab" || key === "Enter" || key === "Delete") {
+      e.preventDefault();
+      e.stopPropagation();
+      const { activatedNodes, rootNode } = this.graph;
+      switch (key) {
+        case "Tab":
+          activatedNodes.firstNode?.addChildNode();
+          this.graph.layout();
+        case "Enter":
+          console.log("rootNode :>> ", rootNode);
+        case "Delete":
+        // activatedNodes.firstNode?.removeNode();
+      }
+    }
   }
   // 节点点击事件
   private onNodeClick(node: ITypeOfNodeType) {
     const { activatedNodes, addIconNode } = this.graph;
-    activatedNodes.forEach((item) => {
-      item.shape.setDeActivation();
-    });
-    activatedNodes.clear();
-    activatedNodes.add(node);
-    node.shape.setActivation();
-    // 显示新增按钮
+    activatedNodes.keepOne(node);
+    // 显示新增按钮 并注册相关快捷键
     addIconNode.onShowByNode(node);
+    document.addEventListener("keydown", this.onWindowKeydown);
   }
   /**
    * 组合键：ctrl + 鼠标点击节点事件
    * @param node
    */
   private onCtrlNodeClick(node: ITypeOfNodeType) {
-    const { activatedNodes } = this.graph;
+    const { activatedNodes, addIconNode } = this.graph;
     if (activatedNodes.has(node)) {
-      this.graph.activatedNodes.delete(node);
-      node.shape.setDeActivation();
+      activatedNodes.delete(node);
     } else {
       activatedNodes.add(node);
-      node.shape.setActivation();
     }
-    console.log("activatedNodes :>> ", activatedNodes);
+    addIconNode.onHide();
+    document.removeEventListener("keydown", this.onWindowKeydown);
   }
 }

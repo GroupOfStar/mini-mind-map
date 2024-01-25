@@ -44,6 +44,15 @@ export class AddIconNode {
     const { lineWidth, iconSize } = AddIconNode;
     return lineWidth * 2 + iconSize;
   }
+  /** 是否显示了 */
+  public isShow(node?: ITypeOfNodeType) {
+    const isDisplay = this.group.css("display") === "block";
+    if (node) {
+      return this.event.node === node && isDisplay;
+    } else {
+      return isDisplay;
+    }
+  }
   /** 设置节点样式 */
   private setNodeStyle() {
     const { iconSize } = AddIconNode;

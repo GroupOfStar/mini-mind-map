@@ -1,25 +1,24 @@
 import { Node } from "../Node";
 import { ExpandNode } from "../contentNode/ExpandNode";
-import { getTreeNodeTotal } from "../../utils";
+import { DefaultNode } from "./DefaultNode";
 import type { RootNode } from "../index";
 import type { ISecondNodeProps } from "../index.d";
-import type { DefaultNode } from "./DefaultNode";
 
-export class SecondNode extends Node<RootNode, DefaultNode> {
+export class SecondNode extends Node<RootNode, SecondNode, DefaultNode> {
   public expandNode?: ExpandNode;
 
-  constructor(props: ISecondNodeProps<RootNode, DefaultNode>) {
-    super({ ...props, nodeType: "second" });
+  constructor(props: ISecondNodeProps<RootNode, SecondNode, DefaultNode>) {
+    super({ ...props, currentNodeType: "second", childNodeType: "node" });
   }
-  public get children(): Node<DefaultNode, DefaultNode>[] {
+  public get children(): DefaultNode[] {
     return this._children;
   }
-  public set children(child: Node<DefaultNode, DefaultNode>[]) {
-    if (child.length > 0) {
-      /** 子节点总数 */
-      const childTotal = getTreeNodeTotal(this.nodeData);
-      this.expandNode = new ExpandNode(childTotal, this.group, this.style);
-    }
+  public set children(child: DefaultNode[]) {
+    // if (child.length > 0) {
+    //   /** 子节点总数 */
+    //   const childTotal = getTreeNodeTotal(this.nodeData);
+    //   this.expandNode = new ExpandNode(childTotal, this.group, this.style);
+    // }
     this._children = child;
   }
   public init(): void {
@@ -34,5 +33,15 @@ export class SecondNode extends Node<RootNode, DefaultNode> {
         this.expandNode.doNodeLayout(this.shape.selectedNodeWidth / 2);
       }
     }
+  }
+  public addChildNode() {
+    const defaultNode = new DefaultNode({
+      nodesGroup: this.nodesGroup,
+      nodeData: super.createInitNodeData(this.id, this.depth + 1),
+      parentNode: this,
+    });
+    defaultNode.init();
+    this.children = this.children.concat([defaultNode]);
+    return defaultNode;
   }
 }
