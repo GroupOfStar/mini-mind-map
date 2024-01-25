@@ -43,3 +43,15 @@ export function forDeepEachTree<T extends ITreeNode>(callback: IForEachNode<T>, 
     }
   }
 }
+
+/**
+ * 深度获取子节点总数
+ * @param node 节点数
+ * @returns 子节点的总数
+ */
+export function getTreeNodeTotal<T extends ITreeNode>(node: T): number {
+  return node.children.reduce(
+    (total, item) => total + getTreeNodeTotal(item),
+    node.children.length
+  );
+}

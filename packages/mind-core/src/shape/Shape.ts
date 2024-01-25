@@ -11,7 +11,7 @@ export abstract class Shape<P, C> {
   /** 可视节点 */
   protected visibleNodeEl = new Rect();
   /** 文本节点 */
-  protected textNodeEl = new Text();
+  protected textNodeEl!: Text;
 
   public x: number = 0;
   public y: number = 0;
@@ -19,9 +19,8 @@ export abstract class Shape<P, C> {
   constructor(node: Node<P, C>) {
     this.group = node.group;
     this.selectedNodeEl = node.selectedNodeEl;
-
     // 创建节点
-    this.createNode(node.nodeData);
+    this.createNode();
   }
   /** 可视节点的宽 */
   abstract get visibleNodeWidth(): number;
@@ -34,19 +33,33 @@ export abstract class Shape<P, C> {
   /** 选中后节点的高 */
   abstract get selectedNodeHeight(): number;
   /** 创建节点 */
-  createNode(node: INodeData) {
+  createNode() {
     // 节点边框
     this.selectedNodeEl.addTo(this.group).addClass("selected-node");
-    const { text = "" } = node;
     // 文本节点
-    this.textNodeEl.addClass("text").text(text);
+    // this.textNodeEl
+    //   .addClass("text")
+    //   .text("Lorem ipsum dolor sit amet consectetur.\nCras sodales imperdiet auctor.");
+    this.textNodeEl = new Text().addClass("text");
+    // this.textNodeEl.text("标签标签标签标签标签标签标签\n\n顶顶顶");
+
+    // this.textNodeEl.addClass("text");
+    // this.textNodeEl.text("This is just the start, ");
+    // this.textNodeEl.build(true); // enables build mode
+    // const tspan = this.textNodeEl.tspan("something pink in the middle ").newLine();
+    // tspan.fill("#00ff97");
+    // this.textNodeEl.plain("and again boring at the end.");
+    // this.textNodeEl.build(false); // disables build mode
+    // tspan.animate(2000);
+    // tspan.fill("#f06");
+
     // 节点本身
     this.visibleNodeEl.addTo(this.group).addClass("node");
     // 确保text节点在最后一个, 所以最后添加
     this.textNodeEl.addTo(this.group);
   }
   /** 设置样式 */
-  abstract setNodeStyle(): void;
+  abstract setNodeStyle(nodeData: INodeData): void;
   /** 节点布局 */
   abstract doNodeLayout(): void;
   /** 设置激活 */

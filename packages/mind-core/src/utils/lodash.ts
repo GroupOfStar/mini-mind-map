@@ -16,3 +16,12 @@ export function debounce(fn: Function, time: number = 300) {
     }, time);
   };
 }
+
+/**
+ * 判断是否为数字
+ * @param val 值
+ * @returns 是否未数字
+ */
+export function isNumber(val: any): boolean {
+  return !isNaN(parseFloat(val)) && isFinite(val);
+}

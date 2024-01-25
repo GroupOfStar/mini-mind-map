@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" width="300" height="800">
+      <!-- <text x="30" y="30" style="width: 200px; font-size: 20px; white-space: pre-line">
+        千利奴流乎和加 餘多連曽津祢那 良牟有為能於久 耶万計不己衣天 阿佐伎喩女美之 恵比毛勢須
+      </text>
+
+      <text
+        class="text"
+        x="30"
+        y="60"
+        font-family="Helvetica"
+        font-size="16"
+        text-anchor="left"
+        fill="#666666"
+        pointer-events="none"
+        style="white-space: pre-line; user-select: none"
+      >
+        <tspan>第3层节点02-01</tspan>
+        <tspan></tspan>
+        <tspan>after</tspan>
+        <tspan></tspan>
+        <tspan></tspan>
+        <tspan></tspan>
+      </text> -->
+
+      <foreignObject width="200" height="400">
+        <div id="article-box" contenteditable="true">Click to edit</div>
+      </foreignObject>
+    </svg>
+
+    <style>
+      #article-box {
+        /* border: solid rgb(225, 225, 230) 1px;
+        border-radius: 8px; */
+        height: 300px;
+        /* background-color: #f3f2f2; */
+        /* padding: 10px 15px; */
+        /* font-size: 16px; */
+        /* overflow: auto; */
+        /* color: gray; */
+      }
+
+      /* 为输入内容时，显示提示内容 */
+      #article-box:empty:before {
+        content: "在这里输入文本，将会根据输入的文本产生词云~~";
+        color: gray;
+      }
+
+      /* 获取焦点时，清除内容 */
+      #article-box:focus:before {
+        content: none;
+      }
+
+      /* 输入框获取焦点时，清除默认黑框，并且给阴影 */
+      #article-box:focus {
+        outline: none; /* 有黑框是因为默认给了轮廓 */
+        /* box-shadow: 0 0 2px blue inset; */
+      }
+    </style>
+  </body>
+</html>

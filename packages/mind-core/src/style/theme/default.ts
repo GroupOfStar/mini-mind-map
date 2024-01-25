@@ -6,6 +6,7 @@ export const defaultTheme: ITheme = {
   // layout: "DownwardOrganizational",
   imgMaxWidth: 100,
   imgMaxHeight: 100,
+  lineTextMaxWidth: 480,
   iconSize: 20,
   lineWidth: 2,
   lineColor: "#257BF1",

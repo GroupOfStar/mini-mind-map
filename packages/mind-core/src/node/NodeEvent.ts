@@ -24,24 +24,24 @@ export class NodeEvent<P, C> extends Emitter<IEvents> {
   private onClick(e: Event) {
     const event = e as MouseEvent;
     event.stopPropagation();
-    const { shape, style, nodeData } = this.node;
-    const { x, y, selectedNodeWidth, selectedNodeHeight } = shape;
-    const { marginX, marginY } = style;
-    console.log(
-      `${nodeData.text}:>>`,
-      " x :",
-      x,
-      " y :",
-      y,
-      " selectedNodeWidth :",
-      selectedNodeWidth,
-      " selectedNodeHeight :",
-      selectedNodeHeight,
-      " marginX :",
-      marginX,
-      " marginY :",
-      marginY
-    );
+    // const { shape, style, nodeData } = this.node;
+    // const { x, y, selectedNodeWidth, selectedNodeHeight } = shape;
+    // const { marginX, marginY } = style;
+    // console.log(
+    //   `${nodeData.text}:>>`,
+    //   " x :",
+    //   x,
+    //   " y :",
+    //   y,
+    //   " selectedNodeWidth :",
+    //   selectedNodeWidth,
+    //   " selectedNodeHeight :",
+    //   selectedNodeHeight,
+    //   " marginX :",
+    //   marginX,
+    //   " marginY :",
+    //   marginY
+    // );
     // 如果是ctrl键按下，则不执行默认的点击事件，而是执行ctrl_node_click事件
     if (event.ctrlKey) {
       this.emit("ctrl_node_click", this.node);

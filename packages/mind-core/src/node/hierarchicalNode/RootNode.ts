@@ -20,7 +20,7 @@ export class RootNode extends Node<null, SecondNode> {
     if (this.nodesGroup) {
       this.group.id(this.id);
       this.group.addTo(this.nodesGroup);
-      this.shape.setNodeStyle();
+      this.shape.setNodeStyle(this.nodeData);
       this.shape.doNodeLayout();
     }
   }

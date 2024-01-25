@@ -122,6 +122,7 @@ export class Graph {
   /** 渲染 */
   render() {
     console.log("render");
+    this.svg.addTo(this.el);
     const walk = <T extends INodeData>(
       data: T[],
       parentNode?: RootNode | SecondNode | DefaultNode
@@ -153,7 +154,6 @@ export class Graph {
       });
     };
     this.rootNode = walk(this.dataTree)[0];
-    this.svg.addTo(this.el);
   }
   /** 布局 */
   layout() {

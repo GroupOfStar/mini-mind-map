@@ -1,6 +1,8 @@
 import { Shape } from "./Shape";
 import type { Style } from "./../style";
-import { Node } from "src/node";
+import type { Node } from "./../node";
+import type { INodeData } from "./../graph/index.d";
+import { getWrapString, measureText } from "src/utils";
 
 export class RectShape<P, C> extends Shape<P, C> {
   private style: Style;
@@ -29,11 +31,40 @@ export class RectShape<P, C> extends Shape<P, C> {
     return this.visibleNodeHeight + this.selectedBoxPadding * 2;
   }
   /** 设置样式 */
-  setNodeStyle() {
-    const { color, borderRadius = 0, fillColor, borderColor } = this.style;
-    // const { text = "" } = this.node;
-    // this.textNodeEl.addClass("text").text("第三层节点02-01");
+  public setNodeStyle(nodeData: INodeData) {
+    const {
+      fontSize,
+      fontWeight,
+      color,
+      borderRadius = 0,
+      fillColor,
+      borderColor,
+      theme,
+    } = this.style;
+    const { fontFamily, lineTextMaxWidth = 200 } = theme.config;
     // 文本节点
+    const fontOption = { size: fontSize, family: fontFamily, bold: fontWeight };
+    this.textNodeEl.font({
+      family: fontFamily,
+      size: fontSize,
+      anchor: "left",
+      // leading: 1,
+      // stretch:,
+      // style:
+      // variant:
+      weight: fontWeight,
+    });
+    const { text = "" } = nodeData;
+    this.textNodeEl.text((tp) => {
+      const wrapStr = getWrapString(text, lineTextMaxWidth, fontOption);
+      wrapStr.forEach((str, index, arr) => {
+        if (!str && index === arr.length - 1) {
+          tp.tspan(".").attr({ visibility: "hidden" }).newLine();
+        } else {
+          tp.tspan(str).newLine();
+        }
+      });
+    });
     this.textNodeEl.fill({ color }).attr({ "pointer-events": "none" });
     // @ts-ignore
     this.textNodeEl.css({ "user-select": "none" });
@@ -52,7 +83,7 @@ export class RectShape<P, C> extends Shape<P, C> {
     this.selectedNodeEl.radius(borderRadius);
   }
   /** 节点布局 */
-  doNodeLayout() {
+  public doNodeLayout() {
     this.visibleNodeEl.cx(0).cy(0);
     this.selectedNodeEl.cx(0).cy(0);
     // 一定要最后设置cx和cy,否则会错乱

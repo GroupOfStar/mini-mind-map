@@ -25,7 +25,7 @@ export class DefaultNode extends Node<SecondNode | DefaultNode, DefaultNode> {
     if (this.nodesGroup) {
       this.group.id(this.id);
       this.group.addTo(this.nodesGroup);
-      this.shape.setNodeStyle();
+      this.shape.setNodeStyle(this.nodeData);
       this.shape.doNodeLayout();
       // 设置展开收缩节点
       if (this.expandNode) {

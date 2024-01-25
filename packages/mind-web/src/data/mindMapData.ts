@@ -99,7 +99,12 @@ export const mindMapData = [
   {
     id: "mind#3a7dda90-6a2d-4793-89db-d17e04cd0b1d",
     pid: "mind#1e3e635e-f533-4016-a0d7-8099f886f18a",
-    text: "第3层节点02-01",
+    text: `第3层节点02-01 gasdg哥仨个大是施工方多个函这是自动换行的文本这是自动换行的文本这是自动换行的文本这是自动换行的文本这是自动换行的文本
+数的函数当时的函数的返回速度放缓的很多事更合
+
+适的
+
+`,
     expand: true,
     isActive: false,
     children: [],
@@ -113,7 +118,8 @@ export const mindMapData = [
   {
     id: "mind#3a7dda90-6a2d-4793-89db-sg3ddd3345r52",
     pid: "mind#1e3e635e-f533-4016-a0d7-8099f886f18a",
-    text: "第3层节点02-02",
+    text: `第3层节点02-02
+噶啥的噶啥`,
     expand: true,
     isActive: false,
     children: [],
