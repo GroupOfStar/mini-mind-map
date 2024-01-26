@@ -7,7 +7,7 @@ export class RootNode extends Node<never, RootNode, SecondNode> {
   public expandNode?: ExpandNode;
 
   constructor(props: IRootNodeProps<never, RootNode, SecondNode>) {
-    super({ ...props, currentNodeType: "root", childNodeType: "second" });
+    super({ ...props, nodeType: "root" });
     this.expandNode = undefined;
   }
   public get children(): SecondNode[] {
@@ -24,6 +24,9 @@ export class RootNode extends Node<never, RootNode, SecondNode> {
       this.shape.doNodeLayout();
     }
   }
+  public addBrotherNode(): never {
+    throw new Error("根节点不能增加同级根节点。");
+  }
   public addChildNode(): SecondNode {
     const secondNode = new SecondNode({
       nodesGroup: this.nodesGroup,
@@ -32,5 +35,8 @@ export class RootNode extends Node<never, RootNode, SecondNode> {
     secondNode.init();
     this.children = this.children.concat([secondNode]);
     return secondNode;
+  }
+  public deleteActivatedNode(): never {
+    throw new Error("根节点不能删除。");
   }
 }

@@ -2,6 +2,7 @@ import { Polygon } from "@svgdotjs/svg.js";
 import { Emitter } from "./../emitter";
 import type { IEvents } from "./../graph/index.d";
 import type { Graph } from "./Graph";
+import type { RootNode, SecondNode, DefaultNode } from "./../node";
 import type { ITypeOfNodeType } from "./../node/index.d";
 
 export class GraphEvent extends Emitter<IEvents> {
@@ -138,15 +139,23 @@ export class GraphEvent extends Emitter<IEvents> {
     if (key === "Tab" || key === "Enter" || key === "Delete") {
       e.preventDefault();
       e.stopPropagation();
-      const { activatedNodes, rootNode } = this.graph;
+      const { activatedNodes } = this.graph;
+      let newNode: RootNode | SecondNode | DefaultNode | undefined;
       switch (key) {
         case "Tab":
-          activatedNodes.firstNode?.addChildNode();
-          this.graph.layout();
+          newNode = activatedNodes.firstNode?.addChildNode();
+          break;
         case "Enter":
-          console.log("rootNode :>> ", rootNode);
+          newNode = activatedNodes.firstNode?.addBrotherNode();
+          break;
         case "Delete":
-        // activatedNodes.firstNode?.removeNode();
+          newNode = activatedNodes.firstNode?.deleteActivatedNode();
+          break;
+      }
+      console.log("newNode :>> ", newNode);
+      if (newNode) {
+        activatedNodes.keepOne(newNode);
+        this.graph.layout();
       }
     }
   }

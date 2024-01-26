@@ -24,8 +24,7 @@ export type ITypeOfNodeType = RootNode | SecondNode | DefaultNode;
 
 export interface INodeProps<P, C, D> {
   nodeData: INodeData;
-  currentNodeType: TNodeTypeOfKey;
-  childNodeType: TNodeTypeOfKey;
+  nodeType: TNodeTypeOfKey;
   nodesGroup?: SVGType.G;
   parentNode?: P;
 }

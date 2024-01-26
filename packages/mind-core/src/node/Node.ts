@@ -4,7 +4,7 @@ import type { INodeData } from "./../graph/index.d";
 import { Style } from "./../style";
 import { RectShape } from "./../shape";
 import { NodeEvent } from "./NodeEvent";
-import { normalNodeId } from "./../utils";
+import { forScopeEachTree, normalNodeId } from "./../utils";
 import { v4 as uuidv4 } from "uuid";
 import type { ExpandNode } from "./contentNode/ExpandNode";
 import type { INodeProps, ITypeOfNodeType } from "./index.d";
@@ -43,12 +43,12 @@ export abstract class Node<
   public event = new NodeEvent(this);
 
   constructor(props: INodeProps<P, C, D>) {
-    const { nodeData, nodesGroup, parentNode, currentNodeType, childNodeType } = props;
+    const { nodeData, nodesGroup, parentNode, nodeType } = props;
     this.id = normalNodeId(nodeData.id);
     this.nodesGroup = nodesGroup;
     this.nodeData = nodeData;
     this.parentNode = parentNode;
-    this.style = new Style(currentNodeType);
+    this.style = new Style(nodeType);
     this.shape = new RectShape(this);
   }
   /** 是否为根节点 */
@@ -59,15 +59,6 @@ export abstract class Node<
   public abstract set children(children: D[]);
   /** init */
   public abstract init(): void;
-  /** 设置位置 */
-  public transform(matrixAlias: {
-    rotate: number;
-    translateX: number;
-    translateY: number;
-    scale: number;
-  }) {
-    this.group.transform(matrixAlias);
-  }
   /**
    * 创建初始化的节点数据
    * @param pid 父节点id
@@ -77,6 +68,30 @@ export abstract class Node<
   protected createInitNodeData(pid: string, depth: number): INodeData {
     return { id: uuidv4(), pid, depth, text: "输入文字", children: [] };
   }
+  /** 添加同级节点 */
+  public abstract addBrotherNode(): C;
   /** 添加子节点 */
   public abstract addChildNode(): D;
+  /** 删除节点 */
+  public deleteActivatedNode(): P | C {
+    const parentNode = this.parentNode!;
+    const brotherNodes = [...parentNode.children];
+    const ind = brotherNodes.findIndex((item) => item === this);
+    brotherNodes.splice(ind, 1);
+    parentNode.children = brotherNodes;
+    forScopeEachTree((node) => {
+      node.group.remove();
+    }, this);
+    // 如果没有兄弟节点了
+    if (brotherNodes.length === 0) {
+      return parentNode;
+    } else {
+      // 是最后一个节点就返回前一个
+      if (ind === brotherNodes.length) {
+        return brotherNodes[ind - 1] as C;
+      } else {
+        return brotherNodes[ind] as C;
+      }
+    }
+  }
 }

@@ -8,7 +8,7 @@ export class SecondNode extends Node<RootNode, SecondNode, DefaultNode> {
   public expandNode?: ExpandNode;
 
   constructor(props: ISecondNodeProps<RootNode, SecondNode, DefaultNode>) {
-    super({ ...props, currentNodeType: "second", childNodeType: "node" });
+    super({ ...props, nodeType: "second" });
   }
   public get children(): DefaultNode[] {
     return this._children;
@@ -34,6 +34,20 @@ export class SecondNode extends Node<RootNode, SecondNode, DefaultNode> {
       }
     }
   }
+  public addBrotherNode() {
+    const parentNode = this.parentNode!;
+    const secondNode = new SecondNode({
+      nodesGroup: this.nodesGroup,
+      nodeData: super.createInitNodeData(parentNode.id, this.depth),
+      parentNode,
+    });
+    secondNode.init();
+    const brotherNodes = [...parentNode.children];
+    const ind = brotherNodes.findIndex((item) => item === this);
+    brotherNodes.splice(ind + 1, 0, secondNode);
+    parentNode.children = brotherNodes;
+    return secondNode;
+  }
   public addChildNode() {
     const defaultNode = new DefaultNode({
       nodesGroup: this.nodesGroup,
@@ -43,5 +57,8 @@ export class SecondNode extends Node<RootNode, SecondNode, DefaultNode> {
     defaultNode.init();
     this.children = this.children.concat([defaultNode]);
     return defaultNode;
+  }
+  public deleteActivatedNode(): RootNode | SecondNode {
+    return super.deleteActivatedNode();
   }
 }

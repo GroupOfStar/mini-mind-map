@@ -28,6 +28,11 @@
         <div>
           <button @click="onTestClick">测试按钮</button>
         </div>
+        <br />
+        <div>
+          <button @click="onNodeTotal">获取节点总数</button>
+          <span>{{ nodeTotal }}</span>
+        </div>
       </div>
 
       <div class="directionLeft" style="left: 269px"></div>
@@ -36,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { Graph, ILayoutType } from "@mini-mind-map/mind-core";
 import { sidebarTriggerList, layoutList } from "./../../config";
 
@@ -45,6 +51,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+const nodeTotal = ref(0);
 
 const trigger = (...args: any[]) => {
   console.log("args :>> ", args);
@@ -71,6 +79,10 @@ const onTestClick = (e: MouseEvent) => {
   // console.log("height :>> ", height);
   const userInput = prompt("请输入内容"); // 显示提示信息并等待用户输入
   console.log(userInput); // 将用户输入的值打印到控制台上
+};
+
+const onNodeTotal = () => {
+  nodeTotal.value = props.mindMap.nodesGroup.node.childElementCount;
 };
 
 const onLayout = (item: IStatusEnum<ILayoutType>) => {

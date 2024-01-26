@@ -7,7 +7,7 @@ export class DefaultNode extends Node<SecondNode | DefaultNode, DefaultNode, Def
   public expandNode?: ExpandNode;
 
   constructor(props: IDefaultNodeProps<SecondNode | DefaultNode, DefaultNode, DefaultNode>) {
-    super({ ...props, currentNodeType: "node", childNodeType: "node" });
+    super({ ...props, nodeType: "node" });
   }
   public get children(): DefaultNode[] {
     return this._children;
@@ -33,13 +33,31 @@ export class DefaultNode extends Node<SecondNode | DefaultNode, DefaultNode, Def
       }
     }
   }
+  public addBrotherNode() {
+    const parentNode = this.parentNode!;
+    const defalutNode = new DefaultNode({
+      nodesGroup: this.nodesGroup,
+      nodeData: super.createInitNodeData(parentNode.id, this.depth),
+      parentNode,
+    });
+    defalutNode.init();
+    const brotherNodes = [...parentNode.children];
+    const ind = brotherNodes.findIndex((item) => item === this);
+    brotherNodes.splice(ind + 1, 0, defalutNode);
+    parentNode.children = brotherNodes;
+    return defalutNode;
+  }
   public addChildNode() {
     const defaultNode = new DefaultNode({
       nodesGroup: this.nodesGroup,
       nodeData: super.createInitNodeData(this.id, this.depth + 1),
+      parentNode: this,
     });
     defaultNode.init();
     this.children = this.children.concat([defaultNode]);
     return defaultNode;
+  }
+  public deleteActivatedNode(): SecondNode | DefaultNode {
+    return super.deleteActivatedNode();
   }
 }
