@@ -71,7 +71,7 @@ export function flatTreeNode<T extends ITreeNode>(node: T): T[] {
  * @returns 去重后的树节点数组
  */
 export function uniqueTreeNode<T extends ITreeNode>(nodes: T[]): T[] {
-  // 判断是否存在互相存在的节点
+  // 判断curr在arr中是否深度地存在
   const isMutualExist = (curr: T, arr: T[]): boolean => {
     return arr.some((item) => (item.id === curr.id ? true : isMutualExist(curr, item.children)));
   };
@@ -84,7 +84,7 @@ export function uniqueTreeNode<T extends ITreeNode>(nodes: T[]): T[] {
         const ele = total[index];
         if (isMutualExist(ele, [currentValue])) {
           total.splice(index, 1);
-          break;
+          index--;
         }
       }
       return [...total, currentValue];
@@ -92,20 +92,36 @@ export function uniqueTreeNode<T extends ITreeNode>(nodes: T[]): T[] {
   }, [] as T[]);
 }
 
-// 把节点树的数组转换成文字树的数组
-export function nodeTreeToTextTree<T extends ITreeNode>(nodes: T[]): string[] {
-  return nodes.map((item) => {
-    let text = "";
-    let deep = 0;
-    forScopeEachTree((node, index, parentNode) => {
-      console.log("node :>> ", node);
-      text += text.repeat(deep) + (node.nodeData.text || "");
-      // .replace(/\n/g, "\\n");
-      if (parentNode?.children.length === index + 1) {
-        text += "\n";
-        deep++;
-      }
-    }, item);
-    return text;
-  });
+/**
+ * 把节点树的数组转换成文本树
+ * @param nodes 节点树的数组
+ * @param text 每一行的前缀字符
+ * @param deep 深度，影响换行后tab个数
+ * @returns 文本树
+ */
+export function nodeTreeToText<T extends ITreeNode>(
+  nodes: T[],
+  text: string = "",
+  deep: number = 0
+): string {
+  return nodes
+    .map((item) => {
+      const str = item.nodeData.text || "";
+      return "\t".repeat(deep) + str + "\n" + nodeTreeToText(item.children, text, deep + 1);
+    })
+    .join("");
+}
+
+/**
+ * 把节点树的数组转换成文本树
+ * @param nodes 节点树的数组
+ * @param text 每一行的前缀字符
+ * @param deep 深度，影响换行后tab个数
+ * @returns 文本树
+ */
+export function nodeTreeToRaw<T extends ITreeNode>(nodes: T[]): T[] {
+  return nodes.map((item) => ({
+    ...item.nodeData,
+    children: nodeTreeToRaw(item.children),
+  }));
 }

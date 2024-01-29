@@ -4,7 +4,7 @@ import type { IEvents } from "./../graph/index.d";
 import type { Graph } from "./Graph";
 import type { RootNode, SecondNode, DefaultNode } from "./../node";
 import type { ITypeOfNodeType } from "./../node/index.d";
-import { nodeTreeToTextTree, uniqueTreeNode } from "./../utils";
+import { nodeTreeToRaw, nodeTreeToText, uniqueTreeNode } from "./../utils";
 
 export class GraphEvent extends Emitter<IEvents> {
   private graph: Graph;
@@ -179,19 +179,13 @@ export class GraphEvent extends Emitter<IEvents> {
     e.stopPropagation();
 
     const activatedNodes = this.graph.activatedNode.nodes;
-    console.log("activatedNodes :>> ", activatedNodes);
-    // 根节点不允许复制，过滤掉
-    // 要考虑复制的多节点构成树，方案 1.循环处理查找；2.可以考虑先平铺，去重后再组装
-    // TODO
-
+    // 根节点不允许复制，过滤掉 TODO
     // 去重后的节点数组
     const nodeList = uniqueTreeNode([...activatedNodes]);
     console.log("nodeList :>> ", nodeList);
 
-    console.log("treeText :>> ", nodeTreeToTextTree(nodeList));
-
-    e.clipboardData?.setData("application/json", '{"age":11,"name":"gag","args":["22"]}');
-    e.clipboardData?.setData("text/plain", "文本文本文本");
+    e.clipboardData?.setData("application/json", JSON.stringify(nodeTreeToRaw(nodeList)));
+    e.clipboardData?.setData("text/plain", nodeTreeToText(nodeList));
     e.clipboardData?.setData("custom/type", "gasgasgasdgasdg");
 
     // const blob = new Blob(["text/plain", "text/plain22"], { type: "text/plain" });
