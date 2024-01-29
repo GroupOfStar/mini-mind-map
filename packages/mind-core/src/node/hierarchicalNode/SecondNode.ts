@@ -38,7 +38,7 @@ export class SecondNode extends Node<RootNode, SecondNode, DefaultNode> {
     const parentNode = this.parentNode!;
     const secondNode = new SecondNode({
       nodesGroup: this.nodesGroup,
-      nodeData: super.createInitNodeData(parentNode.id),
+      nodeData: Node.createInitNodeData(parentNode.id),
       parentNode,
     });
     secondNode.init();
@@ -48,15 +48,13 @@ export class SecondNode extends Node<RootNode, SecondNode, DefaultNode> {
     parentNode.children = brotherNodes;
     return secondNode;
   }
-  public addChildNode() {
+  public addChildNode(nodeData = Node.createInitNodeData(this.id)) {
     const defaultNode = new DefaultNode({
       nodesGroup: this.nodesGroup,
-      nodeData: super.createInitNodeData(this.id),
+      nodeData,
       parentNode: this,
     });
-    defaultNode.init();
-    this.children = this.children.concat([defaultNode]);
-    return defaultNode;
+    return super._addChildNode(defaultNode);
   }
   public deleteActivatedNode(): RootNode | SecondNode {
     return super.deleteActivatedNode();

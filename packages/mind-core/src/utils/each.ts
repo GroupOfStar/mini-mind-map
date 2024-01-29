@@ -107,21 +107,9 @@ export function nodeTreeToText<T extends ITreeNode>(
   return nodes
     .map((item) => {
       const str = item.nodeData.text || "";
-      return "\t".repeat(deep) + str + "\n" + nodeTreeToText(item.children, text, deep + 1);
+      // const escapeStr = "\u0020" // 空格
+      const escapeStr = "\t"; // tab
+      return escapeStr.repeat(deep) + str + "\n" + nodeTreeToText(item.children, text, deep + 1);
     })
     .join("");
-}
-
-/**
- * 把节点树的数组转换成文本树
- * @param nodes 节点树的数组
- * @param text 每一行的前缀字符
- * @param deep 深度，影响换行后tab个数
- * @returns 文本树
- */
-export function nodeTreeToRaw<T extends ITreeNode>(nodes: T[]): T[] {
-  return nodes.map((item) => ({
-    ...item.nodeData,
-    children: nodeTreeToRaw(item.children),
-  }));
 }

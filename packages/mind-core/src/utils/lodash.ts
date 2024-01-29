@@ -25,3 +25,11 @@ export function debounce(fn: Function, time: number = 300) {
 export function isNumber(val: any): boolean {
   return !isNaN(parseFloat(val)) && isFinite(val);
 }
+
+/**
+ * 通过密码学安全的随机数生成器生成第四版 UUID
+ * @returns
+ */
+export function uuidv4(): string {
+  return self.crypto.randomUUID();
+}

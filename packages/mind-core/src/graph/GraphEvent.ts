@@ -4,7 +4,8 @@ import type { IEvents } from "./../graph/index.d";
 import type { Graph } from "./Graph";
 import type { RootNode, SecondNode, DefaultNode } from "./../node";
 import type { ITypeOfNodeType } from "./../node/index.d";
-import { nodeTreeToRaw, nodeTreeToText, uniqueTreeNode } from "./../utils";
+import { Node } from "./../node";
+import { nodeTreeToText, uniqueTreeNode } from "./../utils";
 
 export class GraphEvent extends Emitter<IEvents> {
   private graph: Graph;
@@ -182,11 +183,9 @@ export class GraphEvent extends Emitter<IEvents> {
     // 根节点不允许复制，过滤掉 TODO
     // 去重后的节点数组
     const nodeList = uniqueTreeNode([...activatedNodes]);
-    console.log("nodeList :>> ", nodeList);
-
-    e.clipboardData?.setData("application/json", JSON.stringify(nodeTreeToRaw(nodeList)));
     e.clipboardData?.setData("text/plain", nodeTreeToText(nodeList));
-    e.clipboardData?.setData("custom/type", "gasgasgasdgasdg");
+    // application/json
+    e.clipboardData?.setData("mind/node", JSON.stringify(nodeList.map(Node.toRaw)));
 
     // const blob = new Blob(["text/plain", "text/plain22"], { type: "text/plain" });
     // const data = [new ClipboardItem({ ["text/plain"]: blob })];
@@ -211,31 +210,37 @@ export class GraphEvent extends Emitter<IEvents> {
     e.preventDefault();
     e.stopPropagation();
     const clipboardData = e.clipboardData || new DataTransfer();
-    console.log("clipboardData:>> ", clipboardData);
     const textData = clipboardData.getData("text/plain");
     console.log("textData :>> ", textData);
     const htmlData = clipboardData.getData("text/html");
     console.log("htmlData :>> ", htmlData);
     const jsonData = clipboardData.getData("application/json");
     console.log("jsonData :>> ", jsonData);
-    const customData = clipboardData.getData("custom/type");
-    console.log("customData :>> ", customData);
-    console.log("clipboardData.files :>> ", clipboardData.files);
-    if (clipboardData.files.length > 0) {
-      const file = clipboardData.files[0];
-      console.log("file :>> ", file);
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = document.createElement("img");
-        console.log("event.target :>> ", event.target);
-        img.src = (event.target?.result || "").toString();
-        // document.body.appendChild(img);
-        // console.log("img :>> ", img);
-      };
-      reader.readAsDataURL(file);
+    const mindNode = clipboardData.getData("mind/node");
+    if (mindNode) {
+      const nodeList = JSON.parse(mindNode);
+      // nodeList.forEach((node: INodeData) => {
+
+      // })
+      console.log("nodeList :>> ", nodeList);
     }
-    console.log("clipboardData.items :>> ", clipboardData.items);
-    console.log("clipboardData.types :>> ", clipboardData.types);
+
+    // console.log("clipboardData.files :>> ", clipboardData.files);
+    // if (clipboardData.files.length > 0) {
+    //   const file = clipboardData.files[0];
+    //   console.log("file :>> ", file);
+    //   const reader = new FileReader();
+    //   reader.onload = (event) => {
+    //     const img = document.createElement("img");
+    //     console.log("event.target :>> ", event.target);
+    //     img.src = (event.target?.result || "").toString();
+    //     // document.body.appendChild(img);
+    //     // console.log("img :>> ", img);
+    //   };
+    //   reader.readAsDataURL(file);
+    // }
+    // console.log("clipboardData.items :>> ", clipboardData.items);
+    // console.log("clipboardData.types :>> ", clipboardData.types);
   }
   // 节点点击事件
   private onNodeClick(node: ITypeOfNodeType) {

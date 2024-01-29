@@ -4,8 +4,7 @@ import type { INodeData } from "./../graph/index.d";
 import { Style } from "./../style";
 import { RectShape } from "./../shape";
 import { NodeEvent } from "./NodeEvent";
-import { forScopeEachTree, normalNodeId } from "./../utils";
-import { v4 as uuidv4 } from "uuid";
+import { forScopeEachTree, normalNodeId, uuidv4 } from "./../utils";
 import type { ExpandNode } from "./contentNode/ExpandNode";
 import type { INodeProps, ITypeOfNodeType } from "./index.d";
 import type { DefaultNode } from "./hierarchicalNode/DefaultNode";
@@ -55,20 +54,19 @@ export abstract class Node<
   }
   public abstract get children(): D[];
   public abstract set children(children: D[]);
-  /**
-   * 创建初始化的节点数据
-   * @param pid 父节点id
-   * @returns 节点数据
-   */
-  protected createInitNodeData(pid: string): INodeData {
-    return { id: uuidv4(), pid, text: "输入文字", children: [] };
-  }
+
   /** init */
   public abstract init(): void;
   /** 添加同级节点 */
   public abstract addBrotherNode(): C;
   /** 添加子节点 */
-  public abstract addChildNode(): D;
+  public abstract addChildNode(nodeData: INodeData): D;
+  /** 添加子节点 */
+  protected _addChildNode(node: D): D {
+    node.init();
+    this.children = this.children.concat([node]);
+    return node;
+  }
   /** 删除节点 */
   public deleteActivatedNode(): P | C {
     const parentNode = this.parentNode!;
@@ -90,5 +88,27 @@ export abstract class Node<
         return brotherNodes[ind] as C;
       }
     }
+  }
+  /**
+   * 创建初始化的节点数据
+   * @param pid 父节点id
+   * @returns 节点数据
+   */
+  static createInitNodeData(pid: string): INodeData {
+    return { id: uuidv4(), pid, text: "输入文字", children: [] };
+  }
+  /**
+   * 把节点对象还原成节点的原始数据结构
+   * @param node 节点对象
+   * @returns 节点原始数据，id为新创建的id
+   */
+  static toRaw<T extends Node<ITypeOfNodeType | never, ITypeOfNodeType, SecondNode | DefaultNode>>(
+    node: T
+  ): INodeData {
+    return {
+      ...node.nodeData,
+      id: uuidv4(),
+      children: node.children.map(Node.toRaw),
+    };
   }
 }

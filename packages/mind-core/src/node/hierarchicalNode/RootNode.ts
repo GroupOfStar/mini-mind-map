@@ -27,14 +27,12 @@ export class RootNode extends Node<never, RootNode, SecondNode> {
   public addBrotherNode(): never {
     throw new Error("根节点不能增加同级根节点。");
   }
-  public addChildNode(): SecondNode {
+  public addChildNode(nodeData = Node.createInitNodeData(this.id)): SecondNode {
     const secondNode = new SecondNode({
       nodesGroup: this.nodesGroup,
-      nodeData: super.createInitNodeData(this.id),
+      nodeData,
     });
-    secondNode.init();
-    this.children = this.children.concat([secondNode]);
-    return secondNode;
+    return super._addChildNode(secondNode);
   }
   public deleteActivatedNode(): never {
     throw new Error("根节点不能删除。");
