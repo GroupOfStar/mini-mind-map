@@ -4,6 +4,7 @@ import type { IEvents } from "./../graph/index.d";
 import type { Graph } from "./Graph";
 import type { RootNode, SecondNode, DefaultNode } from "./../node";
 import type { ITypeOfNodeType } from "./../node/index.d";
+import { nodeTreeToTextTree, uniqueTreeNode } from "./../utils";
 
 export class GraphEvent extends Emitter<IEvents> {
   private graph: Graph;
@@ -28,13 +29,17 @@ export class GraphEvent extends Emitter<IEvents> {
   public bindEvent() {
     this.onSvgClick = this.onSvgClick.bind(this);
     this.onSvgMousedown = this.onSvgMousedown.bind(this);
-    this.onSvgMousewheel = this.onSvgMousewheel.bind(this);
-    this.onSvgContextmenu = this.onSvgContextmenu.bind(this);
     this.onSvgMousemove = this.onSvgMousemove.bind(this);
     this.onSvgMouseup = this.onSvgMouseup.bind(this);
+    this.onSvgMousewheel = this.onSvgMousewheel.bind(this);
+    this.onSvgContextmenu = this.onSvgContextmenu.bind(this);
+
     this.onNodeClick = this.onNodeClick.bind(this);
     this.onCtrlNodeClick = this.onCtrlNodeClick.bind(this);
-    this.onWindowKeydown = this.onWindowKeydown.bind(this);
+
+    this.onDocumentKeydown = this.onDocumentKeydown.bind(this);
+    this.onDocumentCopy = this.onDocumentCopy.bind(this);
+    this.onDocumentPaste = this.onDocumentPaste.bind(this);
 
     this.graph.svg.on("click", this.onSvgClick);
     this.graph.svg.on("mousedown", this.onSvgMousedown);
@@ -43,6 +48,7 @@ export class GraphEvent extends Emitter<IEvents> {
 
     // this.graph.svg.on("wheel", this.onSvgMousewheel);
     this.graph.svg.on("contextmenu", this.onSvgContextmenu);
+    // this.graph.svg.on("copy", this.onSvgCopy);
 
     // 节点点击事件
     this.on("node_click", this.onNodeClick);
@@ -60,12 +66,14 @@ export class GraphEvent extends Emitter<IEvents> {
     const event = e as MouseEvent;
     event.stopPropagation();
     this.emit("graph_click", event);
-    const { activatedNodes, addIconNode } = this.graph;
+    const { activatedNode, addIconNode } = this.graph;
     // 取消节点的激活效果
-    activatedNodes.clear();
+    activatedNode.clear();
     // 隐藏新增按钮
     addIconNode.onHide();
-    document.removeEventListener("keydown", this.onWindowKeydown);
+    document.removeEventListener("keydown", this.onDocumentKeydown);
+    document.removeEventListener("copy", this.onDocumentCopy);
+    document.removeEventListener("paste", this.onDocumentPaste);
   }
   // svg画布的鼠标按下事件
   private onSvgMousedown(e: Event) {
@@ -131,54 +139,132 @@ export class GraphEvent extends Emitter<IEvents> {
     e.preventDefault();
     e.stopPropagation();
     // this.emit("mousewheel", e, dir, this);
+    document.createElement("div").addEventListener("paste", () => {});
   }
   // 键盘按下事件
-  private onWindowKeydown(e: KeyboardEvent) {
+  private onDocumentKeydown(e: KeyboardEvent) {
     const { key } = e;
-    console.log("onWindowKeydown e :>> ", e);
+    console.log("onDocumentKeydown e :>> ", e);
     if (key === "Tab" || key === "Enter" || key === "Delete") {
       e.preventDefault();
       e.stopPropagation();
-      const { activatedNodes } = this.graph;
+      const { activatedNode } = this.graph;
+      const prevNode = activatedNode.firstNode;
+      console.log("prevNode :>> ", prevNode);
+      console.log("prevNode?.group.rbox() :>> ", prevNode?.group.rbox());
+      const { x = 0, y = 0, width = 0, height = 0 } = prevNode?.group.rbox() || {};
       let newNode: RootNode | SecondNode | DefaultNode | undefined;
       switch (key) {
         case "Tab":
-          newNode = activatedNodes.firstNode?.addChildNode();
+          newNode = prevNode?.addChildNode();
           break;
         case "Enter":
-          newNode = activatedNodes.firstNode?.addBrotherNode();
+          newNode = prevNode?.addBrotherNode();
           break;
         case "Delete":
-          newNode = activatedNodes.firstNode?.deleteActivatedNode();
+          newNode = prevNode?.deleteActivatedNode();
           break;
       }
       console.log("newNode :>> ", newNode);
       if (newNode) {
-        activatedNodes.keepOne(newNode);
-        this.graph.layout();
+        this.graph.doLayout();
+        this.graph.onResize(prevNode, { offsetX: x + width / 2, offsetY: y + height / 2 });
+        activatedNode.keepOne(newNode);
       }
     }
   }
+  // 复制事件
+  private onDocumentCopy(e: ClipboardEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const activatedNodes = this.graph.activatedNode.nodes;
+    console.log("activatedNodes :>> ", activatedNodes);
+    // 根节点不允许复制，过滤掉
+    // 要考虑复制的多节点构成树，方案 1.循环处理查找；2.可以考虑先平铺，去重后再组装
+    // TODO
+
+    // 去重后的节点数组
+    const nodeList = uniqueTreeNode([...activatedNodes]);
+    console.log("nodeList :>> ", nodeList);
+
+    console.log("treeText :>> ", nodeTreeToTextTree(nodeList));
+
+    e.clipboardData?.setData("application/json", '{"age":11,"name":"gag","args":["22"]}');
+    e.clipboardData?.setData("text/plain", "文本文本文本");
+    e.clipboardData?.setData("custom/type", "gasgasgasdgasdg");
+
+    // const blob = new Blob(["text/plain", "text/plain22"], { type: "text/plain" });
+    // const data = [new ClipboardItem({ ["text/plain"]: blob })];
+    // navigator.clipboard.write(data).then(
+    //   () => {
+    //     /* success */
+    //     navigator.clipboard.readText().then((text) => {
+    //       console.log("text :>> ", text);
+    //     });
+    //     navigator.clipboard.read().then((res) => {
+    //       console.log("res :>> ", res);
+    //     });
+    //   },
+    //   () => {
+    //     /* failure */
+    //   }
+    // );
+  }
+  // 粘贴事件
+  private onDocumentPaste(e: ClipboardEvent) {
+    console.log("e :>> ", e);
+    e.preventDefault();
+    e.stopPropagation();
+    const clipboardData = e.clipboardData || new DataTransfer();
+    console.log("clipboardData:>> ", clipboardData);
+    const textData = clipboardData.getData("text/plain");
+    console.log("textData :>> ", textData);
+    const htmlData = clipboardData.getData("text/html");
+    console.log("htmlData :>> ", htmlData);
+    const jsonData = clipboardData.getData("application/json");
+    console.log("jsonData :>> ", jsonData);
+    const customData = clipboardData.getData("custom/type");
+    console.log("customData :>> ", customData);
+    console.log("clipboardData.files :>> ", clipboardData.files);
+    if (clipboardData.files.length > 0) {
+      const file = clipboardData.files[0];
+      console.log("file :>> ", file);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = document.createElement("img");
+        console.log("event.target :>> ", event.target);
+        img.src = (event.target?.result || "").toString();
+        // document.body.appendChild(img);
+        // console.log("img :>> ", img);
+      };
+      reader.readAsDataURL(file);
+    }
+    console.log("clipboardData.items :>> ", clipboardData.items);
+    console.log("clipboardData.types :>> ", clipboardData.types);
+  }
   // 节点点击事件
   private onNodeClick(node: ITypeOfNodeType) {
-    const { activatedNodes, addIconNode } = this.graph;
-    activatedNodes.keepOne(node);
-    // 显示新增按钮 并注册相关快捷键
-    addIconNode.onShowByNode(node);
-    document.addEventListener("keydown", this.onWindowKeydown);
+    const { activatedNode, addIconNode } = this.graph;
+    activatedNode.keepOne(node);
+    document.addEventListener("keydown", this.onDocumentKeydown);
+    document.addEventListener("copy", this.onDocumentCopy);
+    document.addEventListener("paste", this.onDocumentPaste);
   }
   /**
    * 组合键：ctrl + 鼠标点击节点事件
    * @param node
    */
   private onCtrlNodeClick(node: ITypeOfNodeType) {
-    const { activatedNodes, addIconNode } = this.graph;
-    if (activatedNodes.has(node)) {
-      activatedNodes.delete(node);
+    const { activatedNode, addIconNode } = this.graph;
+    if (activatedNode.has(node)) {
+      activatedNode.delete(node);
     } else {
-      activatedNodes.add(node);
+      activatedNode.add(node);
     }
     addIconNode.onHide();
-    document.removeEventListener("keydown", this.onWindowKeydown);
+    document.removeEventListener("keydown", this.onDocumentKeydown);
+    document.addEventListener("copy", this.onDocumentCopy);
+    document.addEventListener("paste", this.onDocumentPaste);
   }
 }

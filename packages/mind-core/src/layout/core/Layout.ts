@@ -28,6 +28,8 @@ export abstract class Layout<T extends ITreeNode<{}>> {
     this.rootNode = rootNode;
     this.option = option;
   }
+  /** 获取布局类型下的偏移量 */
+  abstract get offset(): { offsetX: number; offsetY: number };
   /** 布局 */
   abstract doLayout(): T;
   /** 获取节点树的边界框 */

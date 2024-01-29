@@ -119,7 +119,7 @@ export const mindMapData = [
     id: "mind#3a7dda90-6a2d-4793-89db-sg3ddd3345r52",
     pid: "mind#1e3e635e-f533-4016-a0d7-8099f886f18a",
     text: `第3层节点02-02
-噶啥的噶啥`,
+  噶啥的噶啥`,
     expand: true,
     isActive: false,
     children: [],
@@ -336,7 +336,7 @@ export const mindMapData3 = [
   {
     id: "mind#1e3e635e-f533-4016-a0d7-44jj5476523",
     pid: "mind#3a7dda90-gg-5566-89db-666dfhgfu5673",
-    text: "第3层节点02-03",
+    text: "第3层节点02-03-01",
     expand: true,
     isActive: false,
     children: [],

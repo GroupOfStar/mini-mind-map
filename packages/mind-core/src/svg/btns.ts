@@ -31,6 +31,12 @@ export const AddIcon = `<g stroke="#257BF1" fill="none">
   <line stroke-width="2" x1="0" y1="5.5" x2="0" y2="-5.5" />
   <circle fill="transparent" stroke-width="2" cx="0" cy="0" r="11" style="cursor: pointer;"/>
 </g>`;
+// // 新增按钮
+// export const AddIcon = `<g stroke="#257BF1" fill="none">
+//   <line stroke-width="2" x1="-5.5" y1="0" x2="5.5" y2="0" />
+//   <line stroke-width="2" x1="0" y1="5.5" x2="0" y2="-5.5" />
+//   <circle fill="transparent" stroke-width="2" cx="0" cy="0" r="11" style="cursor: pointer;"/>
+// </g>`;
 
 // 删除按钮
 export const DeleteIconIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="design-iconfont">

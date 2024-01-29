@@ -90,7 +90,7 @@ export class WrapperdTree<T extends ITreeNode<{}>> {
       const fid = this.parentWt.children.findIndex((item) => item === this);
       return fid > 0
         ? getDeepNode(this.parentWt.children[fid - 1], deep)
-        : this.parentWt.getPrevSameLevelContour(deep + 1);
+        : this.parentWt.getPrevSameLevelContour(deep - 1);
     } else {
       return undefined;
     }

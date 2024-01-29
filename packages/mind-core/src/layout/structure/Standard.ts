@@ -2,6 +2,12 @@ import { Layout, nonLayeredTidyTree, WrapperdTree } from "./../core";
 import { RootNode } from "./../../node";
 
 export class Standard extends Layout<RootNode> {
+  get offset() {
+    return {
+      offsetX: window.innerWidth / 2,
+      offsetY: window.innerHeight / 2,
+    };
+  }
   doLayout() {
     // separate into left and right trees
     const leftTree = new RootNode({ nodeData: this.rootNode.nodeData });

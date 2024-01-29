@@ -37,7 +37,7 @@ export class DefaultNode extends Node<SecondNode | DefaultNode, DefaultNode, Def
     const parentNode = this.parentNode!;
     const defalutNode = new DefaultNode({
       nodesGroup: this.nodesGroup,
-      nodeData: super.createInitNodeData(parentNode.id, this.depth),
+      nodeData: super.createInitNodeData(parentNode.id),
       parentNode,
     });
     defalutNode.init();
@@ -50,7 +50,7 @@ export class DefaultNode extends Node<SecondNode | DefaultNode, DefaultNode, Def
   public addChildNode() {
     const defaultNode = new DefaultNode({
       nodesGroup: this.nodesGroup,
-      nodeData: super.createInitNodeData(this.id, this.depth + 1),
+      nodeData: super.createInitNodeData(this.id),
       parentNode: this,
     });
     defaultNode.init();

@@ -4,6 +4,7 @@ import type { ExpandNode } from "../contentNode/ExpandNode";
 import type { IGeneralizationNodeProps } from "../index.d";
 
 export class GeneralizationNode extends Node<DefaultNode, GeneralizationNode, never> {
+  public depth = 0;
   public expandNode?: ExpandNode;
 
   constructor(props: IGeneralizationNodeProps<DefaultNode, GeneralizationNode, never>) {

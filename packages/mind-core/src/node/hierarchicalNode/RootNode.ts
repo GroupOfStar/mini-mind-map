@@ -30,7 +30,7 @@ export class RootNode extends Node<never, RootNode, SecondNode> {
   public addChildNode(): SecondNode {
     const secondNode = new SecondNode({
       nodesGroup: this.nodesGroup,
-      nodeData: super.createInitNodeData(this.id, this.depth + 1),
+      nodeData: super.createInitNodeData(this.id),
     });
     secondNode.init();
     this.children = this.children.concat([secondNode]);

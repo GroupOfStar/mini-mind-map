@@ -38,7 +38,7 @@ export class SecondNode extends Node<RootNode, SecondNode, DefaultNode> {
     const parentNode = this.parentNode!;
     const secondNode = new SecondNode({
       nodesGroup: this.nodesGroup,
-      nodeData: super.createInitNodeData(parentNode.id, this.depth),
+      nodeData: super.createInitNodeData(parentNode.id),
       parentNode,
     });
     secondNode.init();
@@ -51,7 +51,7 @@ export class SecondNode extends Node<RootNode, SecondNode, DefaultNode> {
   public addChildNode() {
     const defaultNode = new DefaultNode({
       nodesGroup: this.nodesGroup,
-      nodeData: super.createInitNodeData(this.id, this.depth + 1),
+      nodeData: super.createInitNodeData(this.id),
       parentNode: this,
     });
     defaultNode.init();

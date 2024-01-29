@@ -16,7 +16,7 @@ export default defineComponent(function Node() {
   const position = reactive({ x: 0, y: 0 });
   const mindMap = new Graph();
 
-  const onResize = debounce(mindMap.onResize.bind(mindMap));
+  const onResize = debounce(() => mindMap.onResize());
 
   // 隐藏弹出层
   const hideModal = () => {
@@ -52,7 +52,7 @@ export default defineComponent(function Node() {
       mindMap.setDataByList(nodeList, rootId);
       mindMap.render();
 
-      mindMap.layout();
+      mindMap.doLayout();
       mindMap.onResize();
     }
 

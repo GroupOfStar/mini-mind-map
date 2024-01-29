@@ -28,6 +28,7 @@ export class AddIconNode {
 
   constructor(graph: Graph) {
     this.graph = graph;
+    this.group.addTo(graph.svg);
     this.lineEl.addTo(this.group);
     this.iconEl.addTo(this.group);
     this.setNodeStyle();
@@ -68,14 +69,18 @@ export class AddIconNode {
   /** 显示新增功能 */
   public onShowByNode(node: ITypeOfNodeType) {
     const { x, y, selectedNodeWidth, selectedNodeHeight } = node.shape;
-    const {
-      graphBoundingBox: { width, height },
-    } = this.graph;
-    this.event.node = node;
-    this.group.move(
-      width / 2 + x + selectedNodeWidth,
-      height / 2 + y + selectedNodeHeight / 2 - this.nodeHeight / 2
-    );
+    console.log("x, y :>> ", x, y);
+    const { x: graphX, y: graphY } = this.graph.nodesGroup.bbox();
+
+    // const {
+    //   graphBoundingBox: { width, height },
+    // } = this.graph;
+    // this.event.node = node;
+    // this.group.move(
+    //   width / 2 + x + selectedNodeWidth,
+    //   height / 2 + y + selectedNodeHeight / 2 - this.nodeHeight / 2
+    // );
+    this.group.move(x + graphX, y + graphY);
     this.group.css({ display: "block" });
   }
   /** 隐藏新增功能 */

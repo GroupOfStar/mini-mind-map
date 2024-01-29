@@ -22,7 +22,7 @@ onMounted(() => {
     mindMap.setDataByList(nodeList, rootId);
     mindMap.render();
     console.log("mindMap :>> ", mindMap);
-    mindMap.layout();
+    mindMap.doLayout();
     mindMap.onResize();
   }
 

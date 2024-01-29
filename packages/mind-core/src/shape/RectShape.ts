@@ -63,6 +63,7 @@ export class RectShape<
     this.textNodeEl.text((tp) => {
       const wrapStr = getWrapString(text, lineTextMaxWidth, fontOption);
       wrapStr.forEach((str, index, arr) => {
+        // 为空的最后一个tspan要渲染出来
         if (!str && index === arr.length - 1) {
           tp.tspan(".").attr({ visibility: "hidden" }).newLine();
         } else {

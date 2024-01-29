@@ -34,6 +34,8 @@ export class NodeEvent<
     const { x, y, selectedNodeWidth, selectedNodeHeight } = shape;
     const { marginX, marginY } = style;
     console.log(
+      "isRoot :",
+      this.node.isRoot,
       `${nodeData.text}:>>`,
       " x :",
       x,

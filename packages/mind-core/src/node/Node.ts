@@ -27,8 +27,6 @@ export abstract class Node<
   public id: string;
   /** 节点data */
   public nodeData: INodeData;
-  /** 深度 */
-  public depth: number = 0;
   /** 父节点 */
   public parentNode?: P;
   /** 子节点 */
@@ -53,21 +51,20 @@ export abstract class Node<
   }
   /** 是否为根节点 */
   get isRoot() {
-    return this.depth === 0;
+    return this.constructor.name === "RootNode";
   }
   public abstract get children(): D[];
   public abstract set children(children: D[]);
-  /** init */
-  public abstract init(): void;
   /**
    * 创建初始化的节点数据
    * @param pid 父节点id
-   * @param depth 深度
    * @returns 节点数据
    */
-  protected createInitNodeData(pid: string, depth: number): INodeData {
-    return { id: uuidv4(), pid, depth, text: "输入文字", children: [] };
+  protected createInitNodeData(pid: string): INodeData {
+    return { id: uuidv4(), pid, text: "输入文字", children: [] };
   }
+  /** init */
+  public abstract init(): void;
   /** 添加同级节点 */
   public abstract addBrotherNode(): C;
   /** 添加子节点 */

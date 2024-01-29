@@ -88,7 +88,7 @@ const onNodeTotal = () => {
 const onLayout = (item: IStatusEnum<ILayoutType>) => {
   const mindMap = props.mindMap;
   mindMap.theme.config.layout = item.value;
-  mindMap.layout();
+  mindMap.doLayout();
   mindMap.onResize();
 };
 </script>
