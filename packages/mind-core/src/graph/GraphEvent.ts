@@ -149,25 +149,25 @@ export class GraphEvent extends Emitter<IEvents> {
     if (key === "Tab" || key === "Enter" || key === "Delete") {
       e.preventDefault();
       e.stopPropagation();
-      const { activatedNode } = this.graph;
+      const { activatedNode, addIconNode } = this.graph;
       const prevNode = activatedNode.firstNode;
       if (prevNode) {
         let newNode: RootNode | SecondNode | DefaultNode | undefined;
         switch (key) {
           case "Tab":
-            newNode = prevNode.addChildNode();
-            this.graph.onScrollToNode(prevNode);
+            addIconNode.addChildToNode(prevNode);
             break;
           case "Enter":
             newNode = prevNode.addBrotherNode();
             this.graph.onScrollToNode(prevNode);
+            activatedNode.keepOne(newNode);
             break;
           case "Delete":
             newNode = prevNode.deleteActivatedNode();
             this.graph.onScrollToNode(newNode);
+            activatedNode.keepOne(newNode);
             break;
         }
-        activatedNode.keepOne(newNode);
       }
     }
   }
@@ -262,7 +262,7 @@ export class GraphEvent extends Emitter<IEvents> {
   }
   // 节点点击事件
   private onNodeClick(node: ITypeOfNodeType) {
-    const { activatedNode, addIconNode } = this.graph;
+    const { activatedNode } = this.graph;
     activatedNode.keepOne(node);
     document.addEventListener("keydown", this.onDocumentKeydown);
     document.addEventListener("copy", this.onDocumentCopy);

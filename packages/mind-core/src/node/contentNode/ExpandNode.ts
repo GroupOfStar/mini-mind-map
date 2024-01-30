@@ -1,10 +1,11 @@
 import { G, Rect, Text } from "@svgdotjs/svg.js";
-import { ExpandNodeEvent } from "./ExpandNodeEvent";
+import { Emitter } from "./../../emitter";
+import type { IEvents } from "./../../graph";
 import type * as SVGType from "@svgdotjs/svg.js";
 import type { Style } from "../../style";
 
 /** 展开节点 */
-export class ExpandNode {
+export class ExpandNode extends Emitter<IEvents> {
   /** group */
   public nodeGroup = new G({ class: "expand-group" });
   /** 节点框 */
@@ -14,10 +15,8 @@ export class ExpandNode {
   /** 样式主题 */
   private nodeStyle: Style;
 
-  /** 节点事件 */
-  public event = new ExpandNodeEvent(this);
-
   constructor(total: number, group: SVGType.G, nodeStyle: Style) {
+    super();
     this.nodeStyle = nodeStyle;
 
     this.textNodeEl.addClass("expand-text");
@@ -27,6 +26,7 @@ export class ExpandNode {
     this.nodeGroup.add(this.textNodeEl);
     // 添加到节点组中
     this.nodeGroup.addTo(group);
+    this.bindEvent();
   }
   /** 节点所占宽度 */
   public get nodeWidth(): number {
@@ -39,6 +39,22 @@ export class ExpandNode {
     const { expandOffset = 0 } = this.nodeStyle.theme.config;
     const { height = 0 } = this.nodeGroup?.bbox() || {};
     return height > 0 ? expandOffset + height : 0;
+  }
+  /** 注册事件 */
+  public bindEvent() {
+    this.onClick = this.onClick.bind(this);
+
+    this.nodeGroup.on("click", this.onClick);
+  }
+  /** 解除事件 */
+  public unbindEvent() {
+    this.nodeGroup.off();
+  }
+  /** 节点点击事件 */
+  private onClick(event: Event) {
+    event.stopPropagation();
+    console.log("expandNode click event  :>> ", event);
+    this.emit("expandNode_click", event);
   }
   /** 设置节点样式 */
   public setNodeStyle() {
