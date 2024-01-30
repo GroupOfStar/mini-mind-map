@@ -108,11 +108,12 @@ export class Graph {
     this.event = new GraphEvent(this);
   }
   /**
-   * 设置SVG将要挂载的HTMLElement容器
+   * 设置并挂载SVG的HTMLElement容器
    * @param el SVG挂载的HTMLElement容器
    */
   public setContainer(el: HTMLElement) {
     this.el = el;
+    this.svg.addTo(el);
   }
   /**
    * 通过一维的节点数组设置成节点树数据
@@ -138,55 +139,70 @@ export class Graph {
     }
   }
   /**
-   * window 的resize事件
-   * 始终保持根节点的y在窗口中间，x根据布局类型来设置在窗口1/3处
+   * 让节点保持在上一次布局的位置
+   * @param node 保持滚动的目标节点
    */
-  public onResize(node: ITypeOfNodeType | undefined = this.rootNode, layout = this.layout?.offset) {
-    console.log("node :>> ", node);
-    const { offsetX = 0, offsetY = 0 } = layout || {};
+  public onScrollToNode(node: ITypeOfNodeType) {
+    const { x = 0, y = 0, width = 0, height = 0 } = node.group.rbox() || {};
+    // 记录下之前的偏移位置
+    const offsetX = x + width / 2;
+    const offsetY = y + height / 2;
+    this.doLayout();
+    const { cx = 0, cy = 0 } = node.group.bbox() || {};
+    this.el.scroll(cx - offsetX, cy - offsetY);
+  }
+  /**
+   * window的resize事件
+   * 始终保持目标节点在窗口中间，具体位置会根据布局类型来
+   * 比如: 右侧布局时, y在窗口中间, x在左侧的1/3处
+   * @param node 将要居中的节点
+   */
+  public onResize(node: ITypeOfNodeType | undefined = this.rootNode) {
+    const { offsetX = 0, offsetY = 0 } = this.layout?.offset || {};
     const { cx = 0, cy = 0 } = node?.group.bbox() || {};
     this.el.scroll(cx - offsetX, cy - offsetY);
   }
+  /**
+   * 把nodeData处理成node节点
+   * @param nodeData
+   * @param parentNode 第一层数据的所属父节点
+   * @returns node节点
+   */
+  public renderNode<T extends INodeData>(nodeData: T[], parentNode?: ITypeOfNodeType) {
+    return nodeData.map((nodeData) => {
+      const depth = nodeData.depth;
+      let node: ITypeOfNodeType;
+      switch (depth) {
+        case 0:
+          node = new RootNode({ nodeData, nodesGroup: this.nodesGroup });
+          break;
+        case 1:
+          node = new SecondNode({
+            nodeData,
+            nodesGroup: this.nodesGroup,
+            parentNode: parentNode as RootNode,
+          });
+          break;
+        case 2:
+        default:
+          node = new DefaultNode({
+            nodeData,
+            nodesGroup: this.nodesGroup,
+            parentNode: parentNode as SecondNode,
+          });
+          break;
+      }
+      node.children = this.renderNode(nodeData.children, node) as any[];
+      node.init();
+      return node as RootNode;
+    });
+  }
   /** 渲染 */
   public render() {
-    this.svg.addTo(this.el);
-    const walk = <T extends INodeData>(
-      data: T[],
-      parentNode?: RootNode | SecondNode | DefaultNode
-    ) => {
-      return data.map((nodeData) => {
-        const depth = nodeData.depth || 0;
-        let node: RootNode | SecondNode | DefaultNode;
-        switch (depth) {
-          case 0:
-            node = new RootNode({ nodeData, nodesGroup: this.nodesGroup });
-            break;
-          case 1:
-            node = new SecondNode({
-              nodeData,
-              nodesGroup: this.nodesGroup,
-              parentNode: parentNode as RootNode,
-            });
-            break;
-          case 2:
-          default:
-            node = new DefaultNode({
-              nodeData,
-              nodesGroup: this.nodesGroup,
-              parentNode: parentNode as SecondNode,
-            });
-            break;
-        }
-        node.children = walk(nodeData.children, node) as any[];
-        node.init();
-        return node as RootNode;
-      });
-    };
-    this.rootNode = walk(this.dataTree)[0];
+    this.rootNode = this.renderNode(this.dataTree)[0];
   }
   /** 布局 */
   public doLayout() {
-    console.log("layout");
     if (this.rootNode) {
       this.linesGroup.clear();
       const { isHorizontal, config } = this.theme;

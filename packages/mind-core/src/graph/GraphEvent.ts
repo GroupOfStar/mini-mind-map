@@ -40,6 +40,7 @@ export class GraphEvent extends Emitter<IEvents> {
 
     this.onDocumentKeydown = this.onDocumentKeydown.bind(this);
     this.onDocumentCopy = this.onDocumentCopy.bind(this);
+    this.onDocumentCut = this.onDocumentCut.bind(this);
     this.onDocumentPaste = this.onDocumentPaste.bind(this);
 
     this.graph.svg.on("click", this.onSvgClick);
@@ -49,7 +50,6 @@ export class GraphEvent extends Emitter<IEvents> {
 
     // this.graph.svg.on("wheel", this.onSvgMousewheel);
     this.graph.svg.on("contextmenu", this.onSvgContextmenu);
-    // this.graph.svg.on("copy", this.onSvgCopy);
 
     // 节点点击事件
     this.on("node_click", this.onNodeClick);
@@ -74,6 +74,7 @@ export class GraphEvent extends Emitter<IEvents> {
     addIconNode.onHide();
     document.removeEventListener("keydown", this.onDocumentKeydown);
     document.removeEventListener("copy", this.onDocumentCopy);
+    document.removeEventListener("cut", this.onDocumentCut);
     document.removeEventListener("paste", this.onDocumentPaste);
   }
   // svg画布的鼠标按下事件
@@ -145,45 +146,41 @@ export class GraphEvent extends Emitter<IEvents> {
   // 键盘按下事件
   private onDocumentKeydown(e: KeyboardEvent) {
     const { key } = e;
-    console.log("onDocumentKeydown e :>> ", e);
     if (key === "Tab" || key === "Enter" || key === "Delete") {
       e.preventDefault();
       e.stopPropagation();
       const { activatedNode } = this.graph;
       const prevNode = activatedNode.firstNode;
-      console.log("prevNode :>> ", prevNode);
-      console.log("prevNode?.group.rbox() :>> ", prevNode?.group.rbox());
-      const { x = 0, y = 0, width = 0, height = 0 } = prevNode?.group.rbox() || {};
-      let newNode: RootNode | SecondNode | DefaultNode | undefined;
-      switch (key) {
-        case "Tab":
-          newNode = prevNode?.addChildNode();
-          break;
-        case "Enter":
-          newNode = prevNode?.addBrotherNode();
-          break;
-        case "Delete":
-          newNode = prevNode?.deleteActivatedNode();
-          break;
-      }
-      console.log("newNode :>> ", newNode);
-      if (newNode) {
-        this.graph.doLayout();
-        this.graph.onResize(prevNode, { offsetX: x + width / 2, offsetY: y + height / 2 });
+      if (prevNode) {
+        let newNode: RootNode | SecondNode | DefaultNode | undefined;
+        switch (key) {
+          case "Tab":
+            newNode = prevNode.addChildNode();
+            this.graph.onScrollToNode(prevNode);
+            break;
+          case "Enter":
+            newNode = prevNode.addBrotherNode();
+            this.graph.onScrollToNode(prevNode);
+            break;
+          case "Delete":
+            newNode = prevNode.deleteActivatedNode();
+            this.graph.onScrollToNode(newNode);
+            break;
+        }
         activatedNode.keepOne(newNode);
       }
     }
   }
-  // 复制事件
-  private onDocumentCopy(e: ClipboardEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const activatedNodes = this.graph.activatedNode.nodes;
-    // 根节点不允许复制，过滤掉 TODO
-    // 去重后的节点数组
-    const nodeList = uniqueTreeNode([...activatedNodes]);
-    e.clipboardData?.setData("text/plain", nodeTreeToText(nodeList));
+  /**
+   * 处理剪切板内容
+   * @param e 剪切板event
+   * @param nodes 节点数组
+   */
+  private SetClipboardContent(e: ClipboardEvent, nodes: Set<ITypeOfNodeType>) {
+    // 去重后的节点数组, 如果根节点不允许复制，这里还需要过滤掉 TODO
+    const nodeList = uniqueTreeNode([...nodes]);
+    // 在edrawsoft上能粘贴成节点必须以空格开头
+    e.clipboardData?.setData("text/plain", "\u0020" + nodeTreeToText(nodeList));
     // application/json
     e.clipboardData?.setData("mind/node", JSON.stringify(nodeList.map(Node.toRaw)));
 
@@ -204,6 +201,25 @@ export class GraphEvent extends Emitter<IEvents> {
     //   }
     // );
   }
+  // 复制事件
+  private onDocumentCopy(e: ClipboardEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    const { nodes } = this.graph.activatedNode;
+    this.SetClipboardContent(e, nodes);
+  }
+  // 剪切事件
+  private onDocumentCut(e: ClipboardEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    const { activatedNode } = this.graph;
+    const { nodes } = activatedNode;
+    // 从前往后删的，所以取最后一个返回的，才是存在节点树中的
+    const newNode = Array.from(nodes).map((item) => item.deleteActivatedNode())[nodes.size - 1];
+    this.graph.onScrollToNode(newNode);
+    activatedNode.keepOne(newNode);
+    this.SetClipboardContent(e, nodes);
+  }
   // 粘贴事件
   private onDocumentPaste(e: ClipboardEvent) {
     console.log("e :>> ", e);
@@ -211,18 +227,20 @@ export class GraphEvent extends Emitter<IEvents> {
     e.stopPropagation();
     const clipboardData = e.clipboardData || new DataTransfer();
     const textData = clipboardData.getData("text/plain");
-    console.log("textData :>> ", textData);
+    console.log("textData :>> ", "\n", textData);
     const htmlData = clipboardData.getData("text/html");
     console.log("htmlData :>> ", htmlData);
     const jsonData = clipboardData.getData("application/json");
     console.log("jsonData :>> ", jsonData);
     const mindNode = clipboardData.getData("mind/node");
+    console.log("mindNode :>> ", mindNode);
     if (mindNode) {
-      const nodeList = JSON.parse(mindNode);
-      // nodeList.forEach((node: INodeData) => {
-
-      // })
-      console.log("nodeList :>> ", nodeList);
+      const { firstNode } = this.graph.activatedNode;
+      if (firstNode) {
+        const nodeList = JSON.parse(mindNode);
+        firstNode.children = firstNode.children.concat(this.graph.renderNode(nodeList, firstNode));
+        this.graph.onScrollToNode(firstNode);
+      }
     }
 
     // console.log("clipboardData.files :>> ", clipboardData.files);
@@ -240,7 +258,7 @@ export class GraphEvent extends Emitter<IEvents> {
     //   reader.readAsDataURL(file);
     // }
     // console.log("clipboardData.items :>> ", clipboardData.items);
-    // console.log("clipboardData.types :>> ", clipboardData.types);
+    console.log("clipboardData.types :>> ", clipboardData.types);
   }
   // 节点点击事件
   private onNodeClick(node: ITypeOfNodeType) {
@@ -248,6 +266,7 @@ export class GraphEvent extends Emitter<IEvents> {
     activatedNode.keepOne(node);
     document.addEventListener("keydown", this.onDocumentKeydown);
     document.addEventListener("copy", this.onDocumentCopy);
+    document.addEventListener("cut", this.onDocumentCut);
     document.addEventListener("paste", this.onDocumentPaste);
   }
   /**
@@ -264,6 +283,7 @@ export class GraphEvent extends Emitter<IEvents> {
     addIconNode.onHide();
     document.removeEventListener("keydown", this.onDocumentKeydown);
     document.addEventListener("copy", this.onDocumentCopy);
+    document.addEventListener("cut", this.onDocumentCut);
     document.addEventListener("paste", this.onDocumentPaste);
   }
 }

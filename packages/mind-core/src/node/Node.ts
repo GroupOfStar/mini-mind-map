@@ -106,8 +106,9 @@ export abstract class Node<
     node: T
   ): INodeData {
     return {
-      ...node.nodeData,
+      // ...node.nodeData,
       id: uuidv4(),
+      text: node.nodeData.text,
       children: node.children.map(Node.toRaw),
     };
   }

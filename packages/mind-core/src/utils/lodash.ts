@@ -31,5 +31,5 @@ export function isNumber(val: any): boolean {
  * @returns
  */
 export function uuidv4(): string {
-  return self.crypto.randomUUID();
+  return self.crypto.randomUUID().replace(/#|-/g, "");
 }
