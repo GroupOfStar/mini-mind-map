@@ -89,6 +89,46 @@ export abstract class Node<
       }
     }
   }
+  /** 获取上一个节点 */
+  getArrowUpNode() {
+    if (this.parentNode) {
+      const brotherNode = this.parentNode.children;
+      const fid = brotherNode.findIndex((item) => item === this);
+      if (fid > 0 && fid <= brotherNode.length - 1) {
+        return brotherNode[fid - 1];
+      } else if (fid === 0) {
+        return this.getArrowLeftNode();
+      } else {
+        return undefined;
+      }
+    } else {
+      return undefined;
+    }
+  }
+  /** 获取下一个节点 */
+  getArrowDownNode() {
+    if (this.parentNode) {
+      const brotherNode = this.parentNode.children;
+      const fid = brotherNode.findIndex((item) => item === this);
+      if (fid >= 0 && fid < brotherNode.length - 1) {
+        return brotherNode[fid + 1];
+      } else if (fid === brotherNode.length - 1) {
+        return this.getArrowRightNode();
+      } else {
+        return undefined;
+      }
+    } else {
+      return undefined;
+    }
+  }
+  /** 获取前一个节点 */
+  getArrowLeftNode() {
+    return this.parentNode;
+  }
+  /** 获取后一个节点 */
+  getArrowRightNode() {
+    return this.children[0];
+  }
   /**
    * 创建初始化的节点数据
    * @param pid 父节点id

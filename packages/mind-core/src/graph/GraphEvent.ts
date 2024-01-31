@@ -146,7 +146,15 @@ export class GraphEvent extends Emitter<IEvents> {
   // 键盘按下事件
   private onDocumentKeydown(e: KeyboardEvent) {
     const { key } = e;
-    if (key === "Tab" || key === "Enter" || key === "Delete") {
+    if (
+      key === "Tab" ||
+      key === "Enter" ||
+      key === "Delete" ||
+      key === "ArrowUp" ||
+      key === "ArrowDown" ||
+      key === "ArrowLeft" ||
+      key === "ArrowRight"
+    ) {
       e.preventDefault();
       e.stopPropagation();
       const { activatedNode, addIconNode } = this.graph;
@@ -167,6 +175,16 @@ export class GraphEvent extends Emitter<IEvents> {
             this.graph.onScrollToNode(newNode);
             activatedNode.keepOne(newNode);
             break;
+          case "ArrowUp":
+          case "ArrowDown":
+          case "ArrowLeft":
+          case "ArrowRight": {
+            newNode = activatedNode.firstNode[`get${key}Node`]();
+            if (newNode) {
+              activatedNode.keepOne(newNode);
+            }
+            break;
+          }
         }
       }
     }
